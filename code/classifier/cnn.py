@@ -171,11 +171,11 @@ class CNN(object):
         rng = np.random.RandomState(1324)
         x = T.matrix('x')
         y = T.ivector('y')
-        input0 = x.reshape((batch_size, 1, 56, 56))
+        input0 = x.reshape((batch_size, 1, 60, 60))
         self.layer0 = ConvPoolLayer(
             rng=rng,
             input=input0,
-            image_shape=(batch_size, 1, 56, 56),
+            image_shape=(batch_size, 1, 60, 60),
             filter_shape=(nkerns[0], 1, 5, 5),
             poolsize=(2, 2),
             W=s['0']['W'],
@@ -184,7 +184,7 @@ class CNN(object):
         self.layer1 = ConvPoolLayer(
             rng=rng,
             input=self.layer0.output,
-            image_shape=(batch_size, nkerns[0], 13, 13),
+            image_shape=(batch_size, nkerns[0], 14, 14),
             filter_shape=(nkerns[1], nkerns[0], 5, 5),
             poolsize=(2, 2),
             W=s['1']['W'],
@@ -194,7 +194,7 @@ class CNN(object):
         self.layer2 = HiddenLayer(
             rng=rng,
             input=input2,
-            n_in=nkerns[1] * 4 * 4,
+            n_in=nkerns[1] * 5 * 5,
             n_out=500,
             activation=T.tanh,
             W=s['2']['W'],

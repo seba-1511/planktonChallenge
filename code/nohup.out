@@ -1,0 +1,99 @@
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+Using gpu device 0: GRID K520
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+Using gpu device 0: GRID K520
+loading data
+processing raw images
+Traceback (most recent call last):
+  File "main.py", line 39, in <module>
+    cnn = CNN(alpha=1, batch_size=1, train_X=d.train_X, train_Y=d.train_Y, epochs=200, instance_id=1000).train()
+  File "/mnt/planktonChallenge/code/classifier/cnn.py", line 283, in train
+    cost_ij = self.train_model(minibatch_index)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function_module.py", line 598, in __call__
+    self.fn.thunks[self.fn.position_of_error])
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function_module.py", line 588, in __call__
+    outputs = self.fn()
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/op.py", line 750, in rval
+    r = p(n, [x[0] for x in i], o)
+  File "/usr/local/lib/python2.7/dist-packages/theano/sandbox/cuda/basic_ops.py", line 2338, in perform
+    raise ValueError("total size of new array must be unchanged")
+ValueError: total size of new array must be unchanged
+Apply node that caused the error: GpuReshape{4}(GpuConv{valid, (1, 1), None, (5, 5), True, (20, 12, 12), (5, 5)}.0, TensorConstant{[50  1  8  8]})
+Inputs types: [CudaNdarrayType(float32, 4D), TensorType(int64, vector)]
+Inputs shapes: [(1, 50, 22, 22), (4,)]
+Inputs strides: [(0, 484, 22, 1), (8,)]
+Inputs scalar values: ['not scalar', 'not scalar']
+
+HINT: Re-running with most Theano optimization disabled could give you a back-traces when this node was created. This can be done with by setting the Theano flags optimizer=fast_compile
+HINT: Use the Theano flag 'exception_verbosity=high' for a debugprint of this apply node.
+loading data
+processing raw images
+Traceback (most recent call last):
+  File "main.py", line 39, in <module>
+    cnn = CNN(alpha=1, batch_size=1, train_X=d.train_X, train_Y=d.train_Y, epochs=200, instance_id=1000).train()
+  File "/mnt/planktonChallenge/code/classifier/cnn.py", line 283, in train
+    cost_ij = self.train_model(minibatch_index)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function_module.py", line 598, in __call__
+    self.fn.thunks[self.fn.position_of_error])
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function_module.py", line 588, in __call__
+    outputs = self.fn()
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/op.py", line 750, in rval
+    r = p(n, [x[0] for x in i], o)
+  File "/usr/local/lib/python2.7/dist-packages/theano/sandbox/cuda/basic_ops.py", line 2338, in perform
+    raise ValueError("total size of new array must be unchanged")
+ValueError: total size of new array must be unchanged
+Apply node that caused the error: GpuReshape{4}(GpuConv{valid, (1, 1), None, (5, 5), True, (20, 12, 12), (5, 5)}.0, TensorConstant{[50  1  8  8]})
+Inputs types: [CudaNdarrayType(float32, 4D), TensorType(int64, vector)]
+Inputs shapes: [(1, 50, 22, 22), (4,)]
+Inputs strides: [(0, 484, 22, 1), (8,)]
+Inputs scalar values: ['not scalar', 'not scalar']
+
+HINT: Re-running with most Theano optimization disabled could give you a back-traces when this node was created. This can be done with by setting the Theano flags optimizer=fast_compile
+HINT: Use the Theano flag 'exception_verbosity=high' for a debugprint of this apply node.
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+Using gpu device 0: GRID K520
