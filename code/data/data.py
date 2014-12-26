@@ -48,8 +48,16 @@ class Data:
                 images.append(image)
                 targets.append(class_id)
         train = (images, targets)
-        pickle.dump(train, open('train' + str(size) + '.pkl', 'wb'))
+        pickle.dump(
+            train, open(curr_dir + '/train' + str(size) + '.pkl', 'wb'))
         return train
+
+    def shuffle_data(self, X, y):
+        shp = np.shape(X)
+        shuffle = np.zeros((shp[0], shp[1] + 1))
+        shuffle[:, :-1] = X
+        shuffle[:, -1] = y
+        return np.random.shuffle(shuffle)
 
     def get_data(self, size=25):
         curr_dir = os.path.dirname(
