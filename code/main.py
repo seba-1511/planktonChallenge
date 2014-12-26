@@ -58,5 +58,6 @@ if __name__ == '__main__':
     predictions = []
     for X in d2.valid_X:
         idx = kclf.predict(X)
+        import pdb; pdb.set_trace()
         predictions.append(cnns[idx].predict(X))
     online_score(predictions, d2.valid_Y)

@@ -15,4 +15,4 @@ def online_score(predictions=[[]], targets=[]):
 def score(predictions=[]):
     return online_score()
 
-print online_score([[0.4999, ] for i in xrange(10)], [0 for i in xrange(10)])
+print online_score([[0.4999, 0.34, 2.0] for i in xrange(10)], [0 for i in xrange(10)])

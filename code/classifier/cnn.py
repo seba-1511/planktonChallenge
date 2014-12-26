@@ -287,6 +287,7 @@ class CNN(object):
                           (epoch, self.epochs - old_training, minibatch_index + 1, n_train_batches,
                            validation_loss * 100.))
                     # self.save_network(epoch + old_training)
+        return self
 
     def get_training(self):
         saved = None
