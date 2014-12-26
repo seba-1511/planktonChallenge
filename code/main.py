@@ -59,4 +59,4 @@ if __name__ == '__main__':
     for X in d2.valid_X:
         idx = kclf.predict(X)
         predictions.append(cnns[idx].predict([X, ]))
-    online_score(predictions, d2.valid_Y)
+    print online_score(predictions, d2.valid_Y)
