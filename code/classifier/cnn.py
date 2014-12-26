@@ -276,7 +276,7 @@ class CNN(object):
         if self.instance:
             old_training = self.get_training()['epoch']
         print T.shape(self.trainX).eval()
-        n_train_batches = 2 #T.shape(self.trainX).eval()[0] - 1
+        n_train_batches = T.shape(self.trainX).eval()[0]
         # n_train_batches = TRAINING_SIZE / self.batch_size
         for epoch in xrange(self.epochs - old_training):
             for minibatch_index in xrange(n_train_batches):
@@ -322,7 +322,7 @@ class CNN(object):
         ], open('layers_' + str(self.instance) + '.pkl', 'wb'))
 
     def score(self):
-        n_test_batches = T.shape(self.testY).eval()[0] - 1
+        n_test_batches = T.shape(self.testY).eval()[0]
         # n_test_batches = TESTING_SIZE / self.batch_size
         validation_losses = [self.validate_model(i) for i
                              in xrange(n_test_batches)]

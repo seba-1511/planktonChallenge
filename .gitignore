@@ -19,6 +19,7 @@ parts/
 sdist/
 var/
 data/
+*.pkl
 *.egg-info/
 .installed.cfg
 *.egg
