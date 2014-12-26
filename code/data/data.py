@@ -9,9 +9,9 @@ from os.path import exists
 from skimage.io import imread
 from skimage.transform import resize
 
-TRAIN_PERCENT = 0.3
-VALID_PERCENT = 0.1
-TEST_PERCENT = 0.1
+TRAIN_PERCENT = 0.80
+VALID_PERCENT = 0.0
+TEST_PERCENT = 0.2
 
 
 class Data(object):
@@ -34,6 +34,9 @@ class Data(object):
         saved = (data[:total], targets[:total])
         pickle.dump(
             saved, open('train' + str(size) + '_' + str(total_perc) + '.pkl', 'wb'))
+
+    def convertBinaryValues(self, image_set=None, threshold=0.5):
+        return (image_set > threshold).astype(int)
 
     def create_thumbnail(self, size, img=None):
         print 'processing raw images'

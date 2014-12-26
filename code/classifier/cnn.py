@@ -171,11 +171,11 @@ class CNN(object):
         rng = np.random.RandomState(1324)
         x = T.matrix('x')
         y = T.ivector('y')
-        input0 = x.reshape((batch_size, 1, 28, 28))
+        input0 = x.reshape((batch_size, 1, 56, 56))
         self.layer0 = ConvPoolLayer(
             rng=rng,
             input=input0,
-            image_shape=(batch_size, 1, 28, 28),
+            image_shape=(batch_size, 1, 56, 56),
             filter_shape=(nkerns[0], 1, 5, 5),
             poolsize=(2, 2),
             W=s['0']['W'],
@@ -184,7 +184,7 @@ class CNN(object):
         self.layer1 = ConvPoolLayer(
             rng=rng,
             input=self.layer0.output,
-            image_shape=(batch_size, nkerns[0], 12, 12),
+            image_shape=(batch_size, nkerns[0], 13, 13),
             filter_shape=(nkerns[1], nkerns[0], 5, 5),
             poolsize=(2, 2),
             W=s['1']['W'],
@@ -286,7 +286,7 @@ class CNN(object):
                     print('epoch %i/%i, minibatch %i/%i, validation error %f %%' %
                           (epoch, self.epochs - old_training, minibatch_index + 1, n_train_batches,
                            validation_loss * 100.))
-                    # self.save_network(epoch + old_training)
+                    self.save_network(epoch + old_training)
         return self
 
     def get_training(self):
