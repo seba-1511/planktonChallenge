@@ -9,7 +9,7 @@ def online_score(predictions=[[]], targets=[]):
     for i, entry in enumerate(predictions):
         tot = np.sum(entry)
         score += log(entry[targets[i]] / tot)
-    return -score / np.shape(predictions)[0]
+    return -score / len(predictions)
 
 
 def score(predictions=[]):
