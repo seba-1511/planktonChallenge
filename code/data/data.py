@@ -9,7 +9,7 @@ from os.path import exists
 from skimage.io import imread
 from skimage.transform import resize
 
-TRAIN_PERCENT = 0.1
+TRAIN_PERCENT = 0.3
 VALID_PERCENT = 0.1
 TEST_PERCENT = 0.1
 

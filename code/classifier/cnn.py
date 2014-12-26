@@ -251,7 +251,7 @@ class CNN(object):
         )
 
     def fetch_sets(self, train_X, train_Y):
-        if train_X and train_Y:
+        if train_X is not None and train_Y is not None:
             self.trainX = np.array(train_X).astype(dtype=theano.config.floatX)
             self.trainY = np.array(train_Y).astype(dtype=theano.config.floatX)
             self.testX = self.trainX
