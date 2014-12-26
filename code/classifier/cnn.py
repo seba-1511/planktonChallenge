@@ -171,11 +171,11 @@ class CNN(object):
         rng = np.random.RandomState(1324)
         x = T.matrix('x')
         y = T.ivector('y')
-        input0 = x.reshape((batch_size, 1, 60, 60))
+        input0 = x.reshape((batch_size, 1, 32, 32))
         self.layer0 = ConvPoolLayer(
             rng=rng,
             input=input0,
-            image_shape=(batch_size, 1, 60, 60),
+            image_shape=(batch_size, 1, 32, 32),
             filter_shape=(nkerns[0], 1, 5, 5),
             poolsize=(2, 2),
             W=s['0']['W'],
