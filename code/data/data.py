@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import inspect
 import cPickle as pickle
 import numpy as np
 
@@ -11,7 +12,9 @@ from skimage.transform import resize
 def create_thumbnail(size=25, img=None):
     if img:
         return resize(img, (size, size))
-    folders = os.walk('../../data/train/')
+    curr_dir = os.path.dirname(
+        os.path.abspath(inspect.getfile(inspect.currentframe())))
+    folders = os.walk(os.path.join(curr_dir, '../../data/train/'))
     images = []
     classes = []
     targets = []
@@ -25,11 +28,17 @@ def create_thumbnail(size=25, img=None):
             image = np.array(image).ravel()
             images.append(image)
             targets.append(class_id)
-    train = {
-        'data': images,
-        'targets': targets
-    }
+    train = (images, targets)
     pickle.dump(train, open('train' + str(size) + '.pkl', 'wb'))
+
+
+def get_train_data(size=25):
+    curr_dir = os.path.dirname(
+        os.path.abspath(inspect.getfile(inspect.currentframe())))
+    filename = os.path.join(curr_dir, 'train' + str(size) + '.pkl')
+    if not os.path.exists(filename):
+        create_thumbnail(size)
+    return pickle.load(open(filename, 'rb'))
 
 
 if __name__ == '__main__':

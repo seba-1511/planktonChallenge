@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import numpy as np
+from data.data import get_train_data
+
 CATEGORIES = (
     'artifacts',
     'chaetognaths',
@@ -19,3 +22,8 @@ CATEGORIES = (
     'siphonophores',
     'trichodesmium',
 )
+
+if __name__ == '__main__':
+    data, t = get_train_data()
+    print np.shape(data)
+    print np.shape(t)
