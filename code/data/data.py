@@ -27,10 +27,10 @@ class Data(object):
         data, targets = self.shuffle_data(data[:total], targets[:total])
         self.train_X = data[:nb_train]
         self.train_Y = targets[:nb_train]
-        self.valid_X = data[nb_train:nb_valid]
-        self.valid_Y = targets[nb_train:nb_valid]
-        self.test_X = data[nb_valid:nb_test]
-        self.test_Y = targets[nb_valid:nb_test]
+        self.valid_X = data[nb_train:nb_train + nb_valid]
+        self.valid_Y = targets[nb_train:nb_train + nb_valid]
+        self.test_X = data[nb_train + nb_valid:total]
+        self.test_Y = targets[nb_train + nb_valid:total]
         saved = (data[:total], targets[:total])
         pickle.dump(
             saved, open('train' + str(size) + '_' + str(total_perc) + '.pkl', 'wb'))

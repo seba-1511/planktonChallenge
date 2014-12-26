@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
     d = Data(size=28)
     d2 = d  # change to another size of pictures
-    kclf = KMeans(clusters=NB_CLUSTERS).train(d.train_X)
+    kclf = KMeans(clusters=NB_CLUSTERS-1).train(d.train_X)
 
     # TODO: Is it a good idea to train the CNN based on data that the Kmeans
     # classifies without having seen it ?
