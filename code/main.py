@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from data.data import get_train_data
+from data.data import Data
 
 CATEGORIES = (
     'artifacts',
@@ -24,6 +24,6 @@ CATEGORIES = (
 )
 
 if __name__ == '__main__':
-    data, t = get_train_data()
+    d = Data()
+    data = d.train_X
     print np.shape(data)
-    print np.shape(t)
