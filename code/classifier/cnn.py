@@ -252,8 +252,8 @@ class CNN(object):
 
     def fetch_sets(self, train_X, train_Y):
         if train_X and train_Y:
-            self.trainX = train_X
-            self.trainY = train_Y
+            self.trainX = T.cast(train_X, dtype=theano.config.floatX)
+            self.trainY = T.cast(train_Y, dtype=theano.config.floatX)
             self.testX = []
             self.testY = []
         else:

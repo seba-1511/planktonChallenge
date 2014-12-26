@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import warnings
 import numpy as np
 
 from data.data import Data
 from classifier.kmeans import KMeans
 from classifier.cnn import CNN
 from score import online_score
+
+warnings.filterwarnings("ignore")
 
 CATEGORIES = (
     'artifacts',
