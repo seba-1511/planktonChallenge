@@ -252,43 +252,31 @@ class CNN(object):
 
     def fetch_sets(self, train_X, train_Y):
         if train_X and train_Y:
-            self.trainX = T.cast(train_X, dtype=theano.config.floatX)
-            self.trainY = T.cast(train_Y, dtype=theano.config.floatX)
-            self.testX = []
-            self.testY = []
+            self.trainX = np.array(train_X).astype(dtype=theano.config.floatX)
+            self.trainY = np.array(train_Y).astype(dtype=theano.config.floatX)
+            self.testX = self.trainX
+            self.testY = self.trainY
         else:
             mnist = fetch_mldata('MNIST original')
-            self.trainX = mnist.data[0:TRAINING_SIZE]
-            self.trainY = mnist.target[0:TRAINING_SIZE]
-            self.testX = mnist.data[TRAINING_SIZE:TRAINING_SIZE + TESTING_SIZE]
-            self.testY = mnist.target[TRAINING_SIZE:TRAINING_SIZE + TESTING_SIZE]
-        self.trainX = shared(
-            np.asarray(self.trainX, dtype=theano.config.floatX),
-            borrow=True
-        )
-        self.trainY = T.cast(
-            shared(
-                np.asarray(self.trainY, dtype=theano.config.floatX),
-                borrow=True),
-            'int32'
-        )
-
-        self.testX = shared(
-            np.asarray(self.testX, dtype=theano.config.floatX),
-            borrow=True
-        )
-        self.testY = T.cast(
-            shared(
-                np.asarray(self.testY, dtype=theano.config.floatX),
-                borrow=True),
-            'int32'
-        )
+            self.trainX = np.asarray(
+                mnist.data[0:TRAINING_SIZE], dtype=theano.config.floatX)
+            self.trainY = np.asarray(
+                mnist.target[0:TRAINING_SIZE], dtype=theano.config.floatX)
+            self.testX = np.asarray(
+                mnist.data[TRAINING_SIZE:TRAINING_SIZE + TESTING_SIZE], dtype=theano.config.floatX)
+            self.testY = np.asarray(
+                mnist.target[TRAINING_SIZE:TRAINING_SIZE + TESTING_SIZE], dtype=theano.config.floatX)
+        self.trainX = shared(self.trainX, borrow=True)
+        self.trainY = T.cast(shared(self.trainY, borrow=True), 'int32')
+        self.testX = shared(self.testX, borrow=True)
+        self.testY = T.cast(shared(self.testY, borrow=True), 'int32')
 
     def train(self):
         old_training = 0
         if self.instance:
             old_training = self.get_training()['epoch']
-        n_train_batches = TRAINING_SIZE / self.batch_size
+        n_train_batches = len(self.trainX)
+        # n_train_batches = TRAINING_SIZE / self.batch_size
         for epoch in xrange(self.epochs - old_training):
             for minibatch_index in xrange(n_train_batches):
                 iter = epoch * n_train_batches + minibatch_index
@@ -298,7 +286,7 @@ class CNN(object):
                     print('epoch %i/%i, minibatch %i/%i, validation error %f %%' %
                           (epoch, self.epochs - old_training, minibatch_index + 1, n_train_batches,
                            validation_loss * 100.))
-                    self.save_network(epoch + old_training)
+                    # self.save_network(epoch + old_training)
 
     def get_training(self):
         saved = None
@@ -357,7 +345,8 @@ class CNN(object):
         ], open('layers_' + str(self.instance) + '.pkl', 'wb'))
 
     def score(self):
-        n_test_batches = TESTING_SIZE / self.batch_size
+        n_test_batches = len(self.testY)
+        # n_test_batches = TESTING_SIZE / self.batch_size
         validation_losses = [self.validate_model(i) for i
                              in xrange(n_test_batches)]
         return np.mean(validation_losses)
