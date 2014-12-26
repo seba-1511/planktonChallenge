@@ -30,7 +30,7 @@ CATEGORIES = (
     'trichodesmium',
 )
 
-NB_CLUSTERS = len(CATEGORIES)
+NB_CLUSTERS = 3 # len(CATEGORIES)
 
 if __name__ == '__main__':
 
@@ -50,8 +50,8 @@ if __name__ == '__main__':
 
     # creating a CNN for each
     print 'creating and training the cnn'
-    cnns = [CNN(batch_size=1, train_X=train_X[i], train_Y=train_Y[i]).train()
-            for i in xrange(NB_CLUSTERS)]
+    cnns = [CNN(batch_size=1, train_X=train_X[i], train_Y=train_Y[
+                i], epochs=2).train()for i in xrange(NB_CLUSTERS)]
 
     # Benchmark the algo:
     print 'benchmarking the algorithm'

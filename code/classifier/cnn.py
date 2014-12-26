@@ -203,7 +203,7 @@ class CNN(object):
         self.layer3 = LogisticRegression(
             input=self.layer2.output,
             n_in=500,
-            n_out=10,
+            n_out=121,
             W=s['3']['W'],
             b=s['3']['b']
         )
@@ -275,7 +275,6 @@ class CNN(object):
         old_training = 0
         if self.instance:
             old_training = self.get_training()['epoch']
-        print T.shape(self.trainX).eval()
         n_train_batches = T.shape(self.trainX).eval()[0]
         # n_train_batches = TRAINING_SIZE / self.batch_size
         for epoch in xrange(self.epochs - old_training):
