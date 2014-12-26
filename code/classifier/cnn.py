@@ -158,12 +158,12 @@ class CNN(object):
     """
 
     def __init__(self, alpha=0.1, epochs=200, nkerns=[20, 50], batch_size=500,
-                 instance_id=None):
+                 instance_id=None, train_X=None, train_Y=None):
         self.instance = instance_id
         self.epochs = epochs
         self.alpha = alpha
         self.batch_size = batch_size
-        self.fetch_sets()
+        self.fetch_sets(train_X, train_Y)
         self.init_network(nkerns, batch_size)
 
     def init_network(self, nkerns, batch_size):
@@ -250,12 +250,18 @@ class CNN(object):
             on_unused_input='ignore'
         )
 
-    def fetch_sets(self):
-        mnist = fetch_mldata('MNIST original')
-        self.trainX = mnist.data[0:TRAINING_SIZE]
-        self.trainY = mnist.target[0:TRAINING_SIZE]
-        self.testX = mnist.data[TRAINING_SIZE:TRAINING_SIZE + TESTING_SIZE]
-        self.testY = mnist.target[TRAINING_SIZE:TRAINING_SIZE + TESTING_SIZE]
+    def fetch_sets(self, train_X, train_Y):
+        if train_X and train_Y:
+            self.trainX = train_X
+            self.trainY = train_Y
+            self.testX = []
+            self.testY = []
+        else:
+            mnist = fetch_mldata('MNIST original')
+            self.trainX = mnist.data[0:TRAINING_SIZE]
+            self.trainY = mnist.target[0:TRAINING_SIZE]
+            self.testX = mnist.data[TRAINING_SIZE:TRAINING_SIZE + TESTING_SIZE]
+            self.testY = mnist.target[TRAINING_SIZE:TRAINING_SIZE + TESTING_SIZE]
         self.trainX = shared(
             np.asarray(self.trainX, dtype=theano.config.floatX),
             borrow=True

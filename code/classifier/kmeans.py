@@ -3,16 +3,16 @@
 from sklearn import cluster
 from multiprocessing import cpu_count
 
-N_PROC = cpu_count()
+NB_PROC = cpu_count()
 
 
 class KMeans(object):
 
-    def __init__(self):
-        self.clf = cluster.KMeans(n_cluster=18, n_jobs=N_PROC)
-        return self
+    def __init__(self, clusters=18):
+        self.clf = cluster.KMeans(n_clusters=clusters, n_jobs=NB_PROC)
 
     def train(self, X):
+        print 'training K-means'
         self.clf.fit(X)
         return self
 
