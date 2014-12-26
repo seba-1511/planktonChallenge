@@ -13,15 +13,16 @@ VALID_PERCENT = 0.1
 TEST_PERCENT = 0.1
 
 
-class Data:
+class Data(object):
 
     def __init__(self, size=25):
         print 'loading data'
         data, targets = self.get_data(size)
-        data, targets = self.shuffle_data(data, targets)
         nb_train = TRAIN_PERCENT * len(targets)
         nb_valid = VALID_PERCENT * len(targets)
         nb_test = TEST_PERCENT * len(targets)
+        total = nb_train + nb_valid + nb_test
+        data, targets = self.shuffle_data(data[:total], targets[:total])
         self.train_X = data[:nb_train]
         self.train_Y = targets[:nb_train]
         self.valid_X = data[nb_train:nb_valid]

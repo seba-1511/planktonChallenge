@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+
 from data.data import Data
+from classifier.kmeans import KMeans
 
 CATEGORIES = (
     'artifacts',
@@ -25,5 +27,6 @@ CATEGORIES = (
 
 if __name__ == '__main__':
     d = Data()
-    data = d.train_X
-    print np.shape(data)
+    kclf = KMeans().train(d.train_X)
+    for i in xrange(25):
+        kclf.predict(d.train_X[i])
