@@ -330,7 +330,7 @@ class CNN(object):
 
     def predict(self, features):
         formated = np.ones(
-            (self.batch_size, len(features[0])),
+            (self.batch_size, np.shape(features[0])[0]),
             dtype=theano.config.floatX
         )
         formated[0:len(features)] = features
