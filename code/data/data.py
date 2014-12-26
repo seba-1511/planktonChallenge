@@ -8,14 +8,15 @@ import numpy as np
 from skimage.io import imread
 from skimage.transform import resize
 
-TRAIN_PERCENT = 10
-VALID_PERCENT = 10
-TEST_PERCENT = 10
+TRAIN_PERCENT = 0.1
+VALID_PERCENT = 0.1
+TEST_PERCENT = 0.1
 
 
 class Data:
 
     def __init__(self, size=25):
+        print 'loading data'
         data, targets = self.get_data(size)
         data, targets = self.shuffle_data(data, targets)
         nb_train = TRAIN_PERCENT * len(targets)
@@ -29,6 +30,7 @@ class Data:
         self.test_Y = targets[nb_valid:nb_test]
 
     def create_thumbnail(self, size=25, img=None):
+        print 'processing raw images'
         if img:
             return resize(img, (size, size))
         curr_dir = os.path.dirname(
@@ -57,7 +59,8 @@ class Data:
         shuffle = np.zeros((shp[0], shp[1] + 1))
         shuffle[:, :-1] = X
         shuffle[:, -1] = y
-        return np.random.shuffle(shuffle)
+        np.random.shuffle(shuffle)
+        return (shuffle[:, :-1], shuffle[:, -1])
 
     def get_data(self, size=25):
         curr_dir = os.path.dirname(
