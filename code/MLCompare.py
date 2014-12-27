@@ -160,14 +160,14 @@ def MLCompare(features, targets):
 
 
         ('Logistic Classifier', linear_model.LogisticRegression,
-         {'C': [0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0],
+         {'C': [0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0],
           'penalty': ['l1', 'l2'],
           'fit_intercept': [True, False]
           }),
 
 
         ('MultinomialNB', naive_bayes.MultinomialNB,
-         {'alpha': [0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0],
+         {'alpha': [0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0],
           'fit_prior': [True, False]
           }),
 
@@ -199,7 +199,7 @@ def MLCompare(features, targets):
         ('AdaBoost', ensemble.AdaBoostClassifier,
          {'n_estimators': [2, 5, 10, 25, 50, 100, 200],
           'base_estimator': [tree.DecisionTreeClassifier()],
-          'learning_rate': [0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0],
+          'learning_rate': [0.01, 0.1, 1.0, 10.0, 100.0, 1000.0],
           'algorithm': ['SAMME.R', 'SAMME']
           }),
     ]
