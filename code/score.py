@@ -23,9 +23,12 @@ def logloss(act, pred):
 
 def online_score(predictions=[[]], targets=[]):
     # return logloss(targets, predictions)
+    epsilon = 1e-15
+    predictions = sp.maximum(epsilon, predictions)
+    predictions = sp.minimum(1 - epsilon, predictions)
     score = 0.0
     for i, entry in enumerate(predictions):
-        # entry = entry[0]
+        entry = entry[0]
         tot = np.sum(entry)
         score += log(entry[targets[i]] / tot)
     return -score / len(predictions)
@@ -34,4 +37,4 @@ def online_score(predictions=[[]], targets=[]):
 def score(predictions=[]):
     return online_score()
 
-print online_score([[0.4999, 0.5001] for i in xrange(10)], [0 for i in xrange(10)])
+# print online_score([[0.4999, 0.5001] for i in xrange(10)], [0 for i in xrange(10)])

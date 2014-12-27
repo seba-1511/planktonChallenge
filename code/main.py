@@ -23,21 +23,21 @@ if __name__ == '__main__':
     d2 = d  # change to another size of pictures
     d.create_categories()
     cnns = []
-    for name in CLASS_NAMES:
+    for i, name in enumerate(CLASS_NAMES):
         print 'Training for ' + name
         train_X = d.train_cat_X[name]
         train_y = d.train_cat_Y[name]
         test_X = d.test_cat_X[name]
         test_y = d.test_cat_Y[name]
         cnn = CNN(
-            alpha=1,
-            batch_size=1,
+            alpha=0.1,
+            batch_size=100,
             train_X=train_X,
             train_Y=train_y,
             test_X=test_X,
             test_Y=test_y,
             epochs=200,
-            instance_id=121)
+            instance_id=12000+i)
         cnn.train()
         # cnns.append[cnn]
         predictions = []
