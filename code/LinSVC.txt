@@ -1,1 +1,41 @@
-
+loading data
+Training for Protists
+Score for Protists: 0.535064935065
+Training for Crustaceans
+Score for Crustaceans: 0.770491803279
+Training for PelagicTunicates
+Score for PelagicTunicates: 0.627035830619
+Training for Artifacts
+Score for Artifacts: 0.892857142857
+Training for Chaetognaths
+Score for Chaetognaths: 0.984848484848
+Training for Planktons
+Score for Planktons: 0.987654320988
+Training for Copepods
+Score for Copepods: 0.652314316469
+Training for Ctenophores
+Score for Ctenophores: 0.790540540541
+Training for ShrimpLike
+Score for ShrimpLike: 0.834821428571
+Training for Detritus
+Score for Detritus: 0.841155234657
+Training for Diotoms
+Score for Diotoms: 1.0
+Training for Echinoderms
+Score for Echinoderms: 0.856164383562
+Training for GelatinousZoolankton
+Score for GelatinousZoolankton: 0.960784313725
+Training for Fish
+Score for Fish: 0.897338403042
+Training for Gastropods
+Score for Gastropods: 0.714285714286
+Training for Hydromedusae
+Score for Hydromedusae: 0.669127516779
+Training for InvertebrateLarvae
+Score for InvertebrateLarvae: 0.741176470588
+Training for Siphonophores
+Score for Siphonophores: 0.62462006079
+Training for Trichodesmium
+Score for Trichodesmium: 0.866666666667
+Training for Unknowns
+Score for Unknowns: 0.740331491713
