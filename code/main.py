@@ -10,31 +10,11 @@ from score import online_score
 
 warnings.filterwarnings("ignore")
 
-CATEGORIES = (
-    'artifacts',
-    'chaetognaths',
-    'copepods',
-    'ctenophores',
-    'detritus',
-    'diatoms',
-    'echinoderms',
-    'fish',
-    'gastropods',
-    'gelatinous zooplankton',
-    'hydromedusae',
-    'invert larvae',
-    'pelagic tunicates',
-    'protists',
-    'shrimp',
-    'siphonophores',
-    'trichodesmium',
-)
-
-NB_CLUSTERS = len(CATEGORIES)
+NB_CLUSTERS = 20
 
 if __name__ == '__main__':
 
-    d = Data(size=32, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
+    d = Data(size=28, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
     d2 = d  # change to another size of pictures
     cnn = CNN(alpha=1, batch_size=1, train_X=d.train_X, train_Y=d.train_Y, epochs=200, instance_id=1000).train()
     predictions = []
