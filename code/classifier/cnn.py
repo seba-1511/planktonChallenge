@@ -342,7 +342,7 @@ class CNN(object):
 
 if __name__ == '__main__':
     print 'creating'
-    cnn = CNN(epochs=10, batch_size=1000, instance_id=666)
+    cnn = CNN(epochs=5, batch_size=1000, instance_id=1666)
     print 'created'
     cnn.train()
     print 'trained'

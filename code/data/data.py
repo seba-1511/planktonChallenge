@@ -9,7 +9,7 @@ from os.path import exists
 from skimage.io import imread
 from skimage.transform import resize
 
-TRAIN_PERCENT = 0.10
+TRAIN_PERCENT = 0.8
 VALID_PERCENT = 0.0
 TEST_PERCENT = 0.2
 
@@ -106,8 +106,8 @@ class Data(object):
     def save_set(self, name, X, y,  directory=''):
         curr_dir = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe())))
-        directory = curr_dir + directory
-        pickle.dump((X, y), open(directory + name + '.pkl', 'wb'))
+        filename = os.path.join(curr_dir, directory + name + '.pkl')
+        pickle.dump((X, y), open(filename, 'wb'))
         
             
 
