@@ -37,8 +37,9 @@ if __name__ == '__main__':
             test_X=test_X,
             test_Y=test_y,
             epochs=200,
-            instance_id=121).train()
-        cnns.append[cnn]
+            instance_id=121)
+        cnn.train()
+        # cnns.append[cnn]
         predictions = []
         for X in test_X:
             predictions.append(cnn.predict([X, ]))
