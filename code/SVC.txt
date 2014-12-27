@@ -1,0 +1,61 @@
+loading data
+Training for Protists
+Score for Protists: 0.4765625
+Log loss for Protists: 1.07428700246
+Training for Crustaceans
+Score for Crustaceans: 0.653846153846
+Log loss for Crustaceans: 0.446112927342
+Training for PelagicTunicates
+Score for PelagicTunicates: 0.586846543002
+Log loss for PelagicTunicates: 0.901240784154
+Training for Artifacts
+Score for Artifacts: 0.46875
+Log loss for Artifacts: 0.297228149978
+Training for Chaetognaths
+Score for Chaetognaths: 0.954022988506
+Log loss for Chaetognaths: 0.0764146340629
+Training for Planktons
+Score for Planktons: 0.986301369863
+Log loss for Planktons: 0.0221176873705
+Training for Copepods
+Score for Copepods: 0.622055674518
+Log loss for Copepods: 0.876334670541
+Training for Ctenophores
+Score for Ctenophores: 0.771626297578
+Log loss for Ctenophores: 0.442152658485
+Training for ShrimpLike
+Score for ShrimpLike: 0.644897959184
+Log loss for ShrimpLike: 0.539455082271
+Training for Detritus
+Score for Detritus: 0.724381625442
+Log loss for Detritus: 0.441674680844
+Training for Diotoms
+Score for Diotoms: 0.95652173913
+Log loss for Diotoms: 0.052488981518
+Training for Echinoderms
+Score for Echinoderms: 0.7625
+Log loss for Echinoderms: 0.476562548728
+Training for GelatinousZoolankton
+Score for GelatinousZoolankton: 0.931034482759
+Log loss for GelatinousZoolankton: 0.0618658075759
+Training for Fish
+Score for Fish: 0.812749003984
+Log loss for Fish: 0.323999556606
+Training for Gastropods
+Score for Gastropods: 0.701492537313
+Log loss for Gastropods: 0.684878575263
+Training for Hydromedusae
+Score for Hydromedusae: 0.579052701801
+Log loss for Hydromedusae: 0.961349223783
+Training for InvertebrateLarvae
+Score for InvertebrateLarvae: 0.621621621622
+Log loss for InvertebrateLarvae: 0.627707254801
+Training for Siphonophores
+Score for Siphonophores: 0.6046875
+Log loss for Siphonophores: 0.815886490779
+Training for Trichodesmium
+Score for Trichodesmium: 0.81914893617
+Log loss for Trichodesmium: 0.303528572358
+Training for Unknowns
+Score for Unknowns: 0.611398963731
+Log loss for Unknowns: 0.59904771668

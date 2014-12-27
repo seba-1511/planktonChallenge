@@ -9,7 +9,9 @@ from classifier.kmeans import KMeans
 from classifier.cnn import CNN
 from score import online_score
 
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC, SVC
+from sklearn.metrics import log_loss
+import MLCompare
 
 warnings.filterwarnings("ignore")
 
@@ -31,9 +33,10 @@ if __name__ == '__main__':
         train_y = d.train_cat_Y[name]
         test_X = d.test_cat_X[name]
         test_y = d.test_cat_Y[name]
-        svm = LinearSVC()
+        svm = SVC(probability=True)
         svm.fit(train_X, train_y)
         print 'Score for ' + name + ': ' + str(svm.score(test_X, test_y))
+        print 'Log loss for ' + name + ': ' + str(log_loss(test_y, svm.predict_proba(test_X)))
         # cnn = CNN(
         #     alpha=0.1,
         #     batch_size=100,
