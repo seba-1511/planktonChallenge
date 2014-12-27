@@ -33,7 +33,7 @@ if __name__ == '__main__':
         train_y = d.train_cat_Y[name]
         test_X = d.test_cat_X[name]
         test_y = d.test_cat_Y[name]
-        svm = SVC(probability=True)
+        svm = LinearSVC(probability=True)
         svm.fit(train_X, train_y)
         print 'Score for ' + name + ': ' + str(svm.score(test_X, test_y))
         print 'Log loss for ' + name + ': ' + str(log_loss(test_y, svm.predict_proba(test_X)))
