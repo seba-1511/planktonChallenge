@@ -18,7 +18,7 @@ if __name__ == '__main__':
     d2 = d  # change to another size of pictures
     cnn = CNN(alpha=1, batch_size=1, train_X=d.train_X, train_Y=d.train_Y, epochs=200, instance_id=1000).train()
     predictions = []
-    for X in d2.valid_X:
+    for X in d2.test_X:
         predictions.append(cnn.predict([X, ]))
     print online_score(predictions, d2.valid_Y)
     # kclf = KMeans(clusters=NB_CLUSTERS - 1).train(d.train_X)
