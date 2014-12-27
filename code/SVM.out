@@ -1,0 +1,58 @@
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+/usr/lib/python2.7/dist-packages/scipy/lib/_util.py:35: DeprecationWarning: Module scipy.linalg.blas.fblas is deprecated, use scipy.linalg.blas instead
+  DeprecationWarning)
+Using gpu device 0: GRID K520
+loading data
+Training for Protists
+Score for Protists: 0.542028985507
+Training for Crustaceans
+Score for Crustaceans: 0.852941176471
+Training for PelagicTunicates
+Score for PelagicTunicates: 0.632890365449
+Training for Artifacts
+Score for Artifacts: 0.894736842105
+Training for Chaetognaths
+Score for Chaetognaths: 0.964285714286
+Training for Planktons
+Score for Planktons: 0.987012987013
+Training for Copepods
+Score for Copepods: 0.656182212581
+Training for Ctenophores
+Score for Ctenophores: 0.787162162162
+Training for ShrimpLike
+Score for ShrimpLike: 0.753246753247
+Training for Detritus
+Score for Detritus: 0.842105263158
+Training for Diotoms
+Score for Diotoms: 0.8125
+Training for Echinoderms
+Score for Echinoderms: 0.883720930233
+Training for GelatinousZoolankton
+Score for GelatinousZoolankton: 0.988764044944
+Training for Fish
+Score for Fish: 0.88850174216
+Training for Gastropods
+Score for Gastropods: 0.743243243243
+Training for Hydromedusae
+Score for Hydromedusae: 0.682154882155
+Training for InvertebrateLarvae
+Score for InvertebrateLarvae: 0.707692307692
+Training for Siphonophores
+Score for Siphonophores: 0.602339181287
+Training for Trichodesmium
+Score for Trichodesmium: 0.901098901099
+Training for Unknowns
+Score for Unknowns: 0.794594594595
