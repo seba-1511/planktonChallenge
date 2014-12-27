@@ -44,6 +44,7 @@ class Data(object):
 
     def __init__(self, size=28):
         print 'loading data'
+        self.size = size
         data, targets = self.get_data(size)
         nb_train = int(TRAIN_PERCENT * len(targets))
         nb_valid = int(VALID_PERCENT * len(targets))
@@ -69,6 +70,44 @@ class Data(object):
         for name in CLASS_NAMES:
             train_classes_X[name] = []
             train_classes_Y[name] = []
+            test_classes_X[name] = []
+            test_classes_Y[name] = []
+        for img_i, img in enumerate(self.train_X):
+            label = self.train_Y[img_i]
+            for name in CLASS_NAMES:
+                if label in CLASSES[name]:
+                    train_classes_X[name].append(img)
+                    train_classes_Y[name].append(label)
+                    break
+                
+        for img_i, img in enumerate(self.test_X):
+            label = self.test_Y[img_i]
+            for name in CLASS_NAMES:
+                if label in CLASSES[name]:
+                    test_classes_X[name].append(img)
+                    test_classes_Y[name].append(label)
+                    break
+        
+        total = TRAIN_PERCENT + VALID_PERCENT + TEST_PERCENT
+        for name in CLASS_NAMES:
+            filename = name + str(self.size) + '_' + str(total)
+            dir = 'classes/'
+            X = train_classes_X[name]
+            y = train_classes_Y[name]
+            self.save_set('train_' + filename, dir, X, y)
+            X = test_classes_X[name]
+            y = test_classes_Y[name]
+            self.save_set('test_' + filename, dir, X, y)
+        self.train_cat_X = train_classes_X
+        self.train_cat_Y = train_classes_Y
+        self.test_cat_X = test_classes_X
+        self.test_cat_Y = test_classes_Y
+            
+    def save_set(self, name, X, y,  directory=''):
+        curr_dir = os.path.dirname(
+            os.path.abspath(inspect.getfile(inspect.currentframe())))
+        directory = curr_dir + directory
+        pickle.dump((X, y), open(directory + name + '.pkl', 'wb'))
         
             
 
@@ -124,4 +163,5 @@ class Data(object):
 
 
 if __name__ == '__main__':
-    d = Data(size=28)    
+    d = Data(size=28)
+    d.create_categories()
