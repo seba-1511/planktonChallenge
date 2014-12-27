@@ -90,3 +90,17 @@ The optimal algorithm for AdaBoost is: AdaBoostClassifier(algorithm=SAMME,
 
 
 Fitted AdaBoost with training scores 0.438888888889
+
+The optimal algorithm for Decision Tree is: DecisionTreeClassifier(compute_importances=None, criterion=entropy,
+            max_depth=16, max_features=sqrt, min_density=None,
+            min_samples_leaf=4, min_samples_split=16, random_state=None,
+            splitter=best)
+
+
+Fitted Decision Tree with training scores 0.533333333333
+
+The optimal algorithm for Logistic Classifier is: LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, penalty=l2, random_state=None, tol=0.0001)
+
+
+Fitted Logistic Classifier with training scores 0.596296296296
