@@ -12,15 +12,35 @@ warnings.filterwarnings("ignore")
 
 NB_CLUSTERS = 20
 
+CLASS_NAMES = ('Protists', 'Crustaceans', 'PelagicTunicates', 'Artifacts', 'Chaetognaths', 'Planktons', 'Copepods', 'Ctenophores', 'ShrimpLike', 'Detritus', 'Diotoms', 'Echinoderms', 'GelatinousZoolankton', 'Fish', 'Gastropods', 'Hydromedusae', 'InvertebrateLarvae', 'Siphonophores', 'Trichodesmium', 'Unknowns')
+ 
+
 if __name__ == '__main__':
 
     d = Data(size=28, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
     d2 = d  # change to another size of pictures
-    cnn = CNN(alpha=1, batch_size=1, train_X=d.train_X, train_Y=d.train_Y, epochs=200, instance_id=1000).train()
-    predictions = []
-    for X in d2.test_X:
-        predictions.append(cnn.predict([X, ]))
-    print online_score(predictions, d2.valid_Y)
+    d.create_categories()
+    cnns = []
+    for name in CLASS_NAMES:
+        train_X = d.train_cat_X[name]
+        train_y = d.train_cat_Y[name]
+        test_X = d.test_cat_X[name]
+        test_y = d.test_cat_Y[name]
+        cnn = CNN(
+            alpha=1, 
+            batch_size=1, 
+            train_X=train_X, 
+            train_Y=train_y,
+            test_X=test_X,
+            test_Y=test_y,
+            epochs=200,
+            instance_id=121).train()
+        predictions = []
+        for X in d2.test_X:
+            predictions.append(cnn.predict([X, ]))
+        print 'Score for ' + name + ': ' + str(online_score(predictions, d2.valid_Y))
+    
+    
     # kclf = KMeans(clusters=NB_CLUSTERS - 1).train(d.train_X)
 
     # # TODO: Is it a good idea to train the CNN based on data that the Kmeans
