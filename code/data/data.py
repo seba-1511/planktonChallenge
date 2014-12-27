@@ -94,10 +94,10 @@ class Data(object):
             dir = 'classes/'
             X = train_classes_X[name]
             y = train_classes_Y[name]
-            self.save_set('train_' + filename, dir, X, y)
+            self.save_set('train_' + filename, X, y, dir)
             X = test_classes_X[name]
             y = test_classes_Y[name]
-            self.save_set('test_' + filename, dir, X, y)
+            self.save_set('test_' + filename, X, y, dir)
         self.train_cat_X = train_classes_X
         self.train_cat_Y = train_classes_Y
         self.test_cat_X = test_classes_X
