@@ -34,7 +34,7 @@ NB_CLUSTERS = len(CATEGORIES)
 
 if __name__ == '__main__':
 
-    d = Data(size=32)
+    d = Data(size=32, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
     d2 = d  # change to another size of pictures
     cnn = CNN(alpha=1, batch_size=1, train_X=d.train_X, train_Y=d.train_Y, epochs=200, instance_id=1000).train()
     predictions = []

@@ -9,8 +9,8 @@ from os.path import exists
 from skimage.io import imread
 from skimage.transform import resize
 
-TRAIN_PERCENT = 0.8
-VALID_PERCENT = 0.0
+TRAIN_PERCENT = 0.7
+VALID_PERCENT = 0.1
 TEST_PERCENT = 0.2
 
 
@@ -42,15 +42,18 @@ CLASSES = {
 
 class Data(object):
 
-    def __init__(self, size=28):
+    def __init__(self, size=28, train_perc=TRAIN_PERCENT, valid_perc=VALID_PERCENT, test_perc=TEST_PERCENT):
         print 'loading data'
         self.size = size
+        self.train_perc = train_perc
+        self.valid_perc = valid_perc
+        self.test_perc = test_perc
         data, targets = self.get_data(size)
-        nb_train = int(TRAIN_PERCENT * len(targets))
-        nb_valid = int(VALID_PERCENT * len(targets))
-        nb_test = int(TEST_PERCENT * len(targets))
+        nb_train = int(self.train_perc * len(targets))
+        nb_valid = int(self.valid_perc * len(targets))
+        nb_test = int(self.test_perc * len(targets))
         total = nb_train + nb_valid + nb_test
-        total_perc = TRAIN_PERCENT + VALID_PERCENT + TEST_PERCENT
+        total_perc = self.train_perc + self.valid_perc + self.test_perc
         data, targets = self.shuffle_data(data[:total], targets[:total])
         self.train_X = data[:nb_train]
         self.train_Y = targets[:nb_train]
@@ -88,7 +91,7 @@ class Data(object):
                     test_classes_Y[name].append(label)
                     break
         
-        total = TRAIN_PERCENT + VALID_PERCENT + TEST_PERCENT
+        total = self.train_perc + self.valid_perc + self.test_perc
         for name in CLASS_NAMES:
             filename = name + str(self.size) + '_' + str(total)
             dir = 'classes/'
@@ -151,7 +154,7 @@ class Data(object):
         curr_dir = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe())))
         filename = os.path.join(curr_dir, 'train' + str(size) + '.pkl')
-        total = TRAIN_PERCENT + VALID_PERCENT + TEST_PERCENT
+        total = self.train_perc + self.valid_perc + self.test_perc
         previous_file = os.path.join(
             curr_dir, 'train' + str(size) + '_' + str(total) + '.pkl')
         if exists(previous_file):
