@@ -14,6 +14,32 @@ VALID_PERCENT = 0.0
 TEST_PERCENT = 0.2
 
 
+CLASS_NAMES = ('Protists', 'Crustaceans', 'PelagicTunicates', 'Artifacts', 'Chaetognaths', 'Planktons', 'Copepods', 'Ctenophores', 'ShrimpLike', 'Detritus', 'Diotoms', 'Echinoderms', 'GelatinousZoolankton', 'Fish', 'Gastropods', 'Hydromedusae', 'InvertebrateLarvae', 'Siphonophores', 'Trichodesmium', 'Unknowns')
+    
+CLASSES = {
+    'Protists': {0, 1, 2, 82, 83, 84, 85, 86, 90, 91},
+    'Crustaceans': {3, 27, 106},
+    'PelagicTunicates': {4, 5, 6, 7, 113, 114, 115, 116, 117},
+    'Artifacts': {8, 9},
+    'Chaetognaths': {10, 11, 12},
+    'Planktons': {13, 81},
+    'Copepods': {14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26},
+    'Ctenophores': {28, 29, 30, 31},
+    'ShrimpLike': {32, 47, 48, 92, 93, 94, 95},
+    'Detritus': {33, 34, 35, 49},
+    'Diotoms': {36, 37},
+    'Echinoderms': {38, 39, 40, 41, 42, 43, 44, 45},
+    'GelatinousZoolankton': {46, 80},
+    'Fish': {50, 51, 52, 53, 54, 55},
+    'Gastropods': {56, 87, 88, 89},
+    'Hydromedusae': {57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77},
+    'InvertebrateLarvae': {78, 79, 107, 112},
+    'Siphonophores': {96, 97, 98, 99, 100, 101, 102, 103, 104, 105},
+    'Trichodesmium': {108, 109, 110, 111},
+    'Unknowns': {118, 119, 120},
+}
+
+
 class Data(object):
 
     def __init__(self, size=28):
@@ -34,6 +60,17 @@ class Data(object):
         saved = (data[:total], targets[:total])
         pickle.dump(
             saved, open('train' + str(size) + '_' + str(total_perc) + '.pkl', 'wb'))
+            
+    def create_categories(self):
+        train_classes_X = dict()
+        train_classes_Y = dict()
+        test_classes_X = dict()
+        test_classes_Y = dict()
+        for name in CLASS_NAMES:
+            train_classes_X[name] = []
+            train_classes_Y[name] = []
+        
+            
 
     def convertBinaryValues(self, image_set=None, threshold=0.5):
         return (image_set > threshold).astype(int)
@@ -87,4 +124,4 @@ class Data(object):
 
 
 if __name__ == '__main__':
-    Data().create_thumbnail(25)
+    d = Data(size=28)    

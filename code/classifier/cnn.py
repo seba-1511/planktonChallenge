@@ -158,12 +158,12 @@ class CNN(object):
     """
 
     def __init__(self, alpha=0.1, epochs=200, nkerns=[20, 50], batch_size=500,
-                 instance_id=None, train_X=None, train_Y=None):
+                 instance_id=None, train_X=None, train_Y=None, test_X=None, test_Y=None):
         self.instance = instance_id
         self.epochs = epochs
         self.alpha = alpha
         self.batch_size = batch_size
-        self.fetch_sets(train_X, train_Y)
+        self.fetch_sets(train_X, train_Y, test_X, test_Y)
         self.init_network(nkerns, batch_size)
 
     def init_network(self, nkerns, batch_size):
@@ -171,11 +171,11 @@ class CNN(object):
         rng = np.random.RandomState(1324)
         x = T.matrix('x')
         y = T.ivector('y')
-        input0 = x.reshape((batch_size, 1, 32, 32))
+        input0 = x.reshape((batch_size, 1, 28, 28))
         self.layer0 = ConvPoolLayer(
             rng=rng,
             input=input0,
-            image_shape=(batch_size, 1, 32, 32),
+            image_shape=(batch_size, 1, 28, 28),
             filter_shape=(nkerns[0], 1, 5, 5),
             poolsize=(2, 2),
             W=s['0']['W'],
@@ -184,7 +184,7 @@ class CNN(object):
         self.layer1 = ConvPoolLayer(
             rng=rng,
             input=self.layer0.output,
-            image_shape=(batch_size, nkerns[0], 14, 14),
+            image_shape=(batch_size, nkerns[0], 12, 12),
             filter_shape=(nkerns[1], nkerns[0], 5, 5),
             poolsize=(2, 2),
             W=s['1']['W'],
@@ -194,7 +194,7 @@ class CNN(object):
         self.layer2 = HiddenLayer(
             rng=rng,
             input=input2,
-            n_in=nkerns[1] * 5 * 5,
+            n_in=nkerns[1] * 4 * 4,
             n_out=500,
             activation=T.tanh,
             W=s['2']['W'],
@@ -250,12 +250,16 @@ class CNN(object):
             on_unused_input='ignore'
         )
 
-    def fetch_sets(self, train_X, train_Y):
+    def fetch_sets(self, train_X, train_Y, test_X, test_Y):
         if train_X is not None and train_Y is not None:
             self.trainX = np.array(train_X).astype(dtype=theano.config.floatX)
             self.trainY = np.array(train_Y).astype(dtype=theano.config.floatX)
-            self.testX = self.trainX
-            self.testY = self.trainY
+            if test_X is not None and test_Y is not None:
+                self.testX = np.array(test_X).astype(dtype=theano.config.floatX)
+                self.testY = np.array(test_Y).astype(dtype=theano.config.floatX)
+            else:
+                self.testX = self.trainX
+                self.testY = self.trainY
         else:
             mnist = fetch_mldata('MNIST original')
             self.trainX = np.asarray(
@@ -275,8 +279,7 @@ class CNN(object):
         old_training = 0
         if self.instance:
             old_training = self.get_training()['epoch']
-        n_train_batches = T.shape(self.trainX).eval()[0]
-        # n_train_batches = TRAINING_SIZE / self.batch_size
+        n_train_batches = T.shape(self.trainX).eval()[0] / self.batch_size
         for epoch in xrange(self.epochs - old_training):
             for minibatch_index in xrange(n_train_batches):
                 iter = epoch * n_train_batches + minibatch_index
@@ -322,8 +325,7 @@ class CNN(object):
         ], open('layers_' + str(self.instance) + '.pkl', 'wb'))
 
     def score(self):
-        n_test_batches = T.shape(self.testY).eval()[0]
-        # n_test_batches = TESTING_SIZE / self.batch_size
+        n_test_batches = T.shape(self.testY).eval()[0] / self.batch_size
         validation_losses = [self.validate_model(i) for i
                              in xrange(n_test_batches)]
         return np.mean(validation_losses)
