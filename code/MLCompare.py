@@ -16,10 +16,10 @@ from sklearn.cross_validation import KFold, cross_val_score
 from multiprocessing import Process, Manager
 
 # Show the debug messages ?
-DEBUG = True
+DEBUG = False
 
 # Computer Settings
-NB_THREADS = 4
+NB_THREADS = 8
 
 # Application settings
 TEST_SET_PERCENTAGE = 0.1
@@ -135,73 +135,76 @@ class Learner():
 
 def MLCompare(features, targets):
     algorithms = [
-        # ('SVM', svm.SVC,
-        #  {'C': [0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0],
-        #   'kernel': ['linear', 'rbf', 'poly', 'sigmoid'],
-        #   'degree': [2, 3, 4, 5, 6, 7, 8],
-        #   'gamma': [0.0, 1.0, 10.0, 100.0]
-        #   }),
+         ('SVM', svm.SVC,
+          {
+#	   'C': [0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0],
+#           'kernel': ['linear', 'rbf', 'poly', 'sigmoid'],
+#           'degree': [2, 3, 4, 5, 6, 7, 8],
+#           'gamma': [0.0, 1.0, 10.0, 100.0]
+           }),
 
-        ('SGD', linear_model.SGDClassifier,
-         {
-         'loss': ['hinge', 'log', 'modified_huber', 'perceptron'],
-          'penalty': ['l1', 'l2', 'elasticnet'],
-          'alpha': [0.0001, 0.001, 0.01, 0.1],
-          'fit_intercept': [True, False],
-          'n_jobs': [NB_THREADS]
-          }),
+        #('SGD', linear_model.SGDClassifier,
+         #{
+         #'loss': ['hinge', 'log', 'modified_huber', 'perceptron'],
+         # 'penalty': ['l1', 'l2', 'elasticnet'],
+         # 'alpha': [0.0001, 0.001, 0.01, 0.1],
+         # 'fit_intercept': [True, False],
+         # 'n_jobs': [NB_THREADS]
+         # }),
 
 
         ('kNN', neighbors.KNeighborsClassifier,
-         {'n_neighbors': [1, 5, 10, 25, 50, 100, 200, 500, 1000],
+         {'n_neighbors': [5, 10, 25, 50, 100, 200, 500],
           'weights': ['uniform', 'distance'],
           'algorithm': ['auto'],
           }),
 
 
         ('Logistic Classifier', linear_model.LogisticRegression,
-         {'C': [0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0],
-          'penalty': ['l1', 'l2'],
-          'fit_intercept': [True, False]
+         {
+#	  'C': [0.01, 0.1, 1.0, 10.0, 100.0],
+#          'penalty': ['l1', 'l2'],
+#          'fit_intercept': [True, False]
           }),
 
 
         ('MultinomialNB', naive_bayes.MultinomialNB,
-         {'alpha': [0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0],
+         {
+#	  'alpha': [0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0],
           'fit_prior': [True, False]
           }),
 
 
-        ('GaussianNB', naive_bayes.GaussianNB, {}),
+#        ('GaussianNB', naive_bayes.GaussianNB, {}),
 
 
         ('Decision Tree', tree.DecisionTreeClassifier,
          {'criterion': ['gini', 'entropy'],
           'max_features': [None, 'sqrt', 'log2'],
-          'max_depth': [None, 2, 4, 8, 16, 32, 64],
-          'min_samples_split': [1, 2, 4, 8, 16, 32],
-          'min_samples_leaf': [1, 2, 4, 8, 16, 32],
+#          'max_depth': [None, 2, 4, 8, 16, 32, 64],
+#          'min_samples_split': [1, 2, 4, 8, 16, 32],
+#          'min_samples_leaf': [1, 2, 4, 8, 16, 32],
           }),
 
 
         ('Random Forest', ensemble.RandomForestClassifier,
          {'n_estimators': [2, 5, 10, 15],
-          'criterion': ['gini', 'entropy'],
+#          'criterion': ['gini', 'entropy'],
           'max_features': [None, 'sqrt', 'log2'],
-          'max_depth': [None, 2, 4, 8, 16, 32, 64],
-          'min_samples_split': [1, 2, 4, 8, 16, 32],
-          'min_samples_leaf': [1, 2, 4, 8, 16, 32],
-          'bootstrap': [True, False],
+ #         'max_depth': [None, 2, 4, 8, 16, 32, 64],
+ #         'min_samples_split': [1, 2, 4, 8, 16, 32],
+ #         'min_samples_leaf': [1, 2, 4, 8, 16, 32],
+ #         'bootstrap': [True, False],
           'n_jobs': [NB_THREADS],
           }),
 
 
-        ('AdaBoost', ensemble.AdaBoostClassifier,
-         {'n_estimators': [2, 5, 10, 25, 50, 100, 200],
-          'base_estimator': [tree.DecisionTreeClassifier()],
-          'learning_rate': [0.01, 0.1, 1.0, 10.0, 100.0, 1000.0],
-          'algorithm': ['SAMME.R', 'SAMME']
-          }),
+#        ('AdaBoost', ensemble.AdaBoostClassifier,
+#         {'n_estimators': [2, 5, 10, 25, 50, 100, 200],
+#          'base_estimator': [tree.DecisionTreeClassifier()],
+#          'learning_rate': [0.01, 0.1, 1.0, 10.0, 100.0, 1000.0],
+#          'algorithm': ['SAMME.R', 'SAMME']
+#          }),
     ]
 
     learners = [Learner(x, features, targets) for x in algorithms]
