@@ -23,7 +23,7 @@ CLASS_NAMES = ('Protists', 'Crustaceans', 'PelagicTunicates', 'Artifacts', 'Chae
 
 if __name__ == '__main__':
 
-    d = Data(size=28, train_perc=1.0, test_perc=0.0, valid_perc=0.0)
+    d = Data(size=28, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
     d2 = d  # change to another size of pictures
     d.create_categories()
     cnns = []
@@ -33,24 +33,24 @@ if __name__ == '__main__':
         train_y = d.train_cat_Y[name]
         test_X = d.test_cat_X[name]
         test_y = d.test_cat_Y[name]
-        MLCompare(train_X, train_y)
+        #MLCompare(train_X, train_y)
         # print 'Score for ' + name + ': ' + str(svm.score(test_X, test_y))
         # print 'Log loss for ' + name + ': ' + str(log_loss(test_y, svm.predict(test_X)))
-        #cnn = CNN(
-        #     alpha=0.1,
-        #     batch_size=100,
-        #     train_X=train_X,
-        #     train_Y=train_y,
-        #     test_X=test_X,
-        #     test_Y=test_y,
-        #     epochs=200,
-        #     instance_id=12000+i)
-        #cnn.train()
+        cnn = CNN(
+             alpha=0.1,
+             batch_size=100,
+             train_X=train_X,
+             train_Y=train_y,
+             test_X=test_X,
+             test_Y=test_y,
+             epochs=200,
+             instance_id=12000+i)
+        cnn.train()
 #        cnns.append[cnn]
-        #predictions = []
-        #for X in test_X:
-        #     predictions.append(cnn.predict([X, ]))
-        #print 'Score for ' + name + ': ' + str(online_score(predictions, test_y))
+        predictions = []
+        for X in test_X:
+             predictions.append(cnn.predict([X, ]))
+        print 'Score for ' + name + ': ' + str(online_score(predictions, test_y))
         # pk.dump(cnn, open('cnn_' + name + '.pl', 'wb'))
     # pk.dump(cnns, open('cnns.pl', 'wb'))
 
