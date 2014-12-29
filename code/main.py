@@ -21,7 +21,7 @@ CLASS_NAMES = ('Protists', 'Crustaceans', 'PelagicTunicates', 'Artifacts', 'Chae
                'Diotoms', 'Echinoderms', 'GelatinousZoolankton', 'Fish', 'Gastropods', 'Hydromedusae', 'InvertebrateLarvae', 'Siphonophores', 'Trichodesmium', 'Unknowns')
 
 
-def train_specialists(d=Data()):
+def train_specialists(d=None):
     d.create_categories()
     cnns = []
     for i, name in enumerate(CLASS_NAMES):
@@ -51,12 +51,12 @@ def train_specialists(d=Data()):
         # pk.dump(cnn, open('cnn_' + name + '.pl', 'wb'))
     # pk.dump(cnns, open('cnns.pl', 'wb'))
 
-def train_general(d=Data()):
+def train_general(d=None):
     d.create_parent_labels()
     train_X = d.train_X
     train_y = d.train_parent_Y
     test_X = d.test_X
-    test_Y = d.test_parent_Y
+    test_y = d.test_parent_Y
     cnn = CNN(
          alpha=0.1,
          batch_size=100,
@@ -65,7 +65,7 @@ def train_general(d=Data()):
          test_X=test_X,
          test_Y=test_y,
          epochs=200,
-         instance_id=12000+i)
+         instance_id=1)
     cnn.train()
     predictions = []
     for X in test_X:

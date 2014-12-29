@@ -203,7 +203,7 @@ class CNN(object):
         self.layer3 = LogisticRegression(
             input=self.layer2.output,
             n_in=500,
-            n_out=121,
+            n_out=20,
             W=s['3']['W'],
             b=s['3']['b']
         )
