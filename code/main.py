@@ -96,7 +96,7 @@ def train_general(d=None):
          predictions.append(cnn.predict([X, ]))
     print 'Score for general: ' + str(online_score(predictions, test_y))
     svm = SVC()
-    svm.train(train_X, train_y)
+    svm.fit(train_X, train_y)
     probs = svm.predict_proba(test_X)
     log_loss(test_y, probs)
 
