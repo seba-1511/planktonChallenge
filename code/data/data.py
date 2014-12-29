@@ -62,8 +62,9 @@ class Data(object):
         self.test_X = data[nb_train + nb_valid:total]
         self.test_Y = targets[nb_train + nb_valid:total]
         saved = (data[:total], targets[:total])
-        pickle.dump(
-            saved, open('train' + str(size) + '_' + str(total_perc) + '.pkl', 'wb'))
+        f = open('train' + str(size) + '_' + str(total_perc) + '.pkl', 'wb')
+        pickle.dump(saved, f)
+        f.close()
 
     def create_categories(self):
         train_classes_X = dict()
@@ -124,7 +125,9 @@ class Data(object):
         curr_dir = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe())))
         filename = os.path.join(curr_dir, directory + name + '.pkl')
-        pickle.dump((X, y), open(filename, 'wb'))
+        f = open(filename, 'wb')
+        pickle.dump((X, y), f)
+        f.close()
 
     def convertBinaryValues(self, image_set=None, threshold=0.5):
         return (image_set > threshold).astype(int)
@@ -151,8 +154,9 @@ class Data(object):
                 # Important to put -1, to have it 0-based.
                 targets.append(class_id - 1)
         train = (images, targets)
-        pickle.dump(
-            train, open(curr_dir + '/train' + str(size) + '.pkl', 'wb'))
+        f = open(curr_dir + '/train' + str(size) + '.pkl', 'wb')
+        pickle.dump(train, f)
+        f.close()
         return train
 
     def shuffle_data(self, X, y):
@@ -172,7 +176,10 @@ class Data(object):
             curr_dir, 'train' + str(size) + '_' + str(total) + '.pkl')
         if exists(previous_file):
             print 'loaded from smaller dump'
-            return pickle.load(open(previous_file, 'rb'))
+            f = open(previous_file, 'rb')
+            content = pickle.load(f)
+            f.close()
+            return content
         if not exists(filename):
             return self.create_thumbnail(size)
         return pickle.load(open(filename, 'rb'))
