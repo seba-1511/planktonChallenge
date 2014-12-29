@@ -21,10 +21,7 @@ CLASS_NAMES = ('Protists', 'Crustaceans', 'PelagicTunicates', 'Artifacts', 'Chae
                'Diotoms', 'Echinoderms', 'GelatinousZoolankton', 'Fish', 'Gastropods', 'Hydromedusae', 'InvertebrateLarvae', 'Siphonophores', 'Trichodesmium', 'Unknowns')
 
 
-if __name__ == '__main__':
-
-    d = Data(size=28, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
-    d2 = d  # change to another size of pictures
+def train_specialists(d=Data()):
     d.create_categories()
     cnns = []
     for i, name in enumerate(CLASS_NAMES):
@@ -53,6 +50,34 @@ if __name__ == '__main__':
         print 'Score for ' + name + ': ' + str(online_score(predictions, test_y))
         # pk.dump(cnn, open('cnn_' + name + '.pl', 'wb'))
     # pk.dump(cnns, open('cnns.pl', 'wb'))
+
+def train_general(d=Data()):
+    d.create_parent_labels()
+    train_X = d.train_X
+    train_y = d.train_parent_Y
+    test_X = d.test_X
+    test_Y = d.test_parent_Y
+    cnn = CNN(
+         alpha=0.1,
+         batch_size=100,
+         train_X=train_X,
+         train_Y=train_y,
+         test_X=test_X,
+         test_Y=test_y,
+         epochs=200,
+         instance_id=12000+i)
+    cnn.train()
+    predictions = []
+    for X in test_X:
+         predictions.append(cnn.predict([X, ]))
+    print 'Score for general: ' + str(online_score(predictions, test_y))
+
+
+if __name__ == '__main__':
+
+    d = Data(size=28, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
+    #train_specialists(d=d)
+    train_general(d=d)
 
 
 
