@@ -180,12 +180,6 @@ class Data(object):
 
 if __name__ == '__main__':
     d = Data(size=28)
+    d.create_categories()
     d.create_parent_labels()
     print np.shape(d.train_X), np.shape(d.train_parent_Y)
-    for i in xrange(123):
-        f=False
-        for name in CLASS_NAMES:
-            if i in CLASSES[name]:
-                f = True
-        if not f:
-            print i
