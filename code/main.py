@@ -95,11 +95,15 @@ def train_general(d=None):
     for X in test_X:
          predictions.append(cnn.predict([X, ]))
     print 'Score for general: ' + str(online_score(predictions, test_y))
+    svm = SVC()
+    svm.train(train_X, train_y)
+    probs = svm.predict_proba(test_X)
+    log_loss(test_y, probs)
 
 
 if __name__ == '__main__':
 
-    d = Data(size=28, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
+    d = Data(size=60, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
     #train_specialists(d=d)
     train_general(d=d)
 

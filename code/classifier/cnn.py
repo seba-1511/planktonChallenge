@@ -157,7 +157,7 @@ class CNN(object):
         batch_size = the size of the training batches
     """
 
-    def __init__(self, alpha=0.1, epochs=200, nkerns=[20, 50], batch_size=500,
+    def __init__(self, alpha=0.1, epochs=200, nkerns=[5, 20, 50], batch_size=500,
                  instance_id=None, train_X=None, train_Y=None, test_X=None, test_Y=None):
         self.instance = instance_id
         self.epochs = epochs
@@ -171,12 +171,21 @@ class CNN(object):
         rng = np.random.RandomState(1324)
         x = T.matrix('x')
         y = T.ivector('y')
-        input0 = x.reshape((batch_size, 1, 28, 28))
-        self.layer0 = ConvPoolLayer(
+        input0 = x.reshape((batch_size, 1, 60, 60))
+        self.layer = ConvPoolLayer(
             rng=rng,
             input=input0,
-            image_shape=(batch_size, 1, 28, 28),
+            image_shape=(batch_size, 1, 60, 60),
             filter_shape=(nkerns[0], 1, 5, 5),
+            poolsize=(2, 2),
+            W=s['0']['W'],
+            b=s['0']['b']
+        )
+        self.layer0 = ConvPoolLayer(
+            rng=rng,
+            input=self.layer.output,
+            image_shape=(batch_size, nkerns[0], 28, 28),
+            filter_shape=(nkerns[1], nkerns[0], 5, 5),
             poolsize=(2, 2),
             W=s['0']['W'],
             b=s['0']['b']
@@ -184,8 +193,8 @@ class CNN(object):
         self.layer1 = ConvPoolLayer(
             rng=rng,
             input=self.layer0.output,
-            image_shape=(batch_size, nkerns[0], 12, 12),
-            filter_shape=(nkerns[1], nkerns[0], 5, 5),
+            image_shape=(batch_size, nkerns[1], 12, 12),
+            filter_shape=(nkerns[2], nkerns[1], 5, 5),
             poolsize=(2, 2),
             W=s['1']['W'],
             b=s['1']['b']
@@ -194,7 +203,7 @@ class CNN(object):
         self.layer2 = HiddenLayer(
             rng=rng,
             input=input2,
-            n_in=nkerns[1] * 4 * 4,
+            n_in=nkerns[2] * 4 * 4,
             n_out=500,
             activation=T.tanh,
             W=s['2']['W'],
@@ -289,7 +298,7 @@ class CNN(object):
                     print('epoch %i/%i, minibatch %i/%i, validation error %f %%' %
                           (epoch, self.epochs - old_training, minibatch_index + 1, n_train_batches,
                            validation_loss * 100.))
-                    self.save_network(epoch + old_training)
+#                    self.save_network(epoch + old_training)
         return self
 
     def get_training(self):
