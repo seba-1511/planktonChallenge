@@ -110,11 +110,13 @@ class Data(object):
             for new_label, name in enumerate(CLASS_NAMES):
                 if y in CLASSES[name]:
                     new_train_labels.append(new_label)
+                    break
         new_test_labels = []
         for y in self.test_Y:
             for new_label, name in enumerate(CLASS_NAMES):
                 if y in CLASSES[name]:
                     new_test_labels.append(new_label)
+                    break
         self.train_parent_Y = new_train_labels
         self.test_parent_Y = new_test_labels
 
@@ -146,7 +148,8 @@ class Data(object):
                 image = resize(image, (size, size))
                 image = np.array(image).ravel()
                 images.append(image)
-                targets.append(class_id)
+                # Important to put -1, to have it 0-based.
+                targets.append(class_id - 1)
         train = (images, targets)
         pickle.dump(
             train, open(curr_dir + '/train' + str(size) + '.pkl', 'wb'))
@@ -177,4 +180,12 @@ class Data(object):
 
 if __name__ == '__main__':
     d = Data(size=28)
-    d.create_categories()
+    d.create_parent_labels()
+    print np.shape(d.train_X), np.shape(d.train_parent_Y)
+    for i in xrange(123):
+        f=False
+        for name in CLASS_NAMES:
+            if i in CLASSES[name]:
+                f = True
+        if not f:
+            print i
