@@ -15,7 +15,7 @@ TEST_PERCENT = 0.2
 
 
 CLASS_NAMES = ('Protists', 'Crustaceans', 'PelagicTunicates', 'Artifacts', 'Chaetognaths', 'Planktons', 'Copepods', 'Ctenophores', 'ShrimpLike', 'Detritus', 'Diotoms', 'Echinoderms', 'GelatinousZoolankton', 'Fish', 'Gastropods', 'Hydromedusae', 'InvertebrateLarvae', 'Siphonophores', 'Trichodesmium', 'Unknowns')
-    
+
 CLASSES = {
     'Protists': {0, 1, 2, 82, 83, 84, 85, 86, 90, 91},
     'Crustaceans': {3, 27, 106},
@@ -64,7 +64,7 @@ class Data(object):
         saved = (data[:total], targets[:total])
         pickle.dump(
             saved, open('train' + str(size) + '_' + str(total_perc) + '.pkl', 'wb'))
-            
+
     def create_categories(self):
         train_classes_X = dict()
         train_classes_Y = dict()
@@ -82,7 +82,6 @@ class Data(object):
                     train_classes_X[name].append(img)
                     train_classes_Y[name].append(label)
                     break
-                
         for img_i, img in enumerate(self.test_X):
             label = self.test_Y[img_i]
             for name in CLASS_NAMES:
@@ -90,7 +89,6 @@ class Data(object):
                     test_classes_X[name].append(img)
                     test_classes_Y[name].append(label)
                     break
-        
         total = self.train_perc + self.valid_perc + self.test_perc
         for name in CLASS_NAMES:
             filename = name + str(self.size) + '_' + str(total)
@@ -105,14 +103,26 @@ class Data(object):
         self.train_cat_Y = train_classes_Y
         self.test_cat_X = test_classes_X
         self.test_cat_Y = test_classes_Y
-            
+
+    def create_parent_labels(self):
+        new_train_labels = []
+        for y in self.train_Y:
+            for new_label, name in enumerate(CLASS_NAMES):
+                if y in CLASSES[name]:
+                    new_train_labels.append(new_label)
+        new_test_labels = []
+        for y in self.test_Y:
+            for new_label, name in enumerate(CLASS_NAMES):
+                if y in CLASSES[name]:
+                    new_test_labels.append(new_label)
+        self.train_parent_Y = new_train_labels
+        self.test_parent_Y = new_test_labels
+
     def save_set(self, name, X, y,  directory=''):
         curr_dir = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe())))
         filename = os.path.join(curr_dir, directory + name + '.pkl')
         pickle.dump((X, y), open(filename, 'wb'))
-        
-            
 
     def convertBinaryValues(self, image_set=None, threshold=0.5):
         return (image_set > threshold).astype(int)
