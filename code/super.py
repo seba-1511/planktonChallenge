@@ -21,11 +21,11 @@ class Super(object):
         self.test_Y = d.test_Y
         self.valid_X = d.valid_X if d.valid_X else d.test_X
         self.valid_Y = d.valid_Y if d.valid_Y else d.test_Y
+        self.specialists = self.create_specialists()
+        self.general = self.create_general()
 
     def train(self):
         print 'Started training'
-        self.specialists = self.create_specialists()
-        self.general = self.create_general()
         self.train_specialistsalists()
         self.train_general()
 
@@ -89,7 +89,7 @@ class Super(object):
     def predict(self, X):
         top_best = 3
         prediction = np.zeros(121, dtype=float)
-        gen_pred = self.general.predict([X, ])
+        gen_pred = self.general.predict([X, ])[0]
         best_indices = self.get_best_indices(gen_pred, top_best)
         for idx in best_indices:
             pred_score = self.specialists[idx].predict_proba(X)
