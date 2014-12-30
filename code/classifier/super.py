@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from multiprocessing import cpu_count
- from cnn import CNN
- from sklearn.ensemble import RandomForestClassifier
+from cnn import CNN
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import log_loss
+from score import online_score
 
 CLASS_NAMES = (
     'Protists',
@@ -73,6 +75,27 @@ class Super(object):
     def train_specialists(self):
         print 'Training Specialists'
         self.data.create_categories()
+        for i, name in enumerate(CLASS_NAMES):
+            print 'Training for ' + name
+            train_X = self.data.train_cat_X[name]
+            train_y = self.data.train_cat_Y[name]
+            test_X = self.data.test_cat_X[name]
+            test_y = self.data.test_cat_Y[name]
+            clf = self.specialists[i]
+            clf.fit(train_X, train_y)
+            print 'Score for ' + name + ': ' + str(clf.score(test_X, test_y))
+            print 'Log loss for ' + name + ': ' + str(
+                log_loss(test_y, clf.predict_proba(test_X))
+            )
+            self.specialists = clf
 
     def train_general(self):
-        pass
+        print 'Training General'
+        self.general.train()
+        predictions = []
+        print 'Making predictions'
+        for X in self.test_X:
+             predictions.append(self.general.predict([X, ]))
+        print 'Score for general: ' + str(
+            online_score(predictions, self.data.d.test_parent_Y)
+        )
