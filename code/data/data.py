@@ -13,8 +13,28 @@ TRAIN_PERCENT = 0.7
 VALID_PERCENT = 0.1
 TEST_PERCENT = 0.2
 
-
-CLASS_NAMES = ('Protists', 'Crustaceans', 'PelagicTunicates', 'Artifacts', 'Chaetognaths', 'Planktons', 'Copepods', 'Ctenophores', 'ShrimpLike', 'Detritus', 'Diotoms', 'Echinoderms', 'GelatinousZoolankton', 'Fish', 'Gastropods', 'Hydromedusae', 'InvertebrateLarvae', 'Siphonophores', 'Trichodesmium', 'Unknowns')
+CLASS_NAMES = (
+    'Protists',
+    'Crustaceans',
+    'PelagicTunicates',
+    'Artifacts',
+    'Chaetognaths',
+    'Planktons',
+    'Copepods',
+    'Ctenophores',
+    'ShrimpLike',
+    'Detritus',
+    'Diotoms',
+    'Echinoderms',
+    'GelatinousZoolankton',
+    'Fish',
+    'Gastropods',
+    'Hydromedusae',
+    'InvertebrateLarvae',
+    'Siphonophores',
+    'Trichodesmium',
+    'Unknowns'
+)
 
 CLASSES = {
     'Protists': {0, 1, 2, 82, 83, 84, 85, 86, 90, 91},
