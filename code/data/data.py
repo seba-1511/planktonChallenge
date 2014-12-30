@@ -130,7 +130,8 @@ class Data(object):
         f.close()
 
     def convertBinaryValues(self, image_set=None, threshold=0.5):
-        return (image_set > threshold).astype(int)
+        binary = np.array(image_set) > threshold
+        return binary.astype(int)
 
     def create_thumbnail(self, size, img=None):
         print 'processing raw images'
@@ -187,6 +188,4 @@ class Data(object):
 
 if __name__ == '__main__':
     d = Data(size=28)
-    d.create_categories()
-    d.create_parent_labels()
-    print np.shape(d.train_X), np.shape(d.train_parent_Y)
+    print d.convertBinaryValues([0.3, 0.4, 0.1], 0.33)

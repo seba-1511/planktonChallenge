@@ -77,10 +77,12 @@ def train_specialists(d=None):
 
 def train_general(d=None):
     d.create_parent_labels()
+    print 'One-Hot labeling'
     train_X = d.convertBinaryValues(d.train_X)
     train_y = d.convertBinaryValues(d.train_parent_Y)
     test_X = d.convertBinaryValues(d.test_X)
     test_y = d.convertBinaryValues(d.test_parent_Y)
+    print 'creating CNN'
     cnn = CNN(
          alpha=0.1,
          batch_size=100,
@@ -88,17 +90,19 @@ def train_general(d=None):
          train_Y=train_y,
          test_X=test_X,
          test_Y=test_y,
-         epochs=200,
-         instance_id=1)
+         epochs=50,
+         instance_id=None)
+    print 'Training CNN'
     cnn.train()
     predictions = []
+    print 'Making predictions'
     for X in test_X:
          predictions.append(cnn.predict([X, ]))
     print 'Score for general: ' + str(online_score(predictions, test_y))
-    svm = SVC()
-    svm.fit(train_X, train_y)
-    probs = svm.predict_proba(test_X)
-    log_loss(test_y, probs)
+#    svm = SVC(probability=True)
+#    svm.fit(train_X, train_y)
+#    probs = svm.predict_proba(test_X)
+#    print log_loss(test_y, probs)
 
 
 if __name__ == '__main__':
