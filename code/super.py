@@ -113,5 +113,5 @@ class Super(object):
 if __name__ == '__main__':
     d = Data(size=60, train_perc=0.2, test_perc=0.1, valid_perc=0.0)
     a = Super(d)
-#    a.train()
+    a.train()
     print a.score()
