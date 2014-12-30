@@ -77,10 +77,10 @@ def train_specialists(d=None):
 
 def train_general(d=None):
     d.create_parent_labels()
-    train_X = d.train_X
-    train_y = d.train_parent_Y
-    test_X = d.test_X
-    test_y = d.test_parent_Y
+    train_X = d.convertBinaryValues(d.train_X)
+    train_y = d.convertBinaryValues(d.train_parent_Y)
+    test_X = d.convertBinaryValues(d.test_X)
+    test_y = d.convertBinaryValues(d.test_parent_Y)
     cnn = CNN(
          alpha=0.1,
          batch_size=100,
