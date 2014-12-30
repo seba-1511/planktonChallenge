@@ -32,7 +32,7 @@ class Super(object):
     def create_specialists(self):
         print 'Creating specialized models'
         return [RandomForestClassifier(
-                    mex_features='sqrt',
+                    max_features='sqrt',
                     n_estimators=15,
                     n_jobs=NB_CPUS) for i in CLASS_NAMES]
 
@@ -48,7 +48,7 @@ class Super(object):
              train_Y=train_y,
              test_X=self.test_X,
              test_Y=test_y,
-             epochs=200,
+             epochs=1,
              instance_id=None)
         return cnn
 
@@ -67,7 +67,7 @@ class Super(object):
             print 'Log loss for ' + name + ': ' + str(
                 log_loss(test_y, clf.predict_proba(test_X))
             )
-            self.specialists = clf
+            self.specialists[i] = clf
 
     def train_general(self):
         print 'Training General'
