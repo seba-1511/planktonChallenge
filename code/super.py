@@ -26,7 +26,7 @@ class Super(object):
         print 'Started training'
         self.specialists = self.create_specialists()
         self.general = self.create_general()
-        self.train_specialists()
+#        self.train_specialistsalists()
         self.train_general()
 
     def create_specialists(self):
@@ -77,7 +77,7 @@ class Super(object):
         for X in self.test_X:
              predictions.append(self.general.predict([X, ]))
         print 'Score for general: ' + str(
-            online_score(predictions, self.data.d.test_parent_Y)
+            online_score(predictions, self.data.test_parent_Y)
         )
 
     def score(self):
@@ -104,7 +104,7 @@ class Super(object):
         indices = [-1 for i in xrange(top)]
         array = np.array(array)
         for idx, nb in enumerate(array):
-            if nb > np.min(bests):
+            if nb > np.amin(bests):
                 index = np.argmin(bests)
                 bests[index] = i
                 indices[index] = idx
