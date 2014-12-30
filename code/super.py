@@ -81,11 +81,14 @@ class Super(object):
         )
 
     def score(self):
-        pass
+        predictions = []
+        for X in self.test_X:
+            predictions.append(self.predict(X))
+        return log_loss(self.test_Y, predictions)
 
     def predict(self, X):
         top_best = 3
-        prediction = np.zeros(121)
+        prediction = np.zeros(121, dtype=float)
         gen_pred = self.general.predict([X, ])
         best_indices = self.get_best_indices(gen_pred, top_best)
         for idx in best_indices:
@@ -93,7 +96,7 @@ class Super(object):
             name = CLASS_NAMES[idx]
             cls = CLASSES[name]
             for i, score in enumerate(pred_score):
-                prediction[cls[i]] += score
+                prediction[cls[i]] += gen_pred[idx] * score
         return prediction
 
     def get_best_indices(self, array, top=3):
@@ -108,6 +111,7 @@ class Super(object):
         return indices
 
 if __name__ == '__main__':
-    a = Super(Data())
+    d = Data(size=60, train_perc=0.2, test_perc=0.1, valid_perc=0.0)
+    a = Super(d)
     a.train()
-    a.score()
+    print a.score()
