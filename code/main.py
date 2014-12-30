@@ -81,6 +81,7 @@ def train_general(d=None):
     train_y = d.train_parent_Y
     test_X = d.test_X
     test_y = d.test_parent_Y
+    print 'creating CNN'
     cnn = CNN(
          alpha=0.1,
          batch_size=100,
@@ -89,21 +90,23 @@ def train_general(d=None):
          test_X=test_X,
          test_Y=test_y,
          epochs=200,
-         instance_id=1)
+         instance_id=None)
+    print 'Training CNN'
     cnn.train()
     predictions = []
+    print 'Making predictions'
     for X in test_X:
          predictions.append(cnn.predict([X, ]))
     print 'Score for general: ' + str(online_score(predictions, test_y))
-    svm = SVC()
-    svm.fit(train_X, train_y)
-    probs = svm.predict_proba(test_X)
-    log_loss(test_y, probs)
+#    svm = SVC(probability=True)
+#    svm.fit(train_X, train_y)
+#    probs = svm.predict_proba(test_X)
+#    print log_loss(test_y, probs)
 
 
 if __name__ == '__main__':
 
-    d = Data(size=60, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
+    d = Data(size=60, train_perc=0.2, test_perc=0.1, valid_perc=0.0)
     #train_specialists(d=d)
     train_general(d=d)
 
