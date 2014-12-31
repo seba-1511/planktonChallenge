@@ -1,0 +1,59 @@
+Using gpu device 0: GRID K520
+loading data
+Creation of Super
+Creating specialized models
+Creating general model
+Started training
+Training Specialists
+Training for Protists
+Score for Protists: 0.697247706422
+Training for Crustaceans
+Score for Crustaceans: 0.6
+Training for PelagicTunicates
+Score for PelagicTunicates: 0.868613138686
+Training for Artifacts
+Score for Artifacts: 0.950617283951
+Training for Chaetognaths
+Score for Chaetognaths: 0.5
+Training for Planktons
+Score for Planktons: 0.97191011236
+Training for Copepods
+Score for Copepods: 0.801886792453
+Training for Ctenophores
+Score for Ctenophores: 0.913043478261
+Training for ShrimpLike
+Score for ShrimpLike: 0.743801652893
+Training for Detritus
+Score for Detritus: 0.98347107438
+Training for Diotoms
+Score for Diotoms: 0.933333333333
+Training for Echinoderms
+Score for Echinoderms: 0.791666666667
+Training for GelatinousZoolankton
+Score for GelatinousZoolankton: 0.988505747126
+Training for Fish
+Score for Fish: 0.675392670157
+Training for Gastropods
+Score for Gastropods: 0.677419354839
+Training for Hydromedusae
+Score for Hydromedusae: 0.693053311793
+Training for InvertebrateLarvae
+Score for InvertebrateLarvae: 0.842105263158
+Training for Siphonophores
+Score for Siphonophores: 0.940063091483
+Training for Trichodesmium
+Score for Trichodesmium: 0.887218045113
+Training for Unknowns
+Score for Unknowns: 0.929203539823
+Training General
+epoch 0/1, minibatch 273/273, validation error 62.633333 %
+Making predictions
+Score for general: 2.15719500552
+Traceback (most recent call last):
+  File "super.py", line 119, in <module>
+    print a.score()
+  File "super.py", line 86, in score
+    predictions.append(self.predict(X))
+  File "super.py", line 100, in predict
+    b = gen_pred[idx] if isinstance(gen_pred[idx], float) else gen_pred[idx][0]
+IndexError: invalid index to scalar variable.
