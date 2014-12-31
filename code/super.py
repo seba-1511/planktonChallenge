@@ -92,12 +92,12 @@ class Super(object):
         gen_pred = self.general.predict([X, ])[0]
         best_indices = self.get_best_indices(gen_pred, top_best)
         for idx in best_indices:
-            pred_score = self.specialists[idx].predict_proba(X)
+            pred_score = self.specialists[idx].predict_proba(X)[0]
             name = CLASS_NAMES[idx]
             cls = CLASSES[name]
             for i, score in enumerate(pred_score):
-		a = score if isinstance(score, float) else score[0]
-		b = gen_pred[idx] if isinstance(gen_pred[idx], float) else gen_pred[idx][0]
+                a = score if isinstance(score, float) else score[0]
+                b = gen_pred[idx] if isinstance(gen_pred[idx], float) else gen_pred[idx][0]
                 prediction[cls[i]] += (a*b)
         return prediction
 
