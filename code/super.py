@@ -48,7 +48,7 @@ class Super(object):
              train_Y=train_y,
              test_X=self.test_X,
              test_Y=test_y,
-             epochs=1,
+             epochs=100,
              instance_id=None)
         return cnn
 
@@ -81,6 +81,7 @@ class Super(object):
         )
 
     def score(self):
+        print 'Scoring Super'
         predictions = []
         for X in self.test_X:
             predictions.append(self.predict(X))
