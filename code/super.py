@@ -96,9 +96,7 @@ class Super(object):
             name = CLASS_NAMES[idx]
             cls = CLASSES[name]
             for i, score in enumerate(pred_score):
-                a = score if isinstance(score, float) else score[0]
-                b = gen_pred[idx] if isinstance(gen_pred[idx], float) else gen_pred[idx][0]
-                prediction[cls[i]] += (a*b)
+                prediction[cls[i]] += (score * gen_pred[idx])
         return prediction
 
     def get_best_indices(self, array, top=3):
