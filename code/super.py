@@ -15,9 +15,9 @@ class Super(object):
     def __init__(self, d):
         print 'Creation of Super'
         self.data = d
-        self.train_X = d.convertBinaryValues(d.train_X)
+        self.train_X = d.train_X
         self.train_Y = d.train_Y
-        self.test_X = d.convertBinaryValues(d.test_X)
+        self.test_X = d.test_X
         self.test_Y = d.test_Y
         self.valid_X = d.valid_X if d.valid_X else d.test_X
         self.valid_Y = d.valid_Y if d.valid_Y else d.test_Y

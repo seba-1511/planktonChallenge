@@ -86,12 +86,12 @@ def train_general(d=None):
     test_X = d.test_X
     test_y = d.test_parent_Y
     print 'creating RBM'
-    rbm = RBM(n_components=60)
+    rbm = RBM(n_components=3600)
     train_X = rbm.fit_transform(train_X, train_y)
     test_X = rbm.transform(test_X)
     print 'creating CNN'
     cnn = CNN(
-         alpha=0.5,
+         alpha=0.1,
          batch_size=100,
          train_X=train_X,
          train_Y=train_y,
@@ -113,7 +113,7 @@ def train_general(d=None):
 
 
 if __name__ == '__main__':
-    d = Data(size=100, train_perc=0.5, test_perc=0.2, valid_perc=0.0)
+    d = Data(size=100, train_perc=0.1, test_perc=0.2, valid_perc=0.0)
 #    test_dbn(d)
 #    train_specialists(d=d)
     train_general(d=d)
