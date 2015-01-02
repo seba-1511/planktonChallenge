@@ -5,8 +5,8 @@ import numpy as np
 from data.data import Data, CLASS_NAMES, CLASSES
 from multiprocessing import cpu_count
 from classifier.cnn import CNN
+from sklearn import datasets, svm, neighbors, linear_model, naive_bayes, tree, ensemble
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import log_loss
 from score import online_score
 
 NB_CPUS = cpu_count()
@@ -31,10 +31,74 @@ class Super(object):
 
     def create_specialists(self):
         print 'Creating specialized models'
-        return [RandomForestClassifier(
-                    max_features='sqrt',
-                    n_estimators=15,
-                    n_jobs=NB_CPUS) for i in CLASS_NAMES]
+        specialists = [
+            # Protists
+            neighbors.KNeighborsClassifier(
+                n_neighbors=5,
+                weights='distance',
+                algorithm='auto'),
+            # Crustaceans
+            tree.DecisionTreeClassifier(),
+            # Pelagic Tunicates
+            neighbors.KNeighborsClassifier(),
+            # Artifacts
+            neighbors.KNeighborsClassifier(),
+            # Chactognaths
+            RandomForestClassifier(
+                max_features='sqrt',
+                n_estimators=15,
+                n_jobs=NB_CPUS),
+            # Planktons
+            RandomForestClassifier(
+                max_features='sqrt',
+                n_estimators=15,
+                n_jobs=NB_CPUS),
+            # Copepods
+            RandomForestClassifier(
+                max_features='sqrt',
+                n_estimators=15,
+                n_jobs=NB_CPUS),
+            # Ctenophores
+            neighbors.KNeighborsClassifier(),
+            # Shrimp-like
+            neighbors.KNeighborsClassifier(),
+            # Detritus
+            neighbors.KNeighborsClassifier(),
+            # Diotoms
+            neighbors.KNeighborsClassifier(),
+            # Echinoderms
+            neighbors.KNeighborsClassifier(),
+            # Gelatinous Zooplanktons
+            neighbors.KNeighborsClassifier(),
+            # Fish
+            neighbors.KNeighborsClassifier(),
+            # Gastropods
+            naive_bayes.MultinomialNB(),
+            # Hydromedusae
+            neighbors.KNeighborsClassifier(),
+            # invertebrate larvae
+            RandomForestClassifier(
+                max_features='sqrt',
+                n_estimators=15,
+                n_jobs=NB_CPUS),
+            # Siphonophores
+            RandomForestClassifier(
+                max_features='sqrt',
+                n_estimators=15,
+                n_jobs=NB_CPUS),
+            # Trichodesmium
+            svm.SVC(),
+            # Unknowns
+            RandomForestClassifier(
+                max_features='sqrt',
+                n_estimators=15,
+                n_jobs=NB_CPUS),
+        ]
+        return specialists
+#        [RandomForestClassifier(
+#                    max_features='sqrt',
+#                    n_estimators=15,
+#                    n_jobs=NB_CPUS) for i in CLASS_NAMES]
 
     def create_general(self):
         print 'Creating general model'
