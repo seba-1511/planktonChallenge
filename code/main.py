@@ -110,10 +110,10 @@ def train_general(d=None):
 def test_dbn(d=None):
     d.create_parent_labels()
     print 'One-Hot labeling'
-    train_X = d.convertBinaryValues(d.train_X)
-    train_y = d.train_parent_Y
-    test_X = d.convertBinaryValues(d.test_X)
-    test_y = d.test_parent_Y
+    train_X = np.array(d.convertBinaryValues(d.train_X))
+    train_y = np.array(d.train_parent_Y)
+    test_X = np.array(d.convertBinaryValues(d.test_X))
+    test_y = np.array(d.test_parent_Y)
     print 'creating CNN'
     dbn = DBN(
         [train_X.shape[1], 300, 10],
