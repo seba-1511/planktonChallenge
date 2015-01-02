@@ -10,6 +10,7 @@ from classifier.cnn import CNN
 from score import online_score
 
 from sklearn.svm import LinearSVC, SVC
+from sklearn import neighbors
 from sklearn.metrics import log_loss
 from MLCompare import MLCompare
 
@@ -54,24 +55,25 @@ def train_specialists(d=None):
         train_y = d.train_cat_Y[name]
         test_X = d.test_cat_X[name]
         test_y = d.test_cat_Y[name]
-        #MLCompare(train_X, train_y)
-        # print 'Score for ' + name + ': ' + str(svm.score(test_X, test_y))
-        # print 'Log loss for ' + name + ': ' + str(log_loss(test_y, svm.predict(test_X)))
-        cnn = CNN(
-             alpha=0.1,
-             batch_size=100,
-             train_X=train_X,
-             train_Y=train_y,
-             test_X=test_X,
-             test_Y=test_y,
-             epochs=200,
-             instance_id=12000+i)
-        cnn.train()
-#        cnns.append[cnn]
-        predictions = []
-        for X in test_X:
-             predictions.append(cnn.predict([X, ]))
-        print 'Score for ' + name + ': ' + str(online_score(predictions, test_y))
+        svm = neighbors.KNeighborsClassifier()
+        svm.fit(train_X, train_y)
+        print 'Score for ' + name + ': ' + str(svm.score(test_X, test_y))
+        print 'Log loss for ' + name + ': ' + str(online_score(svm.predict(test_X), test_y))
+#        cnn = CNN(
+#             alpha=0.1,
+#             batch_size=100,
+#             train_X=train_X,
+#             train_Y=train_y,
+#             test_X=test_X,
+#             test_Y=test_y,
+#             epochs=200,
+#             instance_id=12000+i)
+#        cnn.train()
+##        cnns.append[cnn]
+#        predictions = []
+#        for X in test_X:
+#             predictions.append(cnn.predict([X, ]))
+#        print 'Score for ' + name + ': ' + str(online_score(predictions, test_y))
         # pk.dump(cnn, open('cnn_' + name + '.pl', 'wb'))
     # pk.dump(cnns, open('cnns.pl', 'wb'))
 
@@ -108,6 +110,6 @@ def train_general(d=None):
 if __name__ == '__main__':
 
     d = Data(size=60, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
-    #train_specialists(d=d)
-    train_general(d=d)
+    train_specialists(d=d)
+#    train_general(d=d)
 
