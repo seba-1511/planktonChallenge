@@ -8,7 +8,7 @@ from data.data import Data
 from classifier.kmeans import KMeans
 from classifier.cnn import CNN
 from score import online_score
-from nolearn.dbn import DBN
+from sklearn.neural_network import BernoulliRBM as RBM
 
 from sklearn.svm import LinearSVC, SVC
 from sklearn import neighbors
@@ -81,10 +81,14 @@ def train_specialists(d=None):
 def train_general(d=None):
     d.create_parent_labels()
     print 'One-Hot labeling'
-    train_X = d.convertBinaryValues(d.train_X)
+    train_X = d.train_X
     train_y = d.train_parent_Y
-    test_X = d.convertBinaryValues(d.test_X)
+    test_X = d.test_X
     test_y = d.test_parent_Y
+    print 'creating RBM'
+    rbm = RBM(n_components=60)
+    train_X = rbm.fit_transform(train_X, train_y)
+    test_X = rbm.transform(test_X)
     print 'creating CNN'
     cnn = CNN(
          alpha=0.5,
@@ -97,8 +101,8 @@ def train_general(d=None):
          instance_id=None)
     print 'Training CNN'
     cnn.train()
-    predictions = []
     print 'Making predictions'
+    predictions = []
     for X in test_X:
          predictions.append(cnn.predict([X, ]))
     print 'Score for general: ' + str(online_score(predictions, test_y))
@@ -116,7 +120,7 @@ def test_dbn(d=None):
     test_y = np.array(d.test_parent_Y)
     print 'creating CNN'
     dbn = DBN(
-        [train_X.shape[1], 300, 10],
+        [train_X.shape[1], 300, 20],
         learn_rates = 0.3,
         learn_rate_decays = 0.9,
         epochs = 10,
@@ -130,8 +134,8 @@ def test_dbn(d=None):
 
 
 if __name__ == '__main__':
-    d = Data(size=60, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
-    test_dbn(d)
+    d = Data(size=100, train_perc=0.5, test_perc=0.2, valid_perc=0.0)
+#    test_dbn(d)
 #    train_specialists(d=d)
-#    train_general(d=d)
+    train_general(d=d)
 
