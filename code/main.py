@@ -111,27 +111,6 @@ def train_general(d=None):
 #    probs = svm.predict_proba(test_X)
 #    print log_loss(test_y, probs)
 
-def test_dbn(d=None):
-    d.create_parent_labels()
-    print 'One-Hot labeling'
-    train_X = np.array(d.convertBinaryValues(d.train_X))
-    train_y = np.array(d.train_parent_Y)
-    test_X = np.array(d.convertBinaryValues(d.test_X))
-    test_y = np.array(d.test_parent_Y)
-    print 'creating CNN'
-    dbn = DBN(
-        [train_X.shape[1], 300, 20],
-        learn_rates = 0.3,
-        learn_rate_decays = 0.9,
-        epochs = 10,
-        verbose = 1)
-    print 'Training DBN'
-    dbn.fit(train_X, train_y)
-    print 'Scoring DBN'
-    print 'Score: ' + str(dbn.score(test_X, test_y))
-    print 'Log loss: ' + str(online_score(dbn.predict(test_X), test_y))
-
-
 
 if __name__ == '__main__':
     d = Data(size=100, train_perc=0.5, test_perc=0.2, valid_perc=0.0)
