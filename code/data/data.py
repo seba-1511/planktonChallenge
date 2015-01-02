@@ -83,7 +83,7 @@ class Data(object):
         self.test_Y = targets[nb_train + nb_valid:total]
         saved = (data[:total], targets[:total])
         f = open('train' + str(size) + '_' + str(total_perc) + '.pkl', 'wb')
-        pickle.dump(saved, f)
+        pickle.dump(saved, f, protocol=pickle.HIGHEST_PROTOCOL)
         f.close()
 
     def create_categories(self):
@@ -146,7 +146,7 @@ class Data(object):
             os.path.abspath(inspect.getfile(inspect.currentframe())))
         filename = os.path.join(curr_dir, directory + name + '.pkl')
         f = open(filename, 'wb')
-        pickle.dump((X, y), f)
+        pickle.dump((X, y), f, protocol=pickle.HIGHEST_PROTOCOL)
         f.close()
 
     def convertBinaryValues(self, image_set=None, threshold=0.5):
@@ -176,7 +176,7 @@ class Data(object):
                 targets.append(class_id - 1)
         train = (images, targets)
         f = open(curr_dir + '/train' + str(size) + '.pkl', 'wb')
-        pickle.dump(train, f)
+        pickle.dump(train, f, protocol=pickle.HIGHEST_PROTOCOL)
         f.close()
         return train
 

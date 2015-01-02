@@ -79,9 +79,9 @@ def train_general(d=None):
     d.create_parent_labels()
     print 'One-Hot labeling'
     train_X = d.convertBinaryValues(d.train_X)
-    train_y = d.convertBinaryValues(d.train_parent_Y)
+    train_y = d.train_parent_Y
     test_X = d.convertBinaryValues(d.test_X)
-    test_y = d.convertBinaryValues(d.test_parent_Y)
+    test_y = d.test_parent_Y
     print 'creating CNN'
     cnn = CNN(
          alpha=0.1,
