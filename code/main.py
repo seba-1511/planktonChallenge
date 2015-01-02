@@ -8,6 +8,7 @@ from data.data import Data
 from classifier.kmeans import KMeans
 from classifier.cnn import CNN
 from score import online_score
+from nolearn.dbn import DBN
 
 from sklearn.svm import LinearSVC, SVC
 from sklearn import neighbors
@@ -106,10 +107,31 @@ def train_general(d=None):
 #    probs = svm.predict_proba(test_X)
 #    print log_loss(test_y, probs)
 
+def test_dbn(d=None):
+    d.create_parent_labels()
+    print 'One-Hot labeling'
+    train_X = d.convertBinaryValues(d.train_X)
+    train_y = d.train_parent_Y
+    test_X = d.convertBinaryValues(d.test_X)
+    test_y = d.test_parent_Y
+    print 'creating CNN'
+    dbn = DBN(
+        [train_X.shape[1], 300, 10],
+        learn_rates = 0.3,
+        learn_rate_decays = 0.9,
+        epochs = 10,
+        verbose = 1)
+    print 'Training DBN'
+    dbn.fit(train_X, train_y)
+    print 'Scoring DBN'
+    print 'Score: ' + str(dbn.score(test_X, test_y))
+    print 'Log loss: ' + str(online_score(dbn.predict(test_X), test_y))
+
+
 
 if __name__ == '__main__':
-
     d = Data(size=60, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
-    train_specialists(d=d)
+    test_dbn(d)
+#    train_specialists(d=d)
 #    train_general(d=d)
 
