@@ -84,7 +84,7 @@ def train_general(d=None):
     test_y = d.test_parent_Y
     print 'creating CNN'
     cnn = CNN(
-         alpha=0.1,
+         alpha=0.5,
          batch_size=100,
          train_X=train_X,
          train_Y=train_y,
