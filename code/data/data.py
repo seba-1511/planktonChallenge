@@ -15,7 +15,7 @@ TEST_PERCENT = 0.2
 
 
 CLASS_NAMES = ('Protists', 'Crustaceans', 'PelagicTunicates', 'Artifacts', 'Chaetognaths', 'Planktons', 'Copepods', 'Ctenophores', 'ShrimpLike', 'Detritus', 'Diotoms', 'Echinoderms', 'GelatinousZoolankton', 'Fish', 'Gastropods', 'Hydromedusae', 'InvertebrateLarvae', 'Siphonophores', 'Trichodesmium', 'Unknowns')
-    
+
 CLASSES = {
     'Protists': {0, 1, 2, 82, 83, 84, 85, 86, 90, 91},
     'Crustaceans': {3, 27, 106},
@@ -64,7 +64,7 @@ class Data(object):
         saved = (data[:total], targets[:total])
         pickle.dump(
             saved, open('train' + str(size) + '_' + str(total_perc) + '.pkl', 'wb'))
-            
+
     def create_categories(self):
         train_classes_X = dict()
         train_classes_Y = dict()
@@ -82,7 +82,7 @@ class Data(object):
                     train_classes_X[name].append(img)
                     train_classes_Y[name].append(label)
                     break
-                
+
         for img_i, img in enumerate(self.test_X):
             label = self.test_Y[img_i]
             for name in CLASS_NAMES:
@@ -90,7 +90,7 @@ class Data(object):
                     test_classes_X[name].append(img)
                     test_classes_Y[name].append(label)
                     break
-        
+
         total = self.train_perc + self.valid_perc + self.test_perc
         for name in CLASS_NAMES:
             filename = name + str(self.size) + '_' + str(total)
@@ -105,22 +105,24 @@ class Data(object):
         self.train_cat_Y = train_classes_Y
         self.test_cat_X = test_classes_X
         self.test_cat_Y = test_classes_Y
-            
+
     def save_set(self, name, X, y,  directory=''):
         curr_dir = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe())))
         filename = os.path.join(curr_dir, directory + name + '.pkl')
         pickle.dump((X, y), open(filename, 'wb'))
-        
-            
+
+
 
     def convertBinaryValues(self, image_set=None, threshold=0.5):
         return (image_set > threshold).astype(int)
 
     def create_thumbnail(self, size, img=None):
         print 'processing raw images'
+        mode = 'constant'
+        cval = 0.0
         if img:
-            return resize(img, (size, size))
+            return resize(img, (size, size), mode=mode, cval=cval)
         curr_dir = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe())))
         folders = os.walk(os.path.join(curr_dir, '../../data/train/'))
@@ -133,7 +135,7 @@ class Data(object):
                 if img.index('.jpg') == -1:
                     continue
                 image = imread(folder[0] + '/' + img)
-                image = resize(image, (size, size))
+                image = resize(image, (size, size), mode=mode, cval=cval)
                 image = np.array(image).ravel()
                 images.append(image)
                 targets.append(class_id)
