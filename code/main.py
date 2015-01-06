@@ -129,16 +129,19 @@ def train_pylearn_general(d=None):
     test_y = np.array(d.test_parent_Y)
     train_y = [
         [1 if y == c else 0 for c, _ in enumerate(CLASS_NAMES)] for y in train_y]
+    train_y = np.array(train_y)
     train_set = DenseDesignMatrix(
         X=train_X, y=train_y, y_labels=len(CLASS_NAMES))
     print 'Setting up'
-    h0 = mlp.Sigmoid(layer_name='h0', dim=500, irange=.235, init_bias=1.)
+    h0 = mlp.Sigmoid(layer_name='h0', dim=5000, irange=.235, init_bias=1.)
+    h1 = mlp.Sigmoid(layer_name='h1', dim=2000, irange=.235, init_bias=1.)
+    h2 = mlp.Sigmoid(layer_name='h2', dim=500, irange=.235, init_bias=1.)
     out = mlp.Softmax(len(CLASS_NAMES), 'output', irange=.235)
-    epochs = EpochCounter(40)
+    epochs = EpochCounter(10)
     trainer = sgd.SGD(
         learning_rate=.05, batch_size=10, termination_criterion=epochs)
-    layers = [h0, out]
-    nn = mlp.MLP(layers, nvis=784)
+    layers = [h0, h1, h2, out]
+    nn = mlp.MLP(layers, nvis=100**2)
     trainer.setup(nn, train_set)
     print 'Learning'
     while True:
@@ -149,11 +152,11 @@ def train_pylearn_general(d=None):
             break
     print 'Scoring'
     test_X = theano.shared(np.array(test_X))
-    predictions = nn.fprop(test_X)
-    print 'Logloss score: ' + online_score(predictions, test_y)
+    predictions = nn.fprop(test_X).eval()
+    print 'Logloss score: ' + str(online_score(predictions, test_y))
 
 if __name__ == '__main__':
-    d = Data(size=28, train_perc=0.4, test_perc=0.2, valid_perc=0.0)
+    d = Data(size=100, train_perc=0.5, test_perc=0.2, valid_perc=0.0)
 #    test_dbn(d)
 #    train_specialists(d=d)
     train_pylearn_general(d=d)
