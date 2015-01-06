@@ -78,13 +78,46 @@ def train_specialists(d=None):
 #             epochs=200,
 #             instance_id=12000+i)
 #        cnn.train()
-# cnns.append[cnn]
 #        predictions = []
 #        for X in test_X:
 #             predictions.append(cnn.predict([X, ]))
 #        print 'Score for ' + name + ': ' + str(online_score(predictions, test_y))
         # pk.dump(cnn, open('cnn_' + name + '.pl', 'wb'))
     # pk.dump(cnns, open('cnns.pl', 'wb'))
+
+
+def train_general(d=None):
+    d.create_parent_labels()
+    print 'One-Hot labeling'
+    train_X = d.train_X
+    train_y = d.train_parent_Y
+    test_X = d.test_X
+    test_y = d.test_parent_Y
+    print 'creating RBM'
+    rbm = RBM(n_components=3600)
+    train_X = rbm.fit_transform(train_X, train_y)
+    test_X = rbm.transform(test_X)
+    print 'creating CNN'
+    cnn = CNN(
+        alpha=0.1,
+        batch_size=100,
+        train_X=train_X,
+        train_Y=train_y,
+        test_X=test_X,
+        test_Y=test_y,
+        epochs=50,
+        instance_id=None)
+    print 'Training CNN'
+    cnn.train()
+    print 'Making predictions'
+    predictions = []
+    for X in test_X:
+        predictions.append(cnn.predict([X, ]))
+    print 'Score for general: ' + str(online_score(predictions, test_y))
+#    svm = SVC(probability=True)
+#    svm.fit(train_X, train_y)
+#    probs = svm.predict_proba(test_X)
+#    print log_loss(test_y, probs)
 
 
 def train_general(d=None):
@@ -141,7 +174,7 @@ def train_pylearn_general(d=None):
     trainer = sgd.SGD(
         learning_rate=.05, batch_size=10, termination_criterion=epochs)
     layers = [h0, h1, h2, out]
-    nn = mlp.MLP(layers, nvis=100**2)
+    nn = mlp.MLP(layers, nvis=100 ** 2)
     trainer.setup(nn, train_set)
     print 'Learning'
     while True:
