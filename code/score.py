@@ -28,7 +28,9 @@ def online_score(predictions=[[]], targets=[]):
     predictions = sp.minimum(1 - epsilon, predictions)
     score = 0.0
     for i, entry in enumerate(predictions):
-        entry = entry[0]
+        shp = np.shape(entry)
+        if shp and shp[0] == 1:
+            entry = entry[0]
         tot = np.sum(entry)
         score += log(entry[targets[i]] / tot)
     return -score / len(predictions)

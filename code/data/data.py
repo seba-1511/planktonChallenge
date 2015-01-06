@@ -13,30 +13,50 @@ TRAIN_PERCENT = 0.7
 VALID_PERCENT = 0.1
 TEST_PERCENT = 0.2
 
-
-CLASS_NAMES = ('Protists', 'Crustaceans', 'PelagicTunicates', 'Artifacts', 'Chaetognaths', 'Planktons', 'Copepods', 'Ctenophores', 'ShrimpLike', 'Detritus', 'Diotoms', 'Echinoderms', 'GelatinousZoolankton', 'Fish', 'Gastropods', 'Hydromedusae', 'InvertebrateLarvae', 'Siphonophores', 'Trichodesmium', 'Unknowns')
+CLASS_NAMES = (
+    'Protists',
+    'Crustaceans',
+    'PelagicTunicates',
+    'Artifacts',
+    'Chaetognaths',
+    'Planktons',
+    'Copepods',
+    'Ctenophores',
+    'ShrimpLike',
+    'Detritus',
+    'Diotoms',
+    'Echinoderms',
+    'GelatinousZoolankton',
+    'Fish',
+    'Gastropods',
+    'Hydromedusae',
+    'InvertebrateLarvae',
+    'Siphonophores',
+    'Trichodesmium',
+    'Unknowns'
+)
 
 CLASSES = {
-    'Protists': {0, 1, 2, 82, 83, 84, 85, 86, 90, 91},
-    'Crustaceans': {3, 27, 106},
-    'PelagicTunicates': {4, 5, 6, 7, 113, 114, 115, 116, 117},
-    'Artifacts': {8, 9},
-    'Chaetognaths': {10, 11, 12},
-    'Planktons': {13, 81},
-    'Copepods': {14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26},
-    'Ctenophores': {28, 29, 30, 31},
-    'ShrimpLike': {32, 47, 48, 92, 93, 94, 95},
-    'Detritus': {33, 34, 35, 49},
-    'Diotoms': {36, 37},
-    'Echinoderms': {38, 39, 40, 41, 42, 43, 44, 45},
-    'GelatinousZoolankton': {46, 80},
-    'Fish': {50, 51, 52, 53, 54, 55},
-    'Gastropods': {56, 87, 88, 89},
-    'Hydromedusae': {57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77},
-    'InvertebrateLarvae': {78, 79, 107, 112},
-    'Siphonophores': {96, 97, 98, 99, 100, 101, 102, 103, 104, 105},
-    'Trichodesmium': {108, 109, 110, 111},
-    'Unknowns': {118, 119, 120},
+    'Protists': (0, 1, 2, 82, 83, 84, 85, 86, 90, 91),
+    'Crustaceans': (3, 27, 106),
+    'PelagicTunicates': (4, 5, 6, 7, 113, 114, 115, 116, 117),
+    'Artifacts': (8, 9),
+    'Chaetognaths': (10, 11, 12),
+    'Planktons': (13, 81),
+    'Copepods': (14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26),
+    'Ctenophores': (28, 29, 30, 31),
+    'ShrimpLike': (32, 47, 48, 92, 93, 94, 95),
+    'Detritus': (33, 34, 35, 49),
+    'Diotoms': (36, 37),
+    'Echinoderms': (38, 39, 40, 41, 42, 43, 44, 45),
+    'GelatinousZoolankton': (46, 80),
+    'Fish': (50, 51, 52, 53, 54, 55),
+    'Gastropods': (56, 87, 88, 89),
+    'Hydromedusae': (57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77),
+    'InvertebrateLarvae': (78, 79, 107, 112),
+    'Siphonophores': (96, 97, 98, 99, 100, 101, 102, 103, 104, 105),
+    'Trichodesmium': (108, 109, 110, 111),
+    'Unknowns': (118, 119, 120),
 }
 
 
@@ -62,8 +82,9 @@ class Data(object):
         self.test_X = data[nb_train + nb_valid:total]
         self.test_Y = targets[nb_train + nb_valid:total]
         saved = (data[:total], targets[:total])
-        pickle.dump(
-            saved, open('train' + str(size) + '_' + str(total_perc) + '.pkl', 'wb'))
+        f = open('train' + str(size) + '_' + str(total_perc) + '.pkl', 'wb')
+        pickle.dump(saved, f, protocol=pickle.HIGHEST_PROTOCOL)
+        f.close()
 
     def create_categories(self):
         train_classes_X = dict()
@@ -82,7 +103,6 @@ class Data(object):
                     train_classes_X[name].append(img)
                     train_classes_Y[name].append(label)
                     break
-
         for img_i, img in enumerate(self.test_X):
             label = self.test_Y[img_i]
             for name in CLASS_NAMES:
@@ -90,7 +110,6 @@ class Data(object):
                     test_classes_X[name].append(img)
                     test_classes_Y[name].append(label)
                     break
-
         total = self.train_perc + self.valid_perc + self.test_perc
         for name in CLASS_NAMES:
             filename = name + str(self.size) + '_' + str(total)
@@ -106,23 +125,38 @@ class Data(object):
         self.test_cat_X = test_classes_X
         self.test_cat_Y = test_classes_Y
 
+    def create_parent_labels(self):
+        new_train_labels = []
+        for y in self.train_Y:
+            for new_label, name in enumerate(CLASS_NAMES):
+                if y in CLASSES[name]:
+                    new_train_labels.append(new_label)
+                    break
+        new_test_labels = []
+        for y in self.test_Y:
+            for new_label, name in enumerate(CLASS_NAMES):
+                if y in CLASSES[name]:
+                    new_test_labels.append(new_label)
+                    break
+        self.train_parent_Y = new_train_labels
+        self.test_parent_Y = new_test_labels
+
     def save_set(self, name, X, y,  directory=''):
         curr_dir = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe())))
         filename = os.path.join(curr_dir, directory + name + '.pkl')
-        pickle.dump((X, y), open(filename, 'wb'))
-
-
+        f = open(filename, 'wb')
+        pickle.dump((X, y), f, protocol=pickle.HIGHEST_PROTOCOL)
+        f.close()
 
     def convertBinaryValues(self, image_set=None, threshold=0.5):
-        return (image_set > threshold).astype(int)
+        binary = np.array(image_set) > threshold
+        return binary.astype(int)
 
     def create_thumbnail(self, size, img=None):
         print 'processing raw images'
-        mode = 'constant'
-        cval = 0.0
         if img:
-            return resize(img, (size, size), mode=mode, cval=cval)
+            return resize(img, (size, size))
         curr_dir = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe())))
         folders = os.walk(os.path.join(curr_dir, '../../data/train/'))
@@ -135,13 +169,15 @@ class Data(object):
                 if img.index('.jpg') == -1:
                     continue
                 image = imread(folder[0] + '/' + img)
-                image = resize(image, (size, size), mode=mode, cval=cval)
+                image = resize(image, (size, size))
                 image = np.array(image).ravel()
                 images.append(image)
-                targets.append(class_id)
+                # Important to put -1, to have it 0-based.
+                targets.append(class_id - 1)
         train = (images, targets)
-        pickle.dump(
-            train, open(curr_dir + '/train' + str(size) + '.pkl', 'wb'))
+        f = open(curr_dir + '/train' + str(size) + '.pkl', 'wb')
+        pickle.dump(train, f, protocol=pickle.HIGHEST_PROTOCOL)
+        f.close()
         return train
 
     def shuffle_data(self, X, y):
@@ -161,7 +197,10 @@ class Data(object):
             curr_dir, 'train' + str(size) + '_' + str(total) + '.pkl')
         if exists(previous_file):
             print 'loaded from smaller dump'
-            return pickle.load(open(previous_file, 'rb'))
+            f = open(previous_file, 'rb')
+            content = pickle.load(f)
+            f.close()
+            return content
         if not exists(filename):
             return self.create_thumbnail(size)
         return pickle.load(open(filename, 'rb'))
@@ -169,4 +208,4 @@ class Data(object):
 
 if __name__ == '__main__':
     d = Data(size=28)
-    d.create_categories()
+    print d.convertBinaryValues([0.3, 0.4, 0.1], 0.33)
