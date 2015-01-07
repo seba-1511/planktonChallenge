@@ -218,16 +218,23 @@ def train_pylearn_general(d=None):
     trainer.setup(nn, train_set)
     print 'Learning'
     test_X = vec_space.np_format_as(test_X, nn.get_input_space())
-    test_X = theano.shared(test_X)
+    # test_X = theano.shared(test_X)
     i = 0
+    X = nn.get_input_space().make_theano_batch()
+    Y = nn.fprop(X)
+    predict = theano.function([X], Y)
     while trainer.continue_learning(nn):
         trainer.train(dataset=train_set)
-        predictions = nn.fprop(test_X).eval()
-        print 'Logloss ' + str(i) + str(log_loss(test_y, predictions))
+        # predictions = predict(test_X)
+        predictions = []
+        for f in test_X:
+            predictions.append(predict([f, ]))
+        print 'Logloss ' + str(i) + ' ' + str(log_loss(test_y, predictions))
+        print 'Epoch ' + str(i)
         i += 1
     print 'Scoring'
     predictions = nn.fprop(test_X).eval()
-    print 'Logloss score: ' + str(online_score(predictions, test_y))
+    print 'Logloss score: ' + str(log_loss(predictions, test_y))
 
 if __name__ == '__main__':
     d = Data(size=60, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
