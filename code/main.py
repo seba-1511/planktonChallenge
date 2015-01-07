@@ -229,6 +229,7 @@ def train_pylearn_general(d=None):
         predictions = []
         for f in test_X:
             predictions.append(predict([f, ]))
+        debug()
         print 'Logloss ' + str(i) + ' ' + str(log_loss(test_y, predictions))
         print 'Epoch ' + str(i)
         i += 1
