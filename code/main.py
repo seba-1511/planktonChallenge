@@ -208,8 +208,7 @@ def train_pylearn_general(d=None):
     )
     trainer.setup(nn, train_set)
     print 'Learning'
-    test_X = test_X
-    test_X = vec_space.np_format_as(test_X, in_space)
+    test_X = vec_space.np_format_as(test_X, nn.get_input_space())
     test_X = theano.shared(test_X)
     i = 0
     while trainer.continue_learning(nn):
