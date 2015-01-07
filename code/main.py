@@ -168,6 +168,15 @@ def train_pylearn_general(d=None):
     train_set = DenseDesignMatrix(
         X=train_X, y=train_y, y_labels=len(CLASS_NAMES))
     print 'Setting up'
+    h = mlp.ConvRectifiedLinear(
+        layer_name='h',
+        output_channels=64,
+        irange=.05,
+        kernel_shape=[5, 5],
+        pool_shape=[4, 4],
+        pool_stride=[2, 2],
+        max_kernel_norm=1.9365
+    )
     h0 = mlp.ConvRectifiedLinear(
         layer_name='h0',
         output_channels=64,
@@ -193,12 +202,12 @@ def train_pylearn_general(d=None):
         # istdev=0.05
     )
     epochs = EpochCounter(10)
-    layers = [h0, h1, out]
+    layers = [h, h0, h1, out]
     in_space = Conv2DSpace(
-        shape=[28, 28],
+        shape=[d.size, d.size],
         num_channels=1
     )
-    vec_space = VectorSpace(784)
+    vec_space = VectorSpace(d.size ** 2)
     nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=None)
     trainer = sgd.SGD(
         learning_rate=.05,
@@ -221,7 +230,7 @@ def train_pylearn_general(d=None):
     print 'Logloss score: ' + str(online_score(predictions, test_y))
 
 if __name__ == '__main__':
-    d = Data(size=28, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
+    d = Data(size=60, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
 #    test_dbn(d)
 #    train_specialists(d=d)
     train_pylearn_general(d=d)
