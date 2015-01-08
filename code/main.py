@@ -228,9 +228,9 @@ def train_pylearn_general(d=None):
         # predictions = predict(test_X)
         predictions = []
         for f in test_X:
-            predictions.append(predict([f, ]))
+            predictions.append(predict([f, ])[0])
         print 'Logloss ' + str(i) + ' ' + str(
-            online_score(test_y, predictions)
+            online_score(predictions, test_y)
         )
         i += 1
     print 'Scoring'
@@ -239,11 +239,11 @@ def train_pylearn_general(d=None):
         predictions.append(predict([f, ]))
     debug()
     print 'Final sLogloss ' + str(i) + ' ' + str(
-        online_score(test_y, predictions)
+        online_score(predictions, test_y)
     )
 
 if __name__ == '__main__':
-    d = Data(size=100, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
+    d = Data(size=100, train_perc=0.5, test_perc=0.1, valid_perc=0.0)
 #    test_dbn(d)
 #    train_specialists(d=d)
     train_pylearn_general(d=d)
