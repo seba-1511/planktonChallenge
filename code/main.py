@@ -230,12 +230,18 @@ def train_pylearn_general(d=None):
         for f in test_X:
             predictions.append(predict([f, ]))
         debug()
-        print 'Logloss ' + str(i) + ' ' + str(log_loss(test_y, predictions))
-        print 'Epoch ' + str(i)
+        print 'Logloss ' + str(i) + ' ' + str(
+            online_score(test_y, predictions)
+        )
         i += 1
     print 'Scoring'
-    predictions = nn.fprop(test_X).eval()
-    print 'Logloss score: ' + str(log_loss(predictions, test_y))
+    predictions = []
+    for f in test_X:
+        predictions.append(predict([f, ]))
+    debug()
+    print 'Final sLogloss ' + str(i) + ' ' + str(
+        online_score(test_y, predictions)
+    )
 
 if __name__ == '__main__':
     d = Data(size=60, train_perc=0.8, test_perc=0.2, valid_perc=0.0)
