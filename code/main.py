@@ -211,7 +211,7 @@ def train_pylearn_general(d=None):
     vec_space = VectorSpace(d.size ** 2)
     nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=None)
     trainer = sgd.SGD(
-        learning_rate=.05,
+        learning_rate=.005,
         cost=dropout.Dropout(),
         batch_size=10,
         termination_criterion=epochs,

@@ -20,4 +20,8 @@ Parameter and initial learning rate summary:
 	softmax_b: 0.00499999988824
 	softmax_W: 0.00499999988824
 Compiling sgd_update...
-Compiling sgd_update done. Time elapsed: 13.556262 seconds
+Compiling sgd_update done. Time elapsed: 3.019619 seconds
+mod.cu(5511) : cutilCheckMsg() CUTIL CUDA error : filterActs: kernel execution failed : (9) invalid configuration argument.
+Learning
+--------------
+Training Epoch 0

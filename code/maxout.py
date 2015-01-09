@@ -16,7 +16,7 @@ from sklearn import neighbors
 
 from pdb import set_trace as debug
 
-from pylearn2.models import mlp
+from pylearn2.models import mlp, maxout
 from pylearn2.training_algorithms import sgd, learning_rule
 from pylearn2.termination_criteria import EpochCounter
 from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
@@ -169,27 +169,30 @@ def train_pylearn_general(d=None):
     train_set = DenseDesignMatrix(
         X=train_X, y=train_y, y_labels=len(CLASS_NAMES))
     print 'Setting up'
-    h = mlp.ConvRectifiedLinear(
+    h = maxout.MaxoutConvC01B(
         layer_name='h',
-        output_channels=64,
+        num_channels=64,
+	num_pieces=4,
         irange=.05,
         kernel_shape=[5, 5],
         pool_shape=[4, 4],
         pool_stride=[2, 2],
         # max_kernel_norm=1.9365
     )
-    h0 = mlp.ConvRectifiedLinear(
+    h0 = maxout.MaxoutConvC01B(
         layer_name='h0',
-        output_channels=64,
+        num_channels=64,
+	num_pieces=4,
         irange=.05,
         kernel_shape=[5, 5],
         pool_shape=[4, 4],
         pool_stride=[2, 2],
         # max_kernel_norm=1.9365
     )
-    h1 = mlp.ConvRectifiedLinear(
+    h1 = maxout.MaxoutConvC01B(
         layer_name='h1',
-        output_channels=64,
+        num_channels=64,
+	num_pieces=4,
         irange=.05,
         kernel_shape=[5, 5],
         pool_shape=[4, 4],
@@ -206,12 +209,13 @@ def train_pylearn_general(d=None):
     layers = [h, h0, h1, out]
     in_space = Conv2DSpace(
         shape=[d.size, d.size],
-        num_channels=1
+        num_channels=1,
+	axes=['c', 0, 1, 'b'],
     )
     vec_space = VectorSpace(d.size ** 2)
     nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=None)
     trainer = sgd.SGD(
-        learning_rate=.05,
+        learning_rate=.005,
         cost=dropout.Dropout(),
         batch_size=10,
         termination_criterion=epochs,
