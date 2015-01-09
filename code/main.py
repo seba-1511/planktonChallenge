@@ -228,7 +228,6 @@ def train_pylearn_general(d=None):
         # trainer.train(dataset=train_set)
         predictions = [predict([f, ])[0] for f in train_X]
         print np.min(predictions), np.max(predictions)
-        debug()
         print 'Logloss on train' + str(i) + ': ' + str(
             online_score(predictions, train_y)
         )
