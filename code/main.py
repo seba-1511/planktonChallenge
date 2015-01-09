@@ -211,11 +211,11 @@ def train_pylearn_general(d=None):
     vec_space = VectorSpace(d.size ** 2)
     nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=None)
     trainer = sgd.SGD(
-        learning_rate=.5,
-        cost=dropout.Dropout(),
+        learning_rate=.05,
+        # cost=dropout.Dropout(),
         batch_size=10,
         termination_criterion=epochs,
-        learning_rule=learning_rule.Momentum(init_momentum=0.8)
+        learning_rule=learning_rule.Momentum(init_momentum=0.5),
     )
     trainer.setup(nn, train_set)
     print 'Learning'
@@ -232,15 +232,15 @@ def train_pylearn_general(d=None):
         trainer.train(dataset=train_set)
         predictions = [predict([f, ])[0] for f in train_X]
         print np.min(predictions), np.max(predictions)
-        print 'Logloss on train' + str(online_score(predictions, train_y))
+        print 'Logloss on train ' + str(online_score(predictions, train_y))
         predictions = [predict([f, ])[0] for f in test_X]
         print np.min(predictions), np.max(predictions)
-        print 'Logloss on test' + str(online_score(predictions, test_y))
+        print 'Logloss on test ' + str(online_score(predictions, test_y))
         i += 1
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=100, train_perc=0.5, test_perc=0.1, valid_perc=0.0)
+    d = Data(size=100, train_perc=0.1, test_perc=0.1, valid_perc=0.0)
 #    test_dbn(d)
 #    train_specialists(d=d)
     train_pylearn_general(d=d)
