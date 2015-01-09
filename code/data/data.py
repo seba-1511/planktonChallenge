@@ -83,7 +83,7 @@ class Data(object):
         self.test_Y = targets[nb_train + nb_valid:total]
         saved = (data[:total], targets[:total])
         f = open('train' + str(size) + '_' + str(total_perc) + '.pkl', 'wb')
-        pickle.dump(saved, f, protocol=pickle.HIGHEST_PROTOCOL)
+        # pickle.dump(saved, f, protocol=pickle.HIGHEST_PROTOCOL)
         f.close()
 
     def create_categories(self):
