@@ -241,7 +241,6 @@ def train_pylearn_general(d=None):
     predictions = []
     for f in test_X:
         predictions.append(predict([f, ]))
-    debug()
     print 'Final sLogloss ' + str(i) + ' ' + str(
         online_score(predictions, test_y)
     )
