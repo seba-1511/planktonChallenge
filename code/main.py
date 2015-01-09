@@ -213,7 +213,7 @@ def train_pylearn_general(d=None):
     trainer = sgd.SGD(
         learning_rate=.05,
         cost=dropout.Dropout(),
-        batch_size=200,
+        batch_size=10,
         termination_criterion=epochs,
         learning_rule=learning_rule.Momentum(init_momentum=0.5),
     )
