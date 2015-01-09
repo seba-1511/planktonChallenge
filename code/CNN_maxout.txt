@@ -1,0 +1,27 @@
+Using gpu device 0: GRID K520
+loading data
+Setting up
+Input shape: (100, 100)
+Detector space: (96, 96)
+Output space: (47, 47)
+Input shape: (47, 47)
+Detector space: (43, 43)
+Output space: (21, 21)
+Input shape: (21, 21)
+Detector space: (17, 17)
+Output space: (8, 8)
+Parameter and initial learning rate summary:
+	h_W: 0.00499999988824
+	h_b: 0.00499999988824
+	h0_W: 0.00499999988824
+	h0_b: 0.00499999988824
+	h1_W: 0.00499999988824
+	h1_b: 0.00499999988824
+	softmax_b: 0.00499999988824
+	softmax_W: 0.00499999988824
+Compiling sgd_update...
+Compiling sgd_update done. Time elapsed: 3.019619 seconds
+mod.cu(5511) : cutilCheckMsg() CUTIL CUDA error : filterActs: kernel execution failed : (9) invalid configuration argument.
+Learning
+--------------
+Training Epoch 0
