@@ -21,6 +21,7 @@ from pylearn2.training_algorithms import sgd, learning_rule
 from pylearn2.termination_criteria import EpochCounter
 from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
 from pylearn2.space import Conv2DSpace, VectorSpace
+from pylearn2.costs.mlp import dropout
 
 warnings.filterwarnings("ignore")
 
@@ -175,7 +176,7 @@ def train_pylearn_general(d=None):
         kernel_shape=[5, 5],
         pool_shape=[4, 4],
         pool_stride=[2, 2],
-        max_kernel_norm=1.9365
+        # max_kernel_norm=1.9365
     )
     h0 = mlp.ConvRectifiedLinear(
         layer_name='h0',
@@ -184,7 +185,7 @@ def train_pylearn_general(d=None):
         kernel_shape=[5, 5],
         pool_shape=[4, 4],
         pool_stride=[2, 2],
-        max_kernel_norm=1.9365
+        # max_kernel_norm=1.9365
     )
     h1 = mlp.ConvRectifiedLinear(
         layer_name='h1',
@@ -193,7 +194,7 @@ def train_pylearn_general(d=None):
         kernel_shape=[5, 5],
         pool_shape=[4, 4],
         pool_stride=[2, 2],
-        max_kernel_norm=1.9365
+        # max_kernel_norm=1.9365
     )
     out = mlp.Softmax(
         n_classes=len(CLASS_NAMES),
@@ -210,10 +211,11 @@ def train_pylearn_general(d=None):
     vec_space = VectorSpace(d.size ** 2)
     nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=None)
     trainer = sgd.SGD(
-        learning_rate=.05,
+        learning_rate=.5,
+        cost=dropout.Dropout(),
         batch_size=10,
         termination_criterion=epochs,
-        learning_rule=learning_rule.Momentum(init_momentum=0.5)
+        learning_rule=learning_rule.Momentum(init_momentum=0.8)
     )
     trainer.setup(nn, train_set)
     print 'Learning'
@@ -225,25 +227,17 @@ def train_pylearn_general(d=None):
     Y = nn.fprop(X)
     predict = theano.function([X], Y)
     while trainer.continue_learning(nn):
-        # trainer.train(dataset=train_set)
+        print '--------------'
+        print 'Training Epoch ' + str(i)
+        trainer.train(dataset=train_set)
         predictions = [predict([f, ])[0] for f in train_X]
         print np.min(predictions), np.max(predictions)
-        print 'Logloss on train' + str(i) + ': ' + str(
-            online_score(predictions, train_y)
-        )
+        print 'Logloss on train' + str(online_score(predictions, train_y))
         predictions = [predict([f, ])[0] for f in test_X]
         print np.min(predictions), np.max(predictions)
-        print 'Logloss on test' + str(i) + ': ' + str(
-            online_score(predictions, test_y)
-        )
+        print 'Logloss on test' + str(online_score(predictions, test_y))
         i += 1
-    print 'Scoring'
-    predictions = []
-    for f in test_X:
-        predictions.append(predict([f, ]))
-    print 'Final sLogloss ' + str(i) + ' ' + str(
-        online_score(predictions, test_y)
-    )
+        print ' '
 
 if __name__ == '__main__':
     d = Data(size=100, train_perc=0.5, test_perc=0.1, valid_perc=0.0)
