@@ -12,7 +12,7 @@ from skimage.transform import resize, rotate, swirl
 TRAIN_PERCENT = 0.7
 VALID_PERCENT = 0.1
 TEST_PERCENT = 0.2
-SAVE = True
+SAVE = False
 
 CLASS_NAMES = (
     'Protists',
@@ -69,7 +69,7 @@ class Data(object):
         self.train_perc = train_perc
         self.valid_perc = valid_perc
         self.test_perc = test_perc
-        self.augmentation = 0
+        self.augmentation = augmentation
         data, targets = self.get_data(size)
         nb_train = int(self.train_perc * len(targets))
         nb_valid = int(self.valid_perc * len(targets))
@@ -230,6 +230,16 @@ class Data(object):
 
 
 if __name__ == '__main__':
+    import time
+    start = time.time()
+    d = Data(size=28, train_perc=0.1, valid_perc=0.0,
+             test_perc=0.1, augmentation=4)
+    end = time.time()
+    print 'Augmented:' + str(end - start)
+    print np.shape(d.train_X)
+    start = time.time()
     d = Data(size=28, train_perc=0.1, valid_perc=0.0,
              test_perc=0.1, augmentation=0)
+    end = time.time()
+    print 'Not Augmented:' + str(end - start)
     print np.shape(d.train_X)
