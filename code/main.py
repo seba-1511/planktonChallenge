@@ -159,6 +159,92 @@ def train_general(d=None):
 #    print log_loss(test_y, probs)
 
 
+def train_pylearn_specialists(d=None):
+    d.create_categories()
+    # for i, name in enumerate(CLASS_NAMES):
+    for i, name in enumerate(CLASS_NAMES[:3]):
+        print 'Training for ' + name
+        train_X = d.train_cat_X[name]
+        train_y = d.train_cat_Y[name]
+        test_X = d.test_cat_X[name]
+        test_y = d.test_cat_Y[name]
+        train_y = [
+            [1 if y == c else 0 for c, _ in enumerate(np.max(train_y))] for y in train_y]
+        train_y = np.array(train_y)
+        train_set = DenseDesignMatrix(
+            X=train_X, y=train_y, y_labels=len(CLASS_NAMES))
+        print 'Setting up'
+        # h = mlp.ConvRectifiedLinear(
+        #     layer_name='h',
+        #     output_channels=64,
+        #     irange=.05,
+        #     kernel_shape=[5, 5],
+        #     pool_shape=[4, 4],
+        #     pool_stride=[2, 2],
+        # max_kernel_norm=1.9365
+        # )
+        h0 = mlp.ConvRectifiedLinear(
+            layer_name='h0',
+            output_channels=64,
+            irange=.05,
+            kernel_shape=[5, 5],
+            pool_shape=[4, 4],
+            pool_stride=[2, 2],
+            # max_kernel_norm=1.9365
+        )
+        h1 = mlp.ConvRectifiedLinear(
+            layer_name='h1',
+            output_channels=64,
+            irange=.05,
+            kernel_shape=[5, 5],
+            pool_shape=[4, 4],
+            pool_stride=[2, 2],
+            # max_kernel_norm=1.9365
+        )
+        out = mlp.Softmax(
+            n_classes=len(CLASS_NAMES),
+            layer_name='output',
+            irange=.235,
+            # istdev=0.05
+        )
+        epochs = EpochCounter(20)
+        layers = [h0, h1, out]
+        in_space = Conv2DSpace(
+            shape=[d.size, d.size],
+            num_channels=1
+        )
+        vec_space = VectorSpace(d.size ** 2)
+        nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=None)
+        trainer = sgd.SGD(
+            learning_rate=.005,
+            cost=dropout.Dropout(),
+            batch_size=10,
+            termination_criterion=epochs,
+            learning_rule=learning_rule.Momentum(init_momentum=0.5),
+        )
+        trainer.setup(nn, train_set)
+        print 'Learning'
+        test_X = vec_space.np_format_as(test_X, nn.get_input_space())
+        train_X = vec_space.np_format_as(train_X, nn.get_input_space())
+        # test_X = theano.shared(test_X)
+        i = 0
+        X = nn.get_input_space().make_theano_batch()
+        Y = nn.fprop(X)
+        predict = theano.function([X], Y)
+        while trainer.continue_learning(nn):
+            print '--------------'
+            print 'Training Epoch ' + str(i)
+            trainer.train(dataset=train_set)
+            predictions = [predict([f, ])[0] for f in train_X]
+            print np.min(predictions), np.max(predictions)
+            print 'Logloss on train: ' + str(online_score(predictions, train_y))
+            predictions = [predict([f, ])[0] for f in test_X]
+            print np.min(predictions), np.max(predictions)
+            print 'Logloss on test: ' + str(online_score(predictions, test_y))
+            i += 1
+            print ' '
+
+
 def train_pylearn_general(d=None):
     d.create_parent_labels()
     train_X = np.array(d.train_X)
@@ -246,9 +332,9 @@ if __name__ == '__main__':
              valid_perc=0.0, augmentation=4)
 #    test_dbn(d)
     print 'Augmented: '
-    train_specialists(d=d)
+    train_pylearn_specialists(d=d)
     print 'Not Augmented: '
     d = Data(size=32, train_perc=0.3, test_perc=0.1,
              valid_perc=0.0, augmentation=0)
-    train_specialists(d=d)
+    train_pylearn_specialists(d=d)
     # train_pylearn_general(d=d)
