@@ -203,7 +203,7 @@ def train_pylearn_general(d=None):
         # istdev=0.05
     )
     epochs = EpochCounter(200)
-    layers = [h, h0, h1, out]
+    layers = [h0, h1, out]
     in_space = Conv2DSpace(
         shape=[d.size, d.size],
         num_channels=1
@@ -211,11 +211,11 @@ def train_pylearn_general(d=None):
     vec_space = VectorSpace(d.size ** 2)
     nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=None)
     trainer = sgd.SGD(
-        learning_rate=.005,
+        learning_rate=.05,
         cost=dropout.Dropout(),
         batch_size=10,
         termination_criterion=epochs,
-        learning_rule=learning_rule.Momentum(init_momentum=0.5),
+        learning_rule=learning_rule.Momentum(init_momentum=0.8),
     )
     trainer.setup(nn, train_set)
     print 'Learning'
@@ -240,7 +240,7 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=100, train_perc=0.9, test_perc=0.1, valid_perc=0.0)
+    d = Data(size=100, train_perc=0.3, test_perc=0.1, valid_perc=0.0)
 #    test_dbn(d)
 #    train_specialists(d=d)
     train_pylearn_general(d=d)
