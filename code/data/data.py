@@ -12,6 +12,7 @@ from skimage.transform import resize, rotate, swirl
 TRAIN_PERCENT = 0.7
 VALID_PERCENT = 0.1
 TEST_PERCENT = 0.2
+SAVE = True
 
 CLASS_NAMES = (
     'Protists',
@@ -82,10 +83,12 @@ class Data(object):
         self.valid_Y = targets[nb_train:nb_train + nb_valid]
         self.test_X = data[nb_train + nb_valid:total]
         self.test_Y = targets[nb_train + nb_valid:total]
-        saved = (data[:total], targets[:total])
-        f = open('train' + str(size) + '_' + str(total_perc) + '.pkl', 'wb')
+        name = 'train' + str(size) + '_' + str(total_perc)
+        self.save_set(name, data[:total], targets[:total])
+        # saved = (data[:total], targets[:total])
+        # f = open('train' + str(size) + '_' + str(total_perc) + '.pkl', 'wb')
         # pickle.dump(saved, f, protocol=pickle.HIGHEST_PROTOCOL)
-        f.close()
+        # f.close()
 
     def create_categories(self):
         train_classes_X = dict()
@@ -143,12 +146,13 @@ class Data(object):
         self.test_parent_Y = new_test_labels
 
     def save_set(self, name, X, y,  directory=''):
-        curr_dir = os.path.dirname(
-            os.path.abspath(inspect.getfile(inspect.currentframe())))
-        filename = os.path.join(curr_dir, directory + name + '.pkl')
-        f = open(filename, 'wb')
-        pickle.dump((X, y), f, protocol=pickle.HIGHEST_PROTOCOL)
-        f.close()
+        if SAVE:
+            curr_dir = os.path.dirname(
+                os.path.abspath(inspect.getfile(inspect.currentframe())))
+            filename = os.path.join(curr_dir, directory + name + '.pkl')
+            f = open(filename, 'wb')
+            pickle.dump((X, y), f, protocol=pickle.HIGHEST_PROTOCOL)
+            f.close()
 
     def convertBinaryValues(self, image_set=None, threshold=0.5):
         binary = np.array(image_set) > threshold
@@ -193,9 +197,10 @@ class Data(object):
                 images.extend(new_images)
                 targets.extend(new_targets)
         train = (images, targets)
-        f = open(curr_dir + '/train' + str(size) + '.pkl', 'wb')
-        pickle.dump(train, f, protocol=pickle.HIGHEST_PROTOCOL)
-        f.close()
+        self.save_set('train' + str(size), images, targets)
+        # f = open(curr_dir + '/train' + str(size) + '.pkl', 'wb')
+        # pickle.dump(train, f, protocol=pickle.HIGHEST_PROTOCOL)
+        # f.close()
         return train
 
     def shuffle_data(self, X, y):
@@ -226,5 +231,5 @@ class Data(object):
 
 if __name__ == '__main__':
     d = Data(size=28, train_perc=0.1, valid_perc=0.0,
-             test_perc=0.1, augmentation=4)
+             test_perc=0.1, augmentation=0)
     print np.shape(d.train_X)
