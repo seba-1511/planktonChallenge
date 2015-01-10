@@ -170,7 +170,7 @@ class Data(object):
         )
         for i in xrange(self.augmentation):
             img = image_modifiers[i](image)
-            images += img.ravel()
+            images.append(img.ravel())
             targets.append(target)
         return images, targets
 
