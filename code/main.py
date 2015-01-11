@@ -169,24 +169,48 @@ def train_pylearn_general(d=None):
     train_set = DenseDesignMatrix(
         X=train_X, y=train_y, y_labels=len(CLASS_NAMES))
     print 'Setting up'
-    h0 = mlp.ConvRectifiedLinear(
-        layer_name='h0',
-        output_channels=64,
+    c0 = mlp.ConvRectifiedLinear(
+        layer_name='c0',
+        output_channels=96,
         irange=.05,
         kernel_shape=[5, 5],
+        pool_shape=[4, 4],
+        pool_stride=[4, 4],
+        # max_kernel_norm=1.9365
+    )
+    m0 = mlp.max_pool(
+        bc01=c0.get_input_space().make_theano_batch(),
+        pool_shape=(4, 4),
+        pool_stride=(2, 2),
+        image_shape=(d.size, d.size),
+    )
+    c1 = mlp.ConvRectifiedLinear(
+        layer_name='c1',
+        output_channels=128,
+        irange=.05,
+        kernel_shape=[3, 3],
         pool_shape=[4, 4],
         pool_stride=[2, 2],
         # max_kernel_norm=1.9365
     )
-    h1 = mlp.ConvRectifiedLinear(
-        layer_name='h1',
-        output_channels=64,
+    c2 = mlp.ConvRectifiedLinear(
+        layer_name='c2',
+        output_channels=128,
         irange=.05,
-        kernel_shape=[5, 5],
+        kernel_shape=[3, 3],
         pool_shape=[4, 4],
         pool_stride=[2, 2],
         # max_kernel_norm=1.9365
     )
+    m2 = mlp.max_pool(
+        bc01=c2.get_input_space().make_theano_batch(),
+        pool_shape=(3, 3),
+        pool_stride=(2, 2),
+        image_shape=(d.size, d.size),
+    )
+    # f0 = mlp.FlattenerLayer()
+    r0 = mlp.RectifiedLinear()
+    r1 = mlp.RectifiedLinear()
     out = mlp.Softmax(
         n_classes=len(CLASS_NAMES),
         layer_name='output',
@@ -194,7 +218,7 @@ def train_pylearn_general(d=None):
         # istdev=0.05
     )
     epochs = EpochCounter(200)
-    layers = [h0, h1, out]
+    layers = [c0, m0, c1, c2, m2, r0, r1, out]
     in_space = Conv2DSpace(
         shape=[d.size, d.size],
         num_channels=1
@@ -206,7 +230,7 @@ def train_pylearn_general(d=None):
         cost=dropout.Dropout(),
         batch_size=10,
         termination_criterion=epochs,
-        learning_rule=learning_rule.Momentum(init_momentum=0.8),
+        learning_rule=learning_rule.Momentum(init_momentum=0.9),
     )
     trainer.setup(nn, train_set)
     print 'Learning'
