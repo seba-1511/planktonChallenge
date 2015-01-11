@@ -221,10 +221,11 @@ def train_pylearn_general(d=None):
         # istdev=0.05
     )
     epochs = EpochCounter(200)
-    layers = [c0, m0, c2, out]
+    layers = [m0, out]
     in_space = Conv2DSpace(
         shape=[d.size, d.size],
-        num_channels=1
+        num_channels=1,
+        axes=['c', 0, 1, 'b'],
     )
     vec_space = VectorSpace(d.size ** 2)
     nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=None)
