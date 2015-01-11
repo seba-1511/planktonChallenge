@@ -159,10 +159,10 @@ def train_pylearn_general(d=None):
         layer_name='m0',
         num_channels=96,
         num_pieces=4,
-        # num_units=512,
         kernel_shape=(5, 5),
         pool_shape=(4, 4),
         pool_stride=(2, 2),
+	irange=.235,
     )
     c1 = mlp.ConvRectifiedLinear(
         layer_name='c1',
@@ -187,8 +187,8 @@ def train_pylearn_general(d=None):
         # pool_stride=[2, 2],
         output_channels=128,
         irange=.05,
-        kernel_shape=[5, 5],
-        pool_shape=[4, 4],
+        kernel_shape=[2, 2],
+        pool_shape=[2, 2],
         pool_stride=[2, 2],
         # max_kernel_norm=1.9365
     )
@@ -199,20 +199,23 @@ def train_pylearn_general(d=None):
     #     pool_stride=(2, 2),
     #     image_shape=(d.size, d.size),
     # )
-    m1 = maxout.Maxout(
+    m1 = maxout.MaxoutConvC01B(
         layer_name='m1',
-        # num_channels=128,
+        num_channels=128,
         num_pieces=4,
-        num_units=512,
-        # kernel_shape=(3, 3),
+        # num_units=512,
+        kernel_shape=(2, 2),
+	pool_shape=(2, 2),
+	pool_stride=(2, 2),
+	irange=.235,
     )
     r0 = mlp.RectifiedLinear(
         layer_name='r0',
         dim=512
     )
-    r1 = mlp.RectifiedLinear(
+    r1 = mlp.Linear(
         layer_name='r1',
-        dim=512
+        dim=121
     )
     out = mlp.Softmax(
         n_classes=len(CLASS_NAMES),
@@ -221,7 +224,7 @@ def train_pylearn_general(d=None):
         # istdev=0.05
     )
     epochs = EpochCounter(200)
-    layers = [m0, out]
+    layers = [c0, m0, c2, m1, out]
     in_space = Conv2DSpace(
         shape=[d.size, d.size],
         num_channels=1,
@@ -230,7 +233,7 @@ def train_pylearn_general(d=None):
     vec_space = VectorSpace(d.size ** 2)
     nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=None)
     trainer = sgd.SGD(
-        learning_rate=0.01,
+        learning_rate=0.005,
         cost=dropout.Dropout(),
         batch_size=batch_size,
         termination_criterion=epochs,
@@ -259,7 +262,7 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=60, train_perc=0.1, test_perc=0.1,
+    d = Data(size=75, train_perc=0.1, test_perc=0.1,
              valid_perc=0.0, augmentation=0)
 #    test_dbn(d)
 #    train_specialists(d=d)
