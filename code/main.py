@@ -2,6 +2,7 @@
 
 import warnings
 import theano
+import pylearn2
 import numpy as np
 import cPickle as pk
 
@@ -16,7 +17,9 @@ from sklearn import neighbors
 
 from pdb import set_trace as debug
 
-from pylearn2.models import mlp
+from theano import tensor as T
+
+from pylearn2.models import mlp, maxout
 from pylearn2.training_algorithms import sgd, learning_rule
 from pylearn2.termination_criteria import EpochCounter
 from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
@@ -123,40 +126,6 @@ def train_general(d=None):
 #    print log_loss(test_y, probs)
 
 
-def train_general(d=None):
-    d.create_parent_labels()
-    print 'One-Hot labeling'
-    train_X = d.train_X
-    train_y = d.train_parent_Y
-    test_X = d.test_X
-    test_y = d.test_parent_Y
-    print 'creating RBM'
-    rbm = RBM(n_components=3600)
-    train_X = rbm.fit_transform(train_X, train_y)
-    test_X = rbm.transform(test_X)
-    print 'creating CNN'
-    cnn = CNN(
-        alpha=0.1,
-        batch_size=100,
-        train_X=train_X,
-        train_Y=train_y,
-        test_X=test_X,
-        test_Y=test_y,
-        epochs=50,
-        instance_id=None)
-    print 'Training CNN'
-    cnn.train()
-    print 'Making predictions'
-    predictions = []
-    for X in test_X:
-        predictions.append(cnn.predict([X, ]))
-    print 'Score for general: ' + str(online_score(predictions, test_y))
-#    svm = SVC(probability=True)
-#    svm.fit(train_X, train_y)
-#    probs = svm.predict_proba(test_X)
-#    print log_loss(test_y, probs)
-
-
 def train_pylearn_general(d=None):
     d.create_parent_labels()
     train_X = np.array(d.train_X)
@@ -169,48 +138,82 @@ def train_pylearn_general(d=None):
     train_set = DenseDesignMatrix(
         X=train_X, y=train_y, y_labels=len(CLASS_NAMES))
     print 'Setting up'
+    batch_size = 10
     c0 = mlp.ConvRectifiedLinear(
         layer_name='c0',
         output_channels=96,
         irange=.05,
         kernel_shape=[5, 5],
         pool_shape=[4, 4],
-        pool_stride=[4, 4],
+        pool_stride=[2, 2],
         # max_kernel_norm=1.9365
     )
-    m0 = mlp.max_pool(
-        bc01=c0.get_input_space().make_theano_batch(),
+    bc01 = T.matrix().reshape((batch_size, 96, d.size, d.size))
+    # m0 = mlp.max_pool(
+    #     bc01=bc01,
+    #     pool_shape=(4, 4),
+    #     pool_stride=(2, 2),
+    #     image_shape=(d.size, d.size),
+    # )
+    m0 = maxout.MaxoutConvC01B(
+        layer_name='m0',
+        num_channels=96,
+        num_pieces=4,
+        # num_units=512,
+        kernel_shape=(5, 5),
         pool_shape=(4, 4),
         pool_stride=(2, 2),
-        image_shape=(d.size, d.size),
     )
     c1 = mlp.ConvRectifiedLinear(
         layer_name='c1',
+        # output_channels=64,
+        # irange=.05,
+        # kernel_shape=[5, 5],
+        # pool_shape=[4, 4],
+        # pool_stride=[2, 2],
         output_channels=128,
         irange=.05,
-        kernel_shape=[3, 3],
+        kernel_shape=[5, 5],
         pool_shape=[4, 4],
         pool_stride=[2, 2],
         # max_kernel_norm=1.9365
     )
     c2 = mlp.ConvRectifiedLinear(
         layer_name='c2',
+        # output_channels=64,
+        # irange=.05,
+        # kernel_shape=[5, 5],
+        # pool_shape=[4, 4],
+        # pool_stride=[2, 2],
         output_channels=128,
         irange=.05,
-        kernel_shape=[3, 3],
+        kernel_shape=[5, 5],
         pool_shape=[4, 4],
         pool_stride=[2, 2],
         # max_kernel_norm=1.9365
     )
-    m2 = mlp.max_pool(
-        bc01=c2.get_input_space().make_theano_batch(),
-        pool_shape=(3, 3),
-        pool_stride=(2, 2),
-        image_shape=(d.size, d.size),
+    bc01 = T.matrix().reshape((batch_size, 128, d.size, d.size))
+    # m1 = mlp.max_pool(
+    #     bc01=bc01,
+    #     pool_shape=(3, 3),
+    #     pool_stride=(2, 2),
+    #     image_shape=(d.size, d.size),
+    # )
+    m1 = maxout.Maxout(
+        layer_name='m1',
+        # num_channels=128,
+        num_pieces=4,
+        num_units=512,
+        # kernel_shape=(3, 3),
     )
-    # f0 = mlp.FlattenerLayer()
-    r0 = mlp.RectifiedLinear()
-    r1 = mlp.RectifiedLinear()
+    r0 = mlp.RectifiedLinear(
+        layer_name='r0',
+        dim=512
+    )
+    r1 = mlp.RectifiedLinear(
+        layer_name='r1',
+        dim=512
+    )
     out = mlp.Softmax(
         n_classes=len(CLASS_NAMES),
         layer_name='output',
@@ -218,7 +221,7 @@ def train_pylearn_general(d=None):
         # istdev=0.05
     )
     epochs = EpochCounter(200)
-    layers = [c0, m0, c1, c2, m2, r0, r1, out]
+    layers = [c0, m0, c2, out]
     in_space = Conv2DSpace(
         shape=[d.size, d.size],
         num_channels=1
@@ -228,7 +231,7 @@ def train_pylearn_general(d=None):
     trainer = sgd.SGD(
         learning_rate=0.01,
         cost=dropout.Dropout(),
-        batch_size=10,
+        batch_size=batch_size,
         termination_criterion=epochs,
         learning_rule=learning_rule.Momentum(init_momentum=0.9),
     )
@@ -255,8 +258,8 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=60, train_perc=0.9, test_perc=0.1,
-             valid_perc=0.0, augmentation=3)
+    d = Data(size=60, train_perc=0.1, test_perc=0.1,
+             valid_perc=0.0, augmentation=0)
 #    test_dbn(d)
 #    train_specialists(d=d)
     train_pylearn_general(d=d)

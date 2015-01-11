@@ -12,7 +12,7 @@ from skimage.transform import resize, rotate, swirl
 TRAIN_PERCENT = 0.7
 VALID_PERCENT = 0.1
 TEST_PERCENT = 0.2
-SAVE = False
+SAVE = True
 
 CLASS_NAMES = (
     'Protists',
