@@ -1,0 +1,20 @@
+Using gpu device 0: GRID K520
+loading data
+processing raw images
+Augmented: 
+Setting up
+Input shape: (60, 60)
+Detector space: (56, 56)
+Output space: (27, 27)
+Input shape: (27, 27)
+Detector space: (23, 23)
+Output space: (11, 11)
+Parameter and initial learning rate summary:
+	h0_W: 1.0
+	h0_b: 1.0
+	h1_W: 1.0
+	h1_b: 1.0
+	softmax_b: 1.0
+	softmax_W: 1.0
+Compiling sgd_update...
+Compiling sgd_update done. Time elapsed: 10.158678 seconds

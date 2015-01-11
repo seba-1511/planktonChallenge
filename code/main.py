@@ -169,15 +169,6 @@ def train_pylearn_general(d=None):
     train_set = DenseDesignMatrix(
         X=train_X, y=train_y, y_labels=len(CLASS_NAMES))
     print 'Setting up'
-    # h = mlp.ConvRectifiedLinear(
-    #     layer_name='h',
-    #     output_channels=64,
-    #     irange=.05,
-    #     kernel_shape=[5, 5],
-    #     pool_shape=[4, 4],
-    #     pool_stride=[2, 2],
-    #     # max_kernel_norm=1.9365
-    # )
     h0 = mlp.ConvRectifiedLinear(
         layer_name='h0',
         output_channels=64,
@@ -211,11 +202,11 @@ def train_pylearn_general(d=None):
     vec_space = VectorSpace(d.size ** 2)
     nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=None)
     trainer = sgd.SGD(
-        learning_rate=.05,
+        learning_rate=0.01,
         cost=dropout.Dropout(),
         batch_size=10,
         termination_criterion=epochs,
-        learning_rule=learning_rule.Momentum(init_momentum=0.5),
+        learning_rule=learning_rule.Momentum(init_momentum=0.8),
     )
     trainer.setup(nn, train_set)
     print 'Learning'
@@ -240,7 +231,8 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=100, train_perc=0.3, test_perc=0.1, valid_perc=0.0)
+    d = Data(size=60, train_perc=0.9, test_perc=0.1,
+             valid_perc=0.0, augmentation=3)
 #    test_dbn(d)
 #    train_specialists(d=d)
     train_pylearn_general(d=d)
