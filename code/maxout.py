@@ -169,33 +169,43 @@ def train_pylearn_general(d=None):
     train_set = DenseDesignMatrix(
         X=train_X, y=train_y, y_labels=len(CLASS_NAMES))
     print 'Setting up'
-    h = maxout.MaxoutConvC01B(
+    h = mlp.ConvRectifiedLinear(
         layer_name='h',
-        num_channels=64,
-	num_pieces=4,
+        output_channels=64,
+        # num_pieces=4,
         irange=.05,
         kernel_shape=[5, 5],
         pool_shape=[4, 4],
         pool_stride=[2, 2],
         # max_kernel_norm=1.9365
     )
-    h0 = maxout.MaxoutConvC01B(
+    h0 = mlp.ConvRectifiedLinear(
         layer_name='h0',
-        num_channels=64,
-	num_pieces=4,
+        output_channels=64,
+        # num_pieces=4,
         irange=.05,
         kernel_shape=[5, 5],
         pool_shape=[4, 4],
         pool_stride=[2, 2],
         # max_kernel_norm=1.9365
     )
-    h1 = maxout.MaxoutConvC01B(
-        layer_name='h1',
-        num_channels=64,
-	num_pieces=4,
+    hflat = mlp.FlattenerLayer(mlp.ConvRectifiedLinear(
+        layer_name='hEx',
+        output_channels=64,
+        # num_pieces=4,
         irange=.05,
         kernel_shape=[5, 5],
         pool_shape=[4, 4],
+        pool_stride=[2, 2],
+    ))
+    h1 = maxout.Maxout(
+        layer_name='h1',
+        # num_channels=64,
+        num_pieces=4,
+        num_units=500,
+        irange=.05,
+        # kernel_shape=[5, 5],
+        # pool_shape=[4, 4],
         pool_stride=[2, 2],
         # max_kernel_norm=1.9365
     )
@@ -205,15 +215,15 @@ def train_pylearn_general(d=None):
         irange=.235,
         # istdev=0.05
     )
-    epochs = EpochCounter(200)
+    epochs = EpochCounter(20)
     layers = [h, h0, h1, out]
     in_space = Conv2DSpace(
         shape=[d.size, d.size],
         num_channels=1,
-	axes=['c', 0, 1, 'b'],
+        # axes=['c', 0, 1, 'b'],
     )
     vec_space = VectorSpace(d.size ** 2)
-    nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=None)
+    nn = mlp.MLP(layers=layers, input_space=in_space)
     trainer = sgd.SGD(
         learning_rate=.005,
         cost=dropout.Dropout(),
@@ -244,7 +254,7 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=100, train_perc=0.9, test_perc=0.1, valid_perc=0.0)
+    d = Data(size=28, train_perc=0.1, test_perc=0.1, valid_perc=0.0)
 #    test_dbn(d)
 #    train_specialists(d=d)
     train_pylearn_general(d=d)
