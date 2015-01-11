@@ -164,12 +164,12 @@ def train_pylearn_specialists(d=None):
     # for i, name in enumerate(CLASS_NAMES):
     for i, name in enumerate(CLASS_NAMES[:3]):
         print 'Training for ' + name
-        train_X = d.train_cat_X[name]
-        train_y = d.train_cat_Y[name]
-        test_X = d.test_cat_X[name]
-        test_y = d.test_cat_Y[name]
+        train_X = np.array(d.train_cat_X[name])
+        train_y = np.array(d.train_cat_Y[name])
+        test_X = np.array(d.test_cat_X[name])
+        test_y = np.array(d.test_cat_Y[name])
         train_y = [
-            [1 if y == c else 0 for c, _ in enumerate(np.max(train_y))] for y in train_y]
+            [1 if y == c else 0 for c in xrange(int(np.max(train_y)))] for y in train_y]
         train_y = np.array(train_y)
         train_set = DenseDesignMatrix(
             X=train_X, y=train_y, y_labels=len(CLASS_NAMES))
@@ -328,13 +328,14 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=32, train_perc=0.3, test_perc=0.1,
-             valid_perc=0.0, augmentation=4)
+    d = Data(size=100, train_perc=0.3, test_perc=0.1,
+             valid_perc=0.0, augmentation=5)
 #    test_dbn(d)
     print 'Augmented: '
-    train_pylearn_specialists(d=d)
-    print 'Not Augmented: '
-    d = Data(size=32, train_perc=0.3, test_perc=0.1,
-             valid_perc=0.0, augmentation=0)
-    train_pylearn_specialists(d=d)
+    # train_pylearn_specialists(d=d)
+    train_pylearn_general(d=d)
+    # print 'Not Augmented: '
+    # d = Data(size=32, train_perc=0.3, test_perc=0.1,
+    #          valid_perc=0.0, augmentation=0)
+    # train_pylearn_specialists(d=d)
     # train_pylearn_general(d=d)

@@ -189,7 +189,15 @@ def train_pylearn_general(d=None):
         pool_stride=[2, 2],
         # max_kernel_norm=1.9365
     )
-    hflat = mlp.FlattenerLayer(mlp.ConvRectifiedLinear())
+    hflat = mlp.FlattenerLayer(mlp.ConvRectifiedLinear(
+        layer_name='hEx',
+        output_channels=64,
+        # num_pieces=4,
+        irange=.05,
+        kernel_shape=[5, 5],
+        pool_shape=[4, 4],
+        pool_stride=[2, 2],
+    ))
     h1 = maxout.Maxout(
         layer_name='h1',
         # num_channels=64,
@@ -208,11 +216,11 @@ def train_pylearn_general(d=None):
         # istdev=0.05
     )
     epochs = EpochCounter(20)
-    layers = [h, h0, hflat, h1, out]
+    layers = [h, h0, h1, out]
     in_space = Conv2DSpace(
         shape=[d.size, d.size],
         num_channels=1,
-        axes=['c', 0, 1, 'b'],
+        # axes=['c', 0, 1, 'b'],
     )
     vec_space = VectorSpace(d.size ** 2)
     nn = mlp.MLP(layers=layers, input_space=in_space)
