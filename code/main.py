@@ -21,6 +21,7 @@ from theano import tensor as T
 
 from pylearn2.models import mlp, maxout
 from pylearn2.training_algorithms import sgd, learning_rule
+from pylearn2.training_algorithms.sgd import MonitorBasedLRAdjuster
 from pylearn2.termination_criteria import EpochCounter
 from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
 from pylearn2.space import Conv2DSpace, VectorSpace
@@ -139,31 +140,32 @@ def train_pylearn_general(d=None):
     train_set = DenseDesignMatrix(
         X=train_X, y=train_y, y_labels=np.unique(d.train_Y).shape[0])
     print 'Setting up'
-    batch_size = 10
+    batch_size = 5
     c0 = mlp.ConvRectifiedLinear(
         layer_name='c0',
         output_channels=96,
         irange=.05,
         kernel_shape=[5, 5],
         pool_shape=[4, 4],
-        pool_stride=[2, 2],
+        pool_stride=[4, 4],
         # max_kernel_norm=1.9365
     )
     # bc01 = T.matrix().reshape((batch_size, 96, d.size, d.size))
     m0 = maxout.MaxoutConvC01B(
         layer_name='m0',
         num_channels=96,
-        num_pieces=4,
+        num_pieces=3,
         kernel_shape=(5, 5),
         pool_shape=(4, 4),
-        pool_stride=(2, 2),
-        irange=.235,
+        pool_stride=(4, 4),
+        irange=0.235,
+        pad=2,
     )
     c1 = mlp.ConvRectifiedLinear(
         layer_name='c1',
         output_channels=128,
         irange=.05,
-        kernel_shape=[5, 5],
+        kernel_shape=[3, 3],
         pool_shape=[4, 4],
         pool_stride=[2, 2],
         # max_kernel_norm=1.9365
@@ -180,45 +182,46 @@ def train_pylearn_general(d=None):
     m1 = maxout.MaxoutConvC01B(
         layer_name='m1',
         num_channels=128,
-        num_pieces=4,
-        # num_units=512,
-        kernel_shape=(2, 2),
-        pool_shape=(2, 2),
+        num_pieces=3,
+        kernel_shape=(3, 3),
+        pool_shape=(4, 4),
         pool_stride=(2, 2),
-        irange=.235,
+        irange=0.235,
+        pad=1,
     )
     r0 = mlp.RectifiedLinear(
         layer_name='r0',
         dim=512,
-        sparse_init=3500,
+        sparse_init=512,
     )
     r1 = mlp.RectifiedLinear(
         layer_name='r1',
-        dim=121,
+        dim=512,
         sparse_init=512,
     )
     out = mlp.Softmax(
         n_classes=np.unique(d.train_Y).shape[0],
         layer_name='output',
-        irange=.235,        # istdev=0.05
+        irange=.235,
     )
     epochs = EpochCounter(200)
-    layers = [m0, m1, r0, r1, out]
+    layers = [c0, c1, r0, r1, out]
     decay_coeffs = [0.002, 0.002, 0.002, 0.002, 1.5]
     in_space = Conv2DSpace(
         shape=[d.size, d.size],
         num_channels=1,
-        axes=['c', 0, 1, 'b'],
+        # axes=['c', 0, 1, 'b'],
     )
     vec_space = VectorSpace(d.size ** 2)
-    nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=None)
+    nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=batch_size)
     trainer = sgd.SGD(
-        learning_rate=1e-1,
+        learning_rate=1e-7,
         cost=SumOfCosts(costs=[
             dropout.Dropout(),
             WeightDecay(decay_coeffs),
         ]),
         batch_size=batch_size,
+        train_iteration_mode='even_shuffled_sequential',
         termination_criterion=epochs,
         learning_rule=learning_rule.Momentum(init_momentum=0.9),
     )
@@ -230,22 +233,29 @@ def train_pylearn_general(d=None):
     X = nn.get_input_space().make_theano_batch()
     Y = nn.fprop(X)
     predict = theano.function([X], Y)
+    best = 40
+    best_iter = -1
     while trainer.continue_learning(nn):
         print '--------------'
         print 'Training Epoch ' + str(i)
         trainer.train(dataset=train_set)
-        predictions = [predict([f, ])[0] for f in train_X]
+        print 'Evaluating...'
+        # predictions = [predict([f, ])[0] for f in train_X]
+        # print np.min(predictions), np.max(predictions)
+        # print 'Logloss on train: ' + str(online_score(predictions, train_y))
+        # predictions = [predict([f, ])[0] for f in test_X]
+        predictions = predict(test_X)
         print np.min(predictions), np.max(predictions)
-        print 'Logloss on train: ' + str(online_score(predictions, train_y))
-        predictions = [predict([f, ])[0] for f in test_X]
-        print np.min(predictions), np.max(predictions)
-        print 'Logloss on test: ' + str(online_score(predictions, test_y))
+        score = online_score(predictions, test_y)
+        print 'Logloss on test: ' + str(score)
+        best, best_iter = best, best_iter if best < score else score, i
+        print 'Current best: ' + str(best) + ' at iter ' + str(best_iter)
         i += 1
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=35, train_perc=0.6, test_perc=0.1,
-             valid_perc=0.0, augmentation=0)
+    d = Data(size=48, train_perc=0.9, test_perc=0.015,
+             valid_perc=0.0, augmentation=3)
 #    test_dbn(d)
 #    train_specialists(d=d)
     train_pylearn_general(d=d)
