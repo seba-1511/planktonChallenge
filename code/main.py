@@ -127,16 +127,16 @@ def train_general(d=None):
 
 
 def train_pylearn_general(d=None):
-    d.create_parent_labels()
+    # d.create_parent_labels()
     train_X = np.array(d.train_X)
     train_y = np.array(d.train_parent_Y)
     test_X = np.array(d.test_X)
     test_y = np.array(d.test_parent_Y)
-    train_y = [
-        [1 if y == c else 0 for c, _ in enumerate(CLASS_NAMES)] for y in train_y]
+    train_y = [[1 if y == c else 0 for c in xrange(
+        np.unique(d.train_Y).shape[0])] for y in train_y]
     train_y = np.array(train_y)
     train_set = DenseDesignMatrix(
-        X=train_X, y=train_y, y_labels=len(CLASS_NAMES))
+        X=train_X, y=train_y, y_labels=np.unique(d.train_Y).shape[0])
     print 'Setting up'
     batch_size = 10
     c0 = mlp.ConvRectifiedLinear(
@@ -148,13 +148,7 @@ def train_pylearn_general(d=None):
         pool_stride=[2, 2],
         # max_kernel_norm=1.9365
     )
-    bc01 = T.matrix().reshape((batch_size, 96, d.size, d.size))
-    # m0 = mlp.max_pool(
-    #     bc01=bc01,
-    #     pool_shape=(4, 4),
-    #     pool_stride=(2, 2),
-    #     image_shape=(d.size, d.size),
-    # )
+    # bc01 = T.matrix().reshape((batch_size, 96, d.size, d.size))
     m0 = maxout.MaxoutConvC01B(
         layer_name='m0',
         num_channels=96,
@@ -162,15 +156,10 @@ def train_pylearn_general(d=None):
         kernel_shape=(5, 5),
         pool_shape=(4, 4),
         pool_stride=(2, 2),
-	irange=.235,
+        irange=.235,
     )
     c1 = mlp.ConvRectifiedLinear(
         layer_name='c1',
-        # output_channels=64,
-        # irange=.05,
-        # kernel_shape=[5, 5],
-        # pool_shape=[4, 4],
-        # pool_stride=[2, 2],
         output_channels=128,
         irange=.05,
         kernel_shape=[5, 5],
@@ -180,11 +169,6 @@ def train_pylearn_general(d=None):
     )
     c2 = mlp.ConvRectifiedLinear(
         layer_name='c2',
-        # output_channels=64,
-        # irange=.05,
-        # kernel_shape=[5, 5],
-        # pool_shape=[4, 4],
-        # pool_stride=[2, 2],
         output_channels=128,
         irange=.05,
         kernel_shape=[2, 2],
@@ -192,7 +176,7 @@ def train_pylearn_general(d=None):
         pool_stride=[2, 2],
         # max_kernel_norm=1.9365
     )
-    bc01 = T.matrix().reshape((batch_size, 128, d.size, d.size))
+    # bc01 = T.matrix().reshape((batch_size, 128, d.size, d.size))
     # m1 = mlp.max_pool(
     #     bc01=bc01,
     #     pool_shape=(3, 3),
@@ -205,9 +189,9 @@ def train_pylearn_general(d=None):
         num_pieces=4,
         # num_units=512,
         kernel_shape=(2, 2),
-	pool_shape=(2, 2),
-	pool_stride=(2, 2),
-	irange=.235,
+        pool_shape=(2, 2),
+        pool_stride=(2, 2),
+        irange=.235,
     )
     r0 = mlp.RectifiedLinear(
         layer_name='r0',
@@ -218,17 +202,17 @@ def train_pylearn_general(d=None):
         dim=121
     )
     out = mlp.Softmax(
-        n_classes=len(CLASS_NAMES),
+        n_classes=np.unique(d.train_Y).shape[0],
         layer_name='output',
         irange=.235,
         # istdev=0.05
     )
     epochs = EpochCounter(200)
-    layers = [c0, m0, c2, m1, out]
+    layers = [c0, out]
     in_space = Conv2DSpace(
         shape=[d.size, d.size],
         num_channels=1,
-        axes=['c', 0, 1, 'b'],
+        # axes=['c', 0, 1, 'b'],
     )
     vec_space = VectorSpace(d.size ** 2)
     nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=None)
@@ -262,7 +246,7 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=75, train_perc=0.1, test_perc=0.1,
+    d = Data(size=60, train_perc=0.9, test_perc=0.1,
              valid_perc=0.0, augmentation=0)
 #    test_dbn(d)
 #    train_specialists(d=d)
