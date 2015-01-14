@@ -248,13 +248,13 @@ def train_pylearn_general(d=None):
         print np.min(predictions), np.max(predictions)
         score = online_score(predictions, test_y)
         print 'Logloss on test: ' + str(score)
-        best, best_iter = best, best_iter if best < score else score, i
+        best, best_iter = (best, best_iter) if best < score else (score, i)
         print 'Current best: ' + str(best) + ' at iter ' + str(best_iter)
         i += 1
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=48, train_perc=0.9, test_perc=0.015,
+    d = Data(size=60, train_perc=0.9, test_perc=0.015,
              valid_perc=0.0, augmentation=3)
 #    test_dbn(d)
 #    train_specialists(d=d)
