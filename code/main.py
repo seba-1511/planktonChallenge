@@ -189,30 +189,31 @@ def train_pylearn_general(d=None):
     )
     r0 = mlp.RectifiedLinear(
         layer_name='r0',
-        dim=512
+        dim=512,
+        sparse_init=3500,
     )
-    r1 = mlp.Linear(
+    r1 = mlp.RectifiedLinear(
         layer_name='r1',
-        dim=121
+        dim=121,
+        sparse_init=512,
     )
     out = mlp.Softmax(
         n_classes=np.unique(d.train_Y).shape[0],
         layer_name='output',
-        irange=.235,
-        # istdev=0.05
+        irange=.235,        # istdev=0.05
     )
     epochs = EpochCounter(200)
-    layers = [m0, m1, out]
-    decay_coeffs = [0.002, 0.002, 1.5]
+    layers = [m0, m1, r0, r1, out]
+    decay_coeffs = [0.002, 0.002, 0.002, 0.002, 1.5]
     in_space = Conv2DSpace(
         shape=[d.size, d.size],
         num_channels=1,
-        # axes=['c', 0, 1, 'b'],
+        axes=['c', 0, 1, 'b'],
     )
     vec_space = VectorSpace(d.size ** 2)
     nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=None)
     trainer = sgd.SGD(
-        learning_rate=0.005,
+        learning_rate=1e-1,
         cost=SumOfCosts(costs=[
             dropout.Dropout(),
             WeightDecay(decay_coeffs),
@@ -225,7 +226,6 @@ def train_pylearn_general(d=None):
     print 'Learning'
     test_X = vec_space.np_format_as(test_X, nn.get_input_space())
     train_X = vec_space.np_format_as(train_X, nn.get_input_space())
-    # test_X = theano.shared(test_X)
     i = 0
     X = nn.get_input_space().make_theano_batch()
     Y = nn.fprop(X)
@@ -244,7 +244,7 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=60, train_perc=0.6, test_perc=0.1,
+    d = Data(size=35, train_perc=0.6, test_perc=0.1,
              valid_perc=0.0, augmentation=0)
 #    test_dbn(d)
 #    train_specialists(d=d)
