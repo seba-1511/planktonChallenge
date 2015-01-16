@@ -232,14 +232,14 @@ class Data(object):
 if __name__ == '__main__':
     import time
     start = time.time()
-    d = Data(size=28, train_perc=0.1, valid_perc=0.0,
-             test_perc=0.1, augmentation=4)
-    end = time.time()
-    print 'Augmented:' + str(end - start)
-    print np.shape(d.train_X)
-    start = time.time()
-    d = Data(size=28, train_perc=0.1, valid_perc=0.0,
+    d = Data(size=100, train_perc=0.9, valid_perc=0.0,
              test_perc=0.1, augmentation=0)
     end = time.time()
-    print 'Not Augmented:' + str(end - start)
-    print np.shape(d.train_X)
+    # print 'Augmented:' + str(end - start)
+    # print np.shape(d.train_X)
+    # start = time.time()
+    # d = Data(size=28, train_perc=0.1, valid_perc=0.0,
+    #          test_perc=0.1, augmentation=0)
+    # end = time.time()
+    # print 'Not Augmented:' + str(end - start)
+    # print np.shape(d.train_X)

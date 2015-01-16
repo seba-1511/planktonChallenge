@@ -262,7 +262,7 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=75, train_perc=0.1, test_perc=0.1,
+    d = Data(size=28, train_perc=0.1, test_perc=0.1,
              valid_perc=0.0, augmentation=0)
 #    test_dbn(d)
 #    train_specialists(d=d)
