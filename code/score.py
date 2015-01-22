@@ -31,10 +31,12 @@ def online_score(predictions=[[]], targets=[]):
     targets = np.argmin(targets, axis=0) if len(targets.shape) > 1 else targets
     if np.shape(predictions)[1] == 1:
         return -np.average(
-            [log(max(epsilon, p[0][t] / p[0].sum())) for p, t in zip(predictions, targets)]
+            [log(max(epsilon, p[0][t] / p[0].sum()))
+             for p, t in zip(predictions, targets)]
         )
     return -np.average(
-        [log(max(epsilon, p[t] / p.sum())) for p, t in zip(predictions, targets)]
+        [log(max(epsilon, p[t] / p.sum()))
+         for p, t in zip(predictions, targets)]
     )
     # score = 0.0
     # for i, entry in enumerate(predictions):
