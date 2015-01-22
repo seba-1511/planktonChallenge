@@ -206,7 +206,7 @@ def train_pylearn_general(d=None):
     )
     epochs = EpochCounter(200)
     layers = [c0, c1, out]
-    decay_coeffs = [0.002, 0.002, 0.002, 0.002, 1.5]
+    decay_coeffs = [0.002, 0.002, 1.5]
     in_space = Conv2DSpace(
         shape=[d.size, d.size],
         num_channels=1,
