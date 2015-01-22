@@ -244,7 +244,7 @@ def train_pylearn_general(d=None):
         print '--------------'
         print 'Training Epoch ' + str(i)
         trainer.train(dataset=train_set)
-        predictions = [predict([f, ])[0] for f in train_X]
+        predictions = [predict([f, ])[0] for f in train_X[:2000]]
         print np.min(predictions), np.max(predictions)
         print 'Logloss on train: ' + str(online_score(predictions, train_y))
         predictions = [predict([f, ])[0] for f in test_X]
