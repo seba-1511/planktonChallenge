@@ -130,11 +130,13 @@ def train_general(d=None):
 
 
 def train_pylearn_general(d=None):
-    # d.create_parent_labels()
+    d.create_parent_labels()
     train_X = np.array(d.train_X)
-    train_y = np.array(d.train_Y)
+    train_y = np.array(d.train_parent_Y)
+    # train_y = np.array(d.train_Y)
     test_X = np.array(d.test_X)
-    test_y = np.array(d.test_Y)
+    test_y = np.array(d.test_parent_Y)
+    # test_y = np.array(d.test_Y)
     train_y = [[1 if y == c else 0 for c in xrange(
         np.unique(d.train_Y).shape[0])] for y in train_y]
     train_y = np.array(train_y)
@@ -205,7 +207,7 @@ def train_pylearn_general(d=None):
         layer_name='output',
         irange=.235,
     )
-    epochs = EpochCounter(200)
+    epochs = EpochCounter(1000)
     layers = [m0, m1, out]
     decay_coeffs = [0.002, 0.002, 1.5]
     in_space = Conv2DSpace(
@@ -255,7 +257,7 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=32, train_perc=0.1, test_perc=0.015,
+    d = Data(size=32, train_perc=0.95, test_perc=0.015,
              valid_perc=0.0, augmentation=0)
 #    test_dbn(d)
 #    train_specialists(d=d)

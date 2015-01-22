@@ -11,7 +11,6 @@ from skimage.transform import resize, rotate, swirl
 from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
 from random import randint
 from math import sqrt
-from multiprocessing import Pool
 
 TRAIN_PERCENT = 0.7
 VALID_PERCENT = 0.1
@@ -64,7 +63,6 @@ CLASSES = {
     'Unknowns': (118, 119, 120),
 }
 
-pp = Pool()
 
 class RotationalDDM(DenseDesignMatrix):
 
@@ -72,18 +70,10 @@ class RotationalDDM(DenseDesignMatrix):
         self.original_X = X
         super(RotationalDDM, self).__init__(X=X, y=y, y_labels=y_labels)
 
-    def rotate(self, x):
-        angle = randint(0, 359)
-        width = sqrt(x.shape[0])
-        x = x.reshape(width, width)
-        return rotate(x, angle).ravel()
-
-
     def iterator(self, mode=None, batch_size=None, num_batches=None, rng=None, data_specs=None, return_tuple=False):
         width = sqrt(self.original_X.shape[1])
-        self.X = pp.map(self.rotate, self.original_X)
-        # self.X = [rotate(x.reshape(width, width), randint(0, 359)).ravel()
-        #           for x in self.original_X]
+        self.X = [rotate(x.reshape(width, width), randint(0, 359)).ravel()
+                  for x in self.original_X]
         self.X = np.array(self.X)
         print 'Rotated'
         return super(RotationalDDM, self).iterator(
