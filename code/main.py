@@ -207,7 +207,7 @@ def train_pylearn_general(d=None):
         layer_name='output',
         irange=.235,
     )
-    epochs = EpochCounter(200)
+    epochs = EpochCounter(500)
     layers = [c0, c1, out]
     decay_coeffs = [0.002, 0.002, 1.5]
     in_space = Conv2DSpace(
@@ -257,7 +257,7 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=32, train_perc=0.1, test_perc=0.015,
+    d = Data(size=32, train_perc=0.95, test_perc=0.015,
              valid_perc=0.0, augmentation=0)
 #    test_dbn(d)
 #    train_specialists(d=d)
