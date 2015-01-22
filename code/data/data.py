@@ -9,6 +9,7 @@ from os.path import exists
 from skimage.io import imread
 from skimage.transform import resize, rotate, swirl
 from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
+from random import randint
 
 TRAIN_PERCENT = 0.7
 VALID_PERCENT = 0.1
@@ -62,10 +63,26 @@ CLASSES = {
 }
 
 
+from pdb import set_trace as debug
+
+
 class RotationalDDM(DenseDesignMatrix):
 
     def __init__(self, X, y, y_labels=None):
-        super(RotationalDDM, self).baz(X=x, y=y, y_labels=y_labels)
+        self.original_X = X
+        super(RotationalDDM, self).__init__(X=X, y=y, y_labels=y_labels)
+
+    def iterator(self, mode=None, batch_size=None, num_batches=None, rng=None, data_specs=None, return_tuple=False):
+        self.X = [rotate(x, randint(0, 359)) for x in self.original_X]
+        debug()
+        return super(RotationalDDM, self).iterator(
+            mode=mode,
+            batch_size=batch_size,
+            num_batches=num_batches,
+            rng=rng,
+            data_specs=data_specs,
+            return_tuple=return_tuple
+        )
 
 
 class Data(object):

@@ -6,7 +6,7 @@ import pylearn2
 import numpy as np
 import cPickle as pk
 
-from data.data import Data
+from data.data import Data, RotationalDDM
 from classifier.kmeans import KMeans
 from classifier.cnn import CNN
 from score import online_score
@@ -129,15 +129,15 @@ def train_general(d=None):
 
 
 def train_pylearn_general(d=None):
-    d.create_parent_labels()
+    # d.create_parent_labels()
     train_X = np.array(d.train_X)
-    train_y = np.array(d.train_parent_Y)
+    train_y = np.array(d.train_Y)
     test_X = np.array(d.test_X)
-    test_y = np.array(d.test_parent_Y)
+    test_y = np.array(d.test_Y)
     train_y = [[1 if y == c else 0 for c in xrange(
         np.unique(d.train_Y).shape[0])] for y in train_y]
     train_y = np.array(train_y)
-    train_set = DenseDesignMatrix(
+    train_set = RotationalDDM(
         X=train_X, y=train_y, y_labels=np.unique(d.train_Y).shape[0])
     print 'Setting up'
     batch_size = 5
