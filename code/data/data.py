@@ -64,9 +64,6 @@ CLASSES = {
 }
 
 
-from pdb import set_trace as debug
-
-
 class RotationalDDM(DenseDesignMatrix):
 
     def __init__(self, X, y, y_labels=None):
@@ -74,10 +71,10 @@ class RotationalDDM(DenseDesignMatrix):
         super(RotationalDDM, self).__init__(X=X, y=y, y_labels=y_labels)
 
     def iterator(self, mode=None, batch_size=None, num_batches=None, rng=None, data_specs=None, return_tuple=False):
-        debug()
         width = sqrt(self.original_X.shape[1])
         self.X = [rotate(x.reshape(width, width), randint(0, 359)).ravel()
                   for x in self.original_X]
+        self.X = np.array(self.X)
         return super(RotationalDDM, self).iterator(
             mode=mode,
             batch_size=batch_size,

@@ -3,7 +3,7 @@
 import numpy as np
 import scipy as sp
 from math import log
-
+from pdb import set_trace as d
 
 def logloss(act, pred):
     """ Vectorised computation of logloss """
