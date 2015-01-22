@@ -242,6 +242,7 @@ def train_pylearn_general(d=None):
         trainer.train(dataset=train_set)
         print 'Evaluating...'
         predictions = [predict([f, ])[0] for f in train_X[:2000]]
+        predictions = predictions[:, 0]
         print np.min(predictions), np.max(predictions)
         counts = itemfreq(predictions)
         print 'Count of train predictions: ', counts
@@ -250,6 +251,7 @@ def train_pylearn_general(d=None):
         print 'Logloss on train: ' + str(online_score(predictions, train_y[:2000]))
         predictions = [predict([f, ])[0] for f in test_X]
         predictions = predict(test_X)
+        predictions = predictions[:, 0]
         print np.min(predictions), np.max(predictions)
         counts = itemfreq(predictions)
         print 'Count of test predictions: ', counts
