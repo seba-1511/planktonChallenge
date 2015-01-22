@@ -14,6 +14,7 @@ from sklearn.neural_network import BernoulliRBM as RBM
 from sklearn.metrics import log_loss
 
 from sklearn import neighbors
+from scipy.stats import itemfreq
 
 from pdb import set_trace as debug
 
@@ -244,19 +245,19 @@ def train_pylearn_general(d=None):
         print 'Evaluating...'
         predictions = [predict([f, ])[0] for f in train_X[:2000]]
         print np.min(predictions), np.max(predictions)
-        unique, counts = np.unique(predictions, return_counts=True)
-        print 'Count of train predictions: ', (unique, counts)
-        unique, counts = np.unique(train_y[:2000], return_counts=True)
-        print 'Count of train labels: ', (unique, counts)
+        counts = itemfreq(predictions)
+        print 'Count of train predictions: ', counts
+        counts = itemfreq(train_y[:2000])
+        print 'Count of train labels: ', counts
         print 'Logloss on train: ' + str(online_score(predictions, train_y))
         predictions = [predict([f, ])[0] for f in test_X]
         predictions = predict(test_X)
         print np.min(predictions), np.max(predictions)
         score = online_score(predictions, test_y)
-        unique, counts = np.unique(predictions, return_counts=True)
-        print 'Count of test predictions: ', (unique, counts)
-        unique, counts = np.unique(test_y, return_counts=True)
-        print 'Count of test labels: ', (unique, counts)
+        counts = itemfreq(predictions)
+        print 'Count of test predictions: ', counts
+        counts = itemfreq(test_y)
+        print 'Count of test labels: ', counts
         print 'Logloss on test: ' + str(score)
         best, best_iter = (best, best_iter) if best < score else (score, i)
         print 'Current best: ' + str(best) + ' at iter ' + str(best_iter)
