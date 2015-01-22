@@ -243,23 +243,13 @@ def train_pylearn_general(d=None):
         print 'Training Epoch ' + str(i)
         trainer.train(dataset=train_set)
         print 'Evaluating...'
-        predictions = [predict([f, ])[0] for f in train_X[:2000]]
-        predictions = predictions[:, 0]
+        predictions = np.array([predict([f, ])[0] for f in train_X[:2000]])
         print np.min(predictions), np.max(predictions)
-        counts = itemfreq(predictions)
-        print 'Count of train predictions: ', counts
-        counts = itemfreq(train_y[:2000])
-        print 'Count of train labels: ', counts
         print 'Logloss on train: ' + str(online_score(predictions, train_y))
-        predictions = [predict([f, ])[0] for f in test_X]
-        predictions = predict(test_X)
-        predictions = predictions[:, 0]
+        # predictions = [predict([f, ])[0] for f in test_X]
+        predictions = np.array(predict(test_X))
         print np.min(predictions), np.max(predictions)
         score = online_score(predictions, test_y)
-        counts = itemfreq(predictions)
-        print 'Count of test predictions: ', counts
-        counts = itemfreq(test_y)
-        print 'Count of test labels: ', counts
         print 'Logloss on test: ' + str(score)
         best, best_iter = (best, best_iter) if best < score else (score, i)
         print 'Current best: ' + str(best) + ' at iter ' + str(best_iter)
@@ -267,7 +257,7 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=100, train_perc=0.95, test_perc=0.015,
+    d = Data(size=32, train_perc=0.1, test_perc=0.015,
              valid_perc=0.0, augmentation=0)
 #    test_dbn(d)
 #    train_specialists(d=d)
