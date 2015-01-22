@@ -8,6 +8,7 @@ import numpy as np
 from os.path import exists
 from skimage.io import imread
 from skimage.transform import resize, rotate, swirl
+from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
 
 TRAIN_PERCENT = 0.7
 VALID_PERCENT = 0.1
@@ -59,6 +60,12 @@ CLASSES = {
     'Trichodesmium': (108, 109, 110, 111),
     'Unknowns': (118, 119, 120),
 }
+
+
+class RotationalDDM(DenseDesignMatrix):
+
+    def __init__(self, X, y, y_labels=None):
+        super(RotationalDDM, self).baz(X=x, y=y, y_labels=y_labels)
 
 
 class Data(object):
