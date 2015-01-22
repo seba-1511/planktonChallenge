@@ -140,7 +140,7 @@ def train_pylearn_general(d=None):
     train_set = RotationalDDM(
         X=train_X, y=train_y, y_labels=np.unique(d.train_Y).shape[0])
     print 'Setting up'
-    batch_size = 5
+    batch_size = 128
     c0 = mlp.ConvRectifiedLinear(
         layer_name='c0',
         output_channels=96,
@@ -215,10 +215,10 @@ def train_pylearn_general(d=None):
     vec_space = VectorSpace(d.size ** 2)
     nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=batch_size)
     trainer = sgd.SGD(
-        learning_rate=1e-7,
+        learning_rate=1e-4,
         cost=SumOfCosts(costs=[
             dropout.Dropout(),
-            WeightDecay(decay_coeffs),
+            # WeightDecay(decay_coeffs),
         ]),
         batch_size=batch_size,
         train_iteration_mode='even_shuffled_sequential',
@@ -242,10 +242,18 @@ def train_pylearn_general(d=None):
         print 'Evaluating...'
         predictions = [predict([f, ])[0] for f in train_X[:2000]]
         print np.min(predictions), np.max(predictions)
-        print 'Logloss on train: ' + str(online_score(predictions, train_y))
+        unique, counts = np.unique(predictions, return_counts=True)
+        print 'Count of train predictions: ', (unique, counts)
+        unique, counts = np.unique(train_y[:2000], return_counts=True)
+        print 'Count of train labels: ', (unique, counts)
+        print 'Logloss on train: ' + str(online_score(predictions, train_y[:2000]))
         predictions = [predict([f, ])[0] for f in test_X]
         predictions = predict(test_X)
         print np.min(predictions), np.max(predictions)
+        unique, counts = np.unique(predictions, return_counts=True)
+        print 'Count of test predictions: ', (unique, counts)
+        unique, counts = np.unique(test_y, return_counts=True)
+        print 'Count of test labels: ', (unique, counts)
         score = online_score(predictions, test_y)
         print 'Logloss on test: ' + str(score)
         best, best_iter = (best, best_iter) if best < score else (score, i)
@@ -254,7 +262,7 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=40, train_perc=0.95, test_perc=0.015,
+    d = Data(size=100, train_perc=0.95, test_perc=0.015,
              valid_perc=0.0, augmentation=0)
 #    test_dbn(d)
 #    train_specialists(d=d)
