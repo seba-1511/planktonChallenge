@@ -139,13 +139,13 @@ def train_general(d=None):
 
 
 def train_pylearn_general(d=None):
-    d.create_parent_labels()
+    # d.create_parent_labels()
     train_X = np.array(d.train_X)
-    train_y = np.array(d.train_parent_Y)
-    # train_y = np.array(d.train_Y)
+    # train_y = np.array(d.train_parent_Y)
+    train_y = np.array(d.train_Y)
     test_X = np.array(d.test_X)
-    test_y = np.array(d.test_parent_Y)
-    # test_y = np.array(d.test_Y)
+    # test_y = np.array(d.test_parent_Y)
+    test_y = np.array(d.test_Y)
     # train_y = convertOneHot(train_y)
     train_y = [[1 if y == c else 0 for c in xrange(
         np.unique(d.train_Y).shape[0])] for y in train_y]
@@ -202,6 +202,16 @@ def train_pylearn_general(d=None):
         irange=0.05,
         W_lr_scale=0.25,
     )
+    m2 = maxout.MaxoutConvC01B(
+        layer_name='m2',
+	num_channels=128,
+	num_pieces=6,
+	kernel_shape=(2, 2),
+	pool_shape=(2, 2),
+	pool_stride=(2, 2),
+	irange=0.05,
+	W_lr_scale=0.25,
+    )
     r0 = mlp.RectifiedLinear(
         layer_name='r0',
         dim=512,
@@ -218,8 +228,8 @@ def train_pylearn_general(d=None):
         irange=.235,
     )
     epochs = EpochCounter(1000)
-    layers = [m0, m1, out]
-    decay_coeffs = [0.002, 0.002, 1.5]
+    layers = [m0, m1, m2, out]
+    decay_coeffs = [0.002, 0.002, 0.002, 1.5]
     in_space = Conv2DSpace(
         shape=[d.size, d.size],
         num_channels=1,
@@ -228,10 +238,10 @@ def train_pylearn_general(d=None):
     vec_space = VectorSpace(d.size ** 2)
     nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=batch_size)
     trainer = sgd.SGD(
-        learning_rate=1e-4,
+        learning_rate=5e-7,
         cost=SumOfCosts(costs=[
             dropout.Dropout(),
-            # WeightDecay(decay_coeffs),
+            WeightDecay(decay_coeffs),
         ]),
         batch_size=batch_size,
         train_iteration_mode='even_shuffled_sequential',
@@ -267,7 +277,7 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=32, train_perc=0.95, test_perc=0.01,
+    d = Data(size=40, train_perc=0.95, test_perc=0.015,
              valid_perc=0.0, augmentation=0)
 #    test_dbn(d)
 #    train_specialists(d=d)
