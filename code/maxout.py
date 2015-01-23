@@ -212,6 +212,10 @@ def train_pylearn_general(d=None):
 	irange=0.05,
 	W_lr_scale=0.25,
     )
+#    m3 = maxout.ConvC01B(
+#	layer_name='m3',
+#	num_channels=
+    #)
     r0 = mlp.RectifiedLinear(
         layer_name='r0',
         dim=512,
@@ -228,8 +232,8 @@ def train_pylearn_general(d=None):
         irange=.235,
     )
     epochs = EpochCounter(1000)
-    layers = [m0, m1, m2, out]
-    decay_coeffs = [0.002, 0.002, 0.002, 1.5]
+    layers = [m0, m1, m2, r0, out]
+    decay_coeffs = [0.002, 0.002, 0.002, 0.002, 1.5]
     in_space = Conv2DSpace(
         shape=[d.size, d.size],
         num_channels=1,
