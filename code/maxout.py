@@ -36,12 +36,15 @@ NB_CLUSTERS = 20
 CLASS_NAMES = ('Protists', 'Crustaceans', 'PelagicTunicates', 'Artifacts', 'Chaetognaths', 'Planktons', 'Copepods', 'Ctenophores', 'ShrimpLike', 'Detritus',
                'Diotoms', 'Echinoderms', 'GelatinousZoolankton', 'Fish', 'Gastropods', 'Hydromedusae', 'InvertebrateLarvae', 'Siphonophores', 'Trichodesmium', 'Unknowns')
 
+
 def convertOneHot(data):
     idx = theano.tensor.lvector()
     z = theano.tensor.zeros((idx.shape[0], data))
-    one_hot = theano.tensor.set_subtensor(z[theano.tensor.arange(idx.shape[0]), idx], 1)
+    one_hot = theano.tensor.set_subtensor(
+        z[theano.tensor.arange(idx.shape[0]), idx], 1)
     f = theano.function([idx], one_hot)
     return f(data).eval()
+
 
 def train_steroids_knn(d=None):
     kclf = KMeans(clusters=NB_CLUSTERS - 1).train(d.train_X)
@@ -143,9 +146,9 @@ def train_pylearn_general(d=None):
     test_X = np.array(d.test_X)
     test_y = np.array(d.test_parent_Y)
     # test_y = np.array(d.test_Y)
-    train_y = convertOneHot(train_y)
-#[[1 if y == c else 0 for c in xrange(
-#        np.unique(d.train_Y).shape[0])] for y in train_y]
+    # train_y = convertOneHot(train_y)
+    train_y = [[1 if y == c else 0 for c in xrange(
+        np.unique(d.train_Y).shape[0])] for y in train_y]
     train_y = np.array(train_y)
     train_set = RotationalDDM(
         X=train_X, y=train_y, y_labels=np.unique(d.train_Y).shape[0])
@@ -169,6 +172,7 @@ def train_pylearn_general(d=None):
         pool_shape=(4, 4),
         pool_stride=(4, 4),
         irange=0.235,
+        W_lr_scale=0.25,
         pad=2,
     )
     c1 = mlp.ConvRectifiedLinear(
@@ -197,6 +201,7 @@ def train_pylearn_general(d=None):
         pool_shape=(4, 4),
         pool_stride=(4, 4),
         irange=0.235,
+        W_lr_scale=0.25,
         pad=1,
     )
     r0 = mlp.RectifiedLinear(
@@ -264,7 +269,7 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=100, train_perc=0.95, test_perc=0.01,
+    d = Data(size=32, train_perc=0.95, test_perc=0.01,
              valid_perc=0.0, augmentation=0)
 #    test_dbn(d)
 #    train_specialists(d=d)

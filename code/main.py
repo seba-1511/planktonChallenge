@@ -151,6 +151,7 @@ def train_pylearn_general(d=None):
         kernel_shape=[5, 5],
         pool_shape=[4, 4],
         pool_stride=[4, 4],
+        W_lr_scale=0.25,
         # max_kernel_norm=1.9365
     )
     # bc01 = T.matrix().reshape((batch_size, 96, d.size, d.size))
@@ -171,6 +172,7 @@ def train_pylearn_general(d=None):
         kernel_shape=[3, 3],
         pool_shape=[4, 4],
         pool_stride=[2, 2],
+        W_lr_scale=0.25,
         # max_kernel_norm=1.9365
     )
     c2 = mlp.ConvRectifiedLinear(
@@ -180,6 +182,7 @@ def train_pylearn_general(d=None):
         kernel_shape=[2, 2],
         pool_shape=[2, 2],
         pool_stride=[2, 2],
+        W_lr_scale=0.25,
         # max_kernel_norm=1.9365
     )
     # m1 = maxout.MaxoutConvC01B(
