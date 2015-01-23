@@ -267,7 +267,8 @@ def train_pylearn_general(d=None):
         print 'Training Epoch ' + str(i)
         trainer.train(dataset=train_set)
         print 'Evaluating...'
-        predictions = [predict([f, ])[0] for f in train_X[:2000]]
+#        predictions = [predict([f, ])[0] for f in train_X[:2000]]
+	predictions = predict(train_X[:2000])
         print np.min(predictions), np.max(predictions)
         print 'Logloss on train: ' + str(online_score(predictions, train_y[:2000]))
         # predictions = [predict([f, ])[0] for f in test_X]
@@ -281,7 +282,7 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=40, train_perc=0.95, test_perc=0.015,
+    d = Data(size=48, train_perc=0.95, test_perc=0.015,
              valid_perc=0.0, augmentation=0)
 #    test_dbn(d)
 #    train_specialists(d=d)
