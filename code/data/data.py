@@ -15,7 +15,7 @@ from math import sqrt
 TRAIN_PERCENT = 0.7
 VALID_PERCENT = 0.1
 TEST_PERCENT = 0.2
-SAVE = False
+SAVE = True
 
 CLASS_NAMES = (
     'Protists',
@@ -64,16 +64,32 @@ CLASSES = {
 }
 
 
+def print_images(images, folder='cropped/'):
+    import imageio as imio
+    width = sqrt(images.shape[1])
+    for i, img in enumerate(images):
+        img = img.reshape(width, width)
+        imio.imsave(folder + str(i) + '.jpg', img)
+
+
 class RotationalDDM(DenseDesignMatrix):
 
     def __init__(self, X, y, y_labels=None):
         self.original_X = X
         super(RotationalDDM, self).__init__(X=X, y=y, y_labels=y_labels)
 
-    def iterator(self, mode=None, batch_size=None, num_batches=None, rng=None, data_specs=None, return_tuple=False):
-        width = sqrt(self.original_X.shape[1])
-        self.X = [rotate(x.reshape(width, width), randint(0, 359)).ravel()
-                  for x in self.original_X]
+    def rotation(self, x):
+        width = sqrt(x.shape[0])
+        angle = randint(0, 359)
+        img = x.reshape(width, width)
+        return rotate(img, angle, mode='nearest').ravel()
+
+    def parallel_rotate(self, X):
+        return [self.rotation(x) for x in X]
+
+    def iterator(self, mode=None, batch_size=None, num_batches=None, rng=None,
+                 data_specs=None, return_tuple=False):
+        self.X = self.parallel_rotate(self.original_X)
         self.X = np.array(self.X)
         print 'Rotated'
         return super(RotationalDDM, self).iterator(
@@ -101,6 +117,7 @@ class Data(object):
         nb_test = int(self.test_perc * len(targets))
         total = nb_train + nb_valid + nb_test
         total_perc = self.train_perc + self.valid_perc + self.test_perc
+        data = np.around(data, 4)
         data, targets = self.shuffle_data(data[:total], targets[:total])
         self.train_X = data[:nb_train]
         self.train_Y = targets[:nb_train]
@@ -110,10 +127,6 @@ class Data(object):
         self.test_Y = targets[nb_train + nb_valid:total]
         name = 'train' + str(size) + '_' + str(total_perc)
         self.save_set(name, data[:total], targets[:total])
-        # saved = (data[:total], targets[:total])
-        # f = open('train' + str(size) + '_' + str(total_perc) + '.pkl', 'wb')
-        # pickle.dump(saved, f, protocol=pickle.HIGHEST_PROTOCOL)
-        # f.close()
 
     def create_categories(self):
         train_classes_X = dict()

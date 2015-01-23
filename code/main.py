@@ -192,6 +192,18 @@ def train_pylearn_general(d=None):
     #     irange=0.235,
     #     pad=1,
     # )
+    sp0 = mlp.SoftmaxPool(
+        detector_layer_dim=16,
+        layer_name='sp0',
+        pool_size=4,
+        sparse_init=512,
+    )
+    sp1 = mlp.SoftmaxPool(
+        detector_layer_dim=16,
+        layer_name='sp1',
+        pool_size=4,
+        sparse_init=512,
+    )
     r0 = mlp.RectifiedLinear(
         layer_name='r0',
         dim=512,
@@ -208,8 +220,8 @@ def train_pylearn_general(d=None):
         irange=.235,
     )
     epochs = EpochCounter(500)
-    layers = [c0, c1, out]
-    decay_coeffs = [0.002, 0.002, 1.5]
+    layers = [c0, c1, sp1, out]
+    decay_coeffs = [0.002, 0.002, 0.002, 1.5]
     in_space = Conv2DSpace(
         shape=[d.size, d.size],
         num_channels=1,
@@ -257,7 +269,7 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=32, train_perc=0.95, test_perc=0.015,
+    d = Data(size=32, train_perc=0.1, test_perc=0.015,
              valid_perc=0.0, augmentation=0)
 #    test_dbn(d)
 #    train_specialists(d=d)
