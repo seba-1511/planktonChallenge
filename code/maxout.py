@@ -139,6 +139,7 @@ def train_general(d=None):
 
 
 def train_pylearn_general(d=None):
+    d.create_categories()
     # d.create_parent_labels()
     train_X = np.array(d.train_X)
     # train_y = np.array(d.train_parent_Y)
@@ -147,6 +148,11 @@ def train_pylearn_general(d=None):
     # test_y = np.array(d.test_parent_Y)
     test_y = np.array(d.test_Y)
     # train_y = convertOneHot(train_y)
+    name = 'Hydromedusae'
+    train_X = np.array(d.train_cat_X[name])
+    train_y = np.array(d.train_cat_Y[name])
+    test_X = np.array(d.test_cat_X[name])
+    test_y = np.array(d.test_cat_Y[name])
     train_y = [[1 if y == c else 0 for c in xrange(
         np.unique(d.train_Y).shape[0])] for y in train_y]
     train_y = np.array(train_y)
@@ -204,27 +210,29 @@ def train_pylearn_general(d=None):
     )
     m2 = maxout.MaxoutConvC01B(
         layer_name='m2',
-	num_channels=128,
-	num_pieces=6,
-	kernel_shape=(2, 2),
-	pool_shape=(2, 2),
-	pool_stride=(2, 2),
-	irange=0.05,
-	W_lr_scale=0.25,
+        num_channels=128,
+        num_pieces=6,
+        kernel_shape=(2, 2),
+        pool_shape=(2, 2),
+        pool_stride=(2, 2),
+        irange=0.05,
+        W_lr_scale=0.25,
     )
 #    m3 = maxout.ConvC01B(
-#	layer_name='m3',
-#	num_channels=
+#   layer_name='m3',
+#   num_channels=
     #)
     r0 = mlp.RectifiedLinear(
         layer_name='r0',
-        dim=512,
-        sparse_init=512,
+        dim=256,
+        sparse_init=256,
+	irange=0.235,
     )
     r1 = mlp.RectifiedLinear(
         layer_name='r1',
-        dim=512,
-        sparse_init=512,
+        dim=128,
+        sparse_init=128,
+	irange=0.235,
     )
     out = mlp.Softmax(
         n_classes=np.unique(d.train_Y).shape[0],
@@ -232,12 +240,12 @@ def train_pylearn_general(d=None):
         irange=.235,
     )
     epochs = EpochCounter(1000)
-    layers = [m0, m1, m2, r0, out]
-    decay_coeffs = [0.002, 0.002, 0.002, 0.002, 1.5]
+    layers = [m0, r0, r1, out]
+    decay_coeffs = [0.002, 0.002, 0.002, 1.5]
     in_space = Conv2DSpace(
         shape=[d.size, d.size],
         num_channels=1,
-        # axes=['c', 0, 1, 'b'],
+#        axes=['c', 0, 1, 'b'],
     )
     vec_space = VectorSpace(d.size ** 2)
     nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=batch_size)
@@ -268,9 +276,9 @@ def train_pylearn_general(d=None):
         trainer.train(dataset=train_set)
         print 'Evaluating...'
 #        predictions = [predict([f, ])[0] for f in train_X[:2000]]
-	predictions = predict(train_X[:2000])
+        predictions = predict(train_X[500:1000])
         print np.min(predictions), np.max(predictions)
-        print 'Logloss on train: ' + str(online_score(predictions, train_y[:2000]))
+        print 'Logloss on train: ' + str(online_score(predictions, train_y[500:1000]))
         # predictions = [predict([f, ])[0] for f in test_X]
         predictions = predict(test_X)
         print np.min(predictions), np.max(predictions)
@@ -282,7 +290,7 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=48, train_perc=0.95, test_perc=0.015,
+    d = Data(size=48, train_perc=0.98, test_perc=0.01,
              valid_perc=0.0, augmentation=0)
 #    test_dbn(d)
 #    train_specialists(d=d)
