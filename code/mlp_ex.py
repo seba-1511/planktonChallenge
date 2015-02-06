@@ -57,7 +57,7 @@ def train(d):
     # test = mnist.MNIST(which_set='test')
 
     print 'Setting up'
-    batch_size = 1000
+    batch_size = 512
     conv = mlp.ConvRectifiedLinear(
         layer_name='c0',
         output_channels=20,
@@ -123,7 +123,7 @@ def train(d):
         termination_criterion=termination_criteria.MonitorBased(channel_name='valid_y_misclass')
     )
     trainer = sgd.SGD(
-	learning_rate=0.1,
+	learning_rate=0.15,
 	cost=dropout.Dropout(),
 	batch_size=batch_size,
 	monitoring_dataset={
