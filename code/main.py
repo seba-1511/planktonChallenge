@@ -133,10 +133,10 @@ def train_pylearn_general(d=None):
     d.create_parent_labels()
     train_X = np.array(d.train_X)
     train_y = np.array(d.train_parent_Y)
-    # train_y = np.array(d.train_Y)
+    train_y = np.array(d.train_Y)
     test_X = np.array(d.test_X)
     test_y = np.array(d.test_parent_Y)
-    # test_y = np.array(d.test_Y)
+    test_y = np.array(d.test_Y)
     train_y = [[1 if y == c else 0 for c in xrange(
         np.unique(d.train_Y).shape[0])] for y in train_y]
     train_y = np.array(train_y)
@@ -151,6 +151,7 @@ def train_pylearn_general(d=None):
         kernel_shape=[5, 5],
         pool_shape=[4, 4],
         pool_stride=[4, 4],
+        W_lr_scale=0.25,
         # max_kernel_norm=1.9365
     )
     # bc01 = T.matrix().reshape((batch_size, 96, d.size, d.size))
@@ -171,6 +172,7 @@ def train_pylearn_general(d=None):
         kernel_shape=[3, 3],
         pool_shape=[4, 4],
         pool_stride=[2, 2],
+        W_lr_scale=0.25,
         # max_kernel_norm=1.9365
     )
     c2 = mlp.ConvRectifiedLinear(
@@ -180,6 +182,7 @@ def train_pylearn_general(d=None):
         kernel_shape=[2, 2],
         pool_shape=[2, 2],
         pool_stride=[2, 2],
+        W_lr_scale=0.25,
         # max_kernel_norm=1.9365
     )
     # m1 = maxout.MaxoutConvC01B(
@@ -255,7 +258,8 @@ def train_pylearn_general(d=None):
         print 'Training Epoch ' + str(i)
         trainer.train(dataset=train_set)
         print 'Evaluating...'
-        predictions = np.array([predict([f, ])[0] for f in train_X[:2000]])
+        predictions = np.array(predict(train_X[:2000]))
+#        predictions = np.array([predict([f, ])[0] for f in train_X[:2000]])
         print np.min(predictions), np.max(predictions)
         print 'Logloss on train: ' + str(online_score(predictions, train_y))
         # predictions = [predict([f, ])[0] for f in test_X]
@@ -270,7 +274,7 @@ def train_pylearn_general(d=None):
 
 if __name__ == '__main__':
     d = Data(size=32, train_perc=0.1, test_perc=0.015,
-             valid_perc=0.0, augmentation=0)
+             valid_perc=0.1, augmentation=0)
 #    test_dbn(d)
 #    train_specialists(d=d)
     train_pylearn_general(d=d)
