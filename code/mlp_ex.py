@@ -71,10 +71,10 @@ def train(d):
     mout = MaxoutConvC01B(
 	layer_name='m0',
 	num_pieces=4,
-	num_channels=96,
+	num_channels=128,
 	irange=.05,
 	kernel_shape=[5, 5],
-	pool_shape=[4, 4],
+	pool_shape=[3, 3],
 	pool_stride=[2, 2],
 	W_lr_scale=0.25,
 	max_kernel_norm=1.9365
@@ -92,8 +92,13 @@ def train(d):
     )
     sigmoid = mlp.Sigmoid(
         layer_name='Sigmoid',
-        dim=750,
-        sparse_init=135,
+        dim=2000,
+        sparse_init=500,
+    )
+    sigmoid2 = mlp.Sigmoid(
+	layer_name='s2',
+	dim=750,
+	sparse_init=225,
     )
     smax = mlp.Softmax(
         layer_name='y',
@@ -106,7 +111,7 @@ def train(d):
 	axes=['c', 0, 1, 'b']
     )
     net = mlp.MLP(
-        layers=[mout, mout2, sigmoid, smax],
+        layers=[mout, mout2, sigmoid, sigmoid2, smax],
         input_space=in_space,
         # nvis=784,
     )
