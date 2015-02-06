@@ -145,10 +145,10 @@ def train(d):
 	nll = monitor.read_channel(net, 'test_y_nll') + 0
 	if nll < prev_nll:
 	    f = open('best.pkle', 'wb')
-	    pk.dump(f, net)
+	    pk.dump(net, f, protocol=pk.HIGHEST_PROTOCOL)
 	    f.close()
 	f = open('monitor.pkle', 'wb')
-	pk.dump(f, test_monitor)
+	pk.dump(test_monitor, f, protocol=pk.HIGHEST_PROTOCOL)
 	f.close()
         epoch += 1
 
