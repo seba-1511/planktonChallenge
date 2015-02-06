@@ -92,8 +92,8 @@ def train(d):
     )
     sigmoid = mlp.Sigmoid(
         layer_name='Sigmoid',
-        dim=500,
-        sparse_init=15,
+        dim=750,
+        sparse_init=135,
     )
     smax = mlp.Softmax(
         layer_name='y',
@@ -106,7 +106,7 @@ def train(d):
 	axes=['c', 0, 1, 'b']
     )
     net = mlp.MLP(
-        layers=[mout, mout2, smax],
+        layers=[mout, mout2, sigmoid, smax],
         input_space=in_space,
         # nvis=784,
     )
@@ -123,7 +123,7 @@ def train(d):
         termination_criterion=termination_criteria.MonitorBased(channel_name='valid_y_misclass')
     )
     trainer = sgd.SGD(
-	learning_rate=0.15,
+	learning_rate=0.1,
 	cost=dropout.Dropout(),
 	batch_size=batch_size,
 	monitoring_dataset={
