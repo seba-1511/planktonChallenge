@@ -141,14 +141,13 @@ def train(d):
         print 'Training...', epoch
         trainer.train(dataset=train)
         net.monitor()
-	debug()
 	test_monitor.append((monitor.read_channel(net, 'test_y_nll'), monitor.read_channel(net, 'test_y_misclass')))
 	nll = monitor.read_channel(net, 'test_y_nll') + 0
 	if nll < prev_nll:
-	    f = open('best.pkle')
+	    f = open('best.pkle', 'wb')
 	    pk.dump(f, net)
 	    f.close()
-	f = open('monitor.pkle')
+	f = open('monitor.pkle', 'wb')
 	pk.dump(f, test_monitor)
 	f.close()
         epoch += 1
