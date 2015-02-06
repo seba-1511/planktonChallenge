@@ -10,9 +10,10 @@ from sklearn.metrics import accuracy_score, classification_report
 
 from data.data import Data, RotationalDDM
 from pdb import set_trace as debug
+import cPickle as pk
 
 from pylearn2.space import Conv2DSpace
-from pylearn2 import termination_criteria
+from pylearn2 import termination_criteria, monitor
 from pylearn2.models import mlp
 from pylearn2.models.maxout import MaxoutConvC01B
 from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
@@ -134,10 +135,22 @@ def train(d):
     )
     trainer.setup(net, train)
     epoch = 0
+    test_monitor = []
+    prev_nll = 10
     while True:
         print 'Training...', epoch
         trainer.train(dataset=train)
         net.monitor()
+	debug()
+	test_monitor.append((monitor.read_channel(net, 'test_y_nll'), monitor.read_channel(net, 'test_y_misclass')))
+	nll = monitor.read_channel(net, 'test_y_nll') + 0
+	if nll < prev_nll:
+	    f = open('best.pkle')
+	    pk.dump(f, net)
+	    f.close()
+	f = open('monitor.pkle')
+	pk.dump(f, test_monitor)
+	f.close()
         epoch += 1
 
 """
@@ -149,6 +162,5 @@ if __name__ == '__main__':
     # debug()
 #    mnist.data = (mnist.data.astype(float) / 255)
     data = Data(size=28, train_perc=0.75, valid_perc=0.1, test_perc=0.15)
-    debug()
     train(d=data)
     # train()
