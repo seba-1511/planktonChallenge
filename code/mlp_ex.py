@@ -69,26 +69,26 @@ def train(d):
         max_kernel_norm=1.9365
     )
     mout = MaxoutConvC01B(
-	layer_name='m0',
-	num_pieces=4,
-	num_channels=128,
-	irange=.05,
-	kernel_shape=[5, 5],
-	pool_shape=[3, 3],
-	pool_stride=[2, 2],
-	W_lr_scale=0.25,
-	max_kernel_norm=1.9365
+        layer_name='m0',
+        num_pieces=4,
+        num_channels=128,
+        irange=.05,
+        kernel_shape=[5, 5],
+        pool_shape=[3, 3],
+        pool_stride=[2, 2],
+        W_lr_scale=0.25,
+        max_kernel_norm=1.9365
     )
     mout2 = MaxoutConvC01B(
-	layer_name='m1',
-	num_pieces=4,
-	num_channels=96,
-	irange=.05,
-	kernel_shape=[5, 5],
-	pool_shape=[4, 4],
-	pool_stride=[2, 2],
-	W_lr_scale=0.25,
-	max_kernel_norm=1.9365	
+        layer_name='m1',
+        num_pieces=4,
+        num_channels=96,
+        irange=.05,
+        kernel_shape=[5, 5],
+        pool_shape=[4, 4],
+        pool_stride=[2, 2],
+        W_lr_scale=0.25,
+        max_kernel_norm=1.9365
     )
     sigmoid = mlp.Sigmoid(
         layer_name='Sigmoid',
@@ -96,9 +96,9 @@ def train(d):
         sparse_init=500,
     )
     sigmoid2 = mlp.Sigmoid(
-	layer_name='s2',
-	dim=750,
-	sparse_init=225,
+        layer_name='s2',
+        dim=750,
+        sparse_init=225,
     )
     smax = mlp.Softmax(
         layer_name='y',
@@ -108,7 +108,7 @@ def train(d):
     in_space = Conv2DSpace(
         shape=[28, 28],
         num_channels=1,
-	axes=['c', 0, 1, 'b']
+        axes=['c', 0, 1, 'b']
     )
     net = mlp.MLP(
         layers=[mout, mout2, sigmoid, sigmoid2, smax],
@@ -125,18 +125,20 @@ def train(d):
             'valid': valid,
             'test': test
         },
-        termination_criterion=termination_criteria.MonitorBased(channel_name='valid_y_misclass')
+        termination_criterion=termination_criteria.MonitorBased(
+            channel_name='valid_y_misclass')
     )
     trainer = sgd.SGD(
-	learning_rate=0.1,
-	cost=dropout.Dropout(),
-	batch_size=batch_size,
-	monitoring_dataset={
-	    'train': train,
-	    'valid': valid,
-	    'test': test
-	},
-        termination_criterion=termination_criteria.MonitorBased(channel_name='valid_y_misclass')
+        learning_rate=0.1,
+        cost=dropout.Dropout(),
+        batch_size=batch_size,
+        monitoring_dataset={
+            'train': train,
+            'valid': valid,
+            'test': test
+        },
+        termination_criterion=termination_criteria.MonitorBased(
+            channel_name='valid_y_misclass')
     )
     trainer.setup(net, train)
     epoch = 0
@@ -146,15 +148,16 @@ def train(d):
         print 'Training...', epoch
         trainer.train(dataset=train)
         net.monitor()
-	test_monitor.append((monitor.read_channel(net, 'test_y_nll'), monitor.read_channel(net, 'test_y_misclass')))
-	nll = monitor.read_channel(net, 'test_y_nll') + 0
-	if nll < prev_nll:
-	    f = open('best.pkle', 'wb')
-	    pk.dump(net, f, protocol=pk.HIGHEST_PROTOCOL)
-	    f.close()
-	f = open('monitor.pkle', 'wb')
-	pk.dump(test_monitor, f, protocol=pk.HIGHEST_PROTOCOL)
-	f.close()
+        test_monitor.append((monitor.read_channel(
+            net, 'test_y_nll'), monitor.read_channel(net, 'test_y_misclass')))
+        nll = monitor.read_channel(net, 'test_y_nll') + 0
+        if nll < prev_nll:
+            f = open('best.pkle', 'wb')
+            pk.dump(net, f, protocol=pk.HIGHEST_PROTOCOL)
+            f.close()
+        f = open('monitor.pkle', 'wb')
+        pk.dump(test_monitor, f, protocol=pk.HIGHEST_PROTOCOL)
+        f.close()
         epoch += 1
 
 """
