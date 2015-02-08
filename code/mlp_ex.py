@@ -12,7 +12,7 @@ from data.data import Data, RotationalDDM
 from pdb import set_trace as debug
 import cPickle as pk
 
-from pylearn2.space import Conv2DSpace
+from pylearn2.space import Conv2DSpace, VectorSpace
 from pylearn2 import termination_criteria, monitor
 from pylearn2.train_extensions import best_params
 from pylearn2.models import mlp
@@ -32,18 +32,20 @@ def convert_categorical(data):
     return np.argmax(data, axis=1)
 
 
-def classify(inp, model, batch_size):
-    inp = np.asarray(inp)
-    inp.shape = (1, batch_size)
+def classify(inp, model, batch_size, vec_space):
+    # inp = np.asarray(inp)
+    in_space = model.get_input_space()
+    inp = vec_space.np_format_as([inp, ], in_space)
     return np.argmax(model.fprop(theano.shared(inp, name='inputs')).eval())
 
 
 def score(dataset, model, batch_size):
     nr_correct = 0
-    for features, label in dataset:
-        if classify(features) == np.argmax(label):
+    vec_space = VectorSpace(len(dataset[0][0]))
+    for features, label in zip(dataset[0], dataset[1]):
+        if classify(features, model, batch_size, vec_space) == np.argmax(label):
             nr_correct += 1
-    return float(nr_correct)/float(len(dataset))
+    return float(nr_correct) / float(len(dataset))
 
 
 def train(d):
@@ -125,6 +127,7 @@ def train(d):
         num_channels=1,
         axes=['c', 0, 1, 'b']
     )
+    vec_space = VectorSpace(784)
     net = mlp.MLP(
         layers=[mout, mout2, sigmoid, sigmoid2, smax],
         input_space=in_space,
@@ -198,7 +201,7 @@ def train(d):
         f = open('monitor.pkle', 'wb')
         pk.dump(test_monitor, f, protocol=pk.HIGHEST_PROTOCOL)
         f.close()
-        print 'Custom test score', score(test, net, batch_size)
+        print 'Custom test score', score((test.X, test.y), net, batch_size)
         mom_adjust.on_monitor(net, valid, trainer)
         lr_adjust.on_monitor(net, valid, trainer)
         epoch += 1
