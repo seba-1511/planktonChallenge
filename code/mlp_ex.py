@@ -14,10 +14,11 @@ import cPickle as pk
 
 from pylearn2.space import Conv2DSpace
 from pylearn2 import termination_criteria, monitor
+from pylearn2.train_extensions import best_params
 from pylearn2.models import mlp
 from pylearn2.models.maxout import MaxoutConvC01B
 from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
-from pylearn2.training_algorithms import bgd, sgd
+from pylearn2.training_algorithms import bgd, sgd, learning_rule
 from pylearn2.costs.mlp import dropout
 
 warnings.filterwarnings("ignore")
@@ -29,6 +30,20 @@ def convert_one_hot(data):
 
 def convert_categorical(data):
     return np.argmax(data, axis=1)
+
+
+def classify(inp, model, batch_size):
+    inp = np.asarray(inp)
+    inp.shape = (1, batch_size)
+    return np.argmax(model.fprop(theano.shared(inp, name='inputs')).eval())
+
+
+def score(dataset, model, batch_size):
+    nr_correct = 0
+    for features, label in dataset:
+        if classify(features) == np.argmax(label):
+            nr_correct += 1
+    return float(nr_correct)/float(len(dataset))
 
 
 def train(d):
@@ -115,6 +130,28 @@ def train(d):
         input_space=in_space,
         # nvis=784,
     )
+    # Momentum:
+    mom_init = 0.3
+    mom_final = 0.99
+    mom_start = 1
+    mom_saturate = 100
+    mom_adjust = learning_rule.MomentumAdjustor(
+        mom_final,
+        mom_start,
+        mom_saturate,
+    )
+    mom_rule = learning_rule.Momentum(mom_init)
+
+    # Learning Rate:
+    lr_init = 1
+    lr_saturate = 100
+    lr_decay_factor = 0.1
+    lr_adjust = sgd.LinearDecayOverEpoch(lr_init, lr_saturate, lr_decay_factor)
+
+    # Monitor:
+    monitor_save_best = best_params.MonitorBasedSaveBest('output_misclass',
+                                                         '/best_model.pkle')
+
     trainer = bgd.BGD(
         batch_size=batch_size,
         line_search_mode='exhaustive',
@@ -148,9 +185,11 @@ def train(d):
         print 'Training...', epoch
         trainer.train(dataset=train)
         net.monitor()
-        test_monitor.append((monitor.read_channel(
-            net, 'test_y_nll'), monitor.read_channel(net, 'test_y_misclass')))
+        monitor_save_best.on_monitor(net, valid, trainer)
         nll = monitor.read_channel(net, 'test_y_nll') + 0
+        test_monitor.append(
+            (nll, monitor.read_channel(net, 'test_y_misclass'))
+        )
         if nll < prev_nll:
             f = open('best.pkle', 'wb')
             pk.dump(net, f, protocol=pk.HIGHEST_PROTOCOL)
@@ -158,6 +197,9 @@ def train(d):
         f = open('monitor.pkle', 'wb')
         pk.dump(test_monitor, f, protocol=pk.HIGHEST_PROTOCOL)
         f.close()
+        print 'Custom test score', score(test, net, batch_size)
+        mom_adjust.on_monitor(net, valid, trainer)
+        lr_adjust.on_monitor(net, valid, trainer)
         epoch += 1
 
 """
