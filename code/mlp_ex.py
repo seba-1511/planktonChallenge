@@ -52,7 +52,7 @@ def classify(inp, model, batch_size, vec_space):
 
 def score(dataset, model, batch_size):
     nr_correct = 0
-    features, targets = dataset
+    features, targets = np.array(dataset, dtype=float)
     vec_space = VectorSpace(len(features[0]))
     for X, y in zip(grouper(features, batch_size), grouper(targets, batch_size)):
         if classify(X, model, batch_size, vec_space) == np.argmax(y, axis=1):
