@@ -4,13 +4,14 @@ import warnings
 import theano
 import pylearn2
 import numpy as np
+import cPickle as pk
 
 from sklearn.datasets import fetch_mldata
 from sklearn.metrics import accuracy_score, classification_report
 
 from data.data import Data, RotationalDDM
 from pdb import set_trace as debug
-import cPickle as pk
+from itertools import izip_longest
 
 from pylearn2.space import Conv2DSpace, VectorSpace
 from pylearn2 import termination_criteria, monitor
@@ -23,9 +24,18 @@ from pylearn2.costs.mlp import dropout
 
 warnings.filterwarnings("ignore")
 
+NB_CLASSES = 121
+
+
+def grouper(iterable, n, fillvalue=None):
+    "Collect data into fixed-length chunks or blocks, from itertools recipes"
+    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx
+    args = [iter(iterable)] * n
+    return izip_longest(fillvalue=fillvalue, *args)
+
 
 def convert_one_hot(data):
-    return np.array([[1 if y == c else 0 for c in xrange(10)] for y in data])
+    return np.array([[1 if y == c else 0 for c in xrange(NB_CLASSES)] for y in data])
 
 
 def convert_categorical(data):
@@ -33,18 +43,23 @@ def convert_categorical(data):
 
 
 def classify(inp, model, batch_size, vec_space):
-    # inp = np.asarray(inp)
+    if len(np.shape(inp)) == 1:
+        inp = np.array([inp, ])
     in_space = model.get_input_space()
-    inp = vec_space.np_format_as([inp, ], in_space)
+    inp = vec_space.np_format_as(inp, in_space)
     return np.argmax(model.fprop(theano.shared(inp, name='inputs')).eval())
 
 
 def score(dataset, model, batch_size):
     nr_correct = 0
-    vec_space = VectorSpace(len(dataset[0][0]))
-    for features, label in zip(dataset[0], dataset[1]):
-        if classify(features, model, batch_size, vec_space) == np.argmax(label):
+    features, targets = dataset
+    vec_space = VectorSpace(len(features[0]))
+    for X, y in zip(grouper(features, batch_size), grouper(targets, batch_size)):
+        if classify(X, model, batch_size, vec_space) == np.argmax(y, axis=1):
             nr_correct += 1
+    # for features, label in zip(dataset[0], dataset[1]):
+    #     if classify(features, model, batch_size, vec_space) == np.argmax(label):
+    #         nr_correct += 1
     return float(nr_correct) / float(len(dataset))
 
 
@@ -119,7 +134,7 @@ def train(d):
     )
     smax = mlp.Softmax(
         layer_name='y',
-        n_classes=10,
+        n_classes=NB_CLASSES,
         irange=0.
     )
     in_space = Conv2DSpace(
@@ -127,7 +142,6 @@ def train(d):
         num_channels=1,
         axes=['c', 0, 1, 'b']
     )
-    vec_space = VectorSpace(784)
     net = mlp.MLP(
         layers=[mout, mout2, sigmoid, sigmoid2, smax],
         input_space=in_space,
