@@ -149,8 +149,8 @@ def train(d):
     lr_adjust = sgd.LinearDecayOverEpoch(lr_init, lr_saturate, lr_decay_factor)
 
     # Monitor:
-    monitor_save_best = best_params.MonitorBasedSaveBest('output_misclass',
-                                                         '/best_model.pkle')
+    monitor_save_best = best_params.MonitorBasedSaveBest('test_y_nll',
+                                                         'best_model.pkle')
 
     trainer = bgd.BGD(
         batch_size=batch_size,
@@ -167,6 +167,7 @@ def train(d):
     )
     trainer = sgd.SGD(
         learning_rate=0.1,
+        learning_rule=mom_rule,
         cost=dropout.Dropout(),
         batch_size=batch_size,
         monitoring_dataset={
