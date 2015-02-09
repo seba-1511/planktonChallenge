@@ -215,9 +215,9 @@ def train(d):
         f = open('monitor.pkle', 'wb')
         pk.dump(test_monitor, f, protocol=pk.HIGHEST_PROTOCOL)
         f.close()
-        print 'Custom test score', score((test.X, test.y), net, batch_size)
-        mom_adjust.on_monitor(net, valid, trainer)
-        lr_adjust.on_monitor(net, valid, trainer)
+        # print 'Custom test score', score((test.X, test.y), net, batch_size)
+        #mom_adjust.on_monitor(net, valid, trainer)
+        #lr_adjust.on_monitor(net, valid, trainer)
         epoch += 1
 
 """
