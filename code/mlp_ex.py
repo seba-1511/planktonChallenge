@@ -73,9 +73,10 @@ def train(d):
     # nb_classes = len(np.unique(y))
     # train_y = convert_one_hot(y)
     # train_set = DenseDesignMatrix(X=X, y=y)
-    train = RotationalDDM(X=d.train_X, y=convert_one_hot(d.train_Y))
-    valid = RotationalDDM(X=d.valid_X, y=convert_one_hot(d.valid_Y))
-    test = RotationalDDM(X=d.test_X, y=convert_one_hot(d.test_Y))
+    d.create_parent_labels()
+    train = RotationalDDM(X=d.train_X, y=convert_one_hot(d.train_parent_Y))
+    valid = RotationalDDM(X=d.valid_X, y=convert_one_hot(d.valid_parent_Y))
+    test = RotationalDDM(X=d.test_X, y=convert_one_hot(d.test_parent_Y))
     # train = mnist.MNIST(
     #     which_set='train',
     #     start=0,
