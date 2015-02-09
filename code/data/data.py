@@ -180,7 +180,14 @@ class Data(object):
                 if y in CLASSES[name]:
                     new_test_labels.append(new_label)
                     break
+        new_valid_labels = []
+        for y in self.valid_Y:
+            for new_label, name in enumerate(CLASS_NAMES):
+                if y in CLASSES[name]:
+                    new_valid_labels.append(new_label)
+                    break
         self.train_parent_Y = new_train_labels
+        self.valid_parent_Y = new_valid_labels
         self.test_parent_Y = new_test_labels
 
     def save_set(self, name, X, y,  directory=''):
