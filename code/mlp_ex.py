@@ -90,7 +90,7 @@ def train(d):
     # test = mnist.MNIST(which_set='test')
 
     print 'Setting up'
-    batch_size = 512
+    batch_size = 1280
     conv = mlp.ConvRectifiedLinear(
         layer_name='c0',
         output_channels=20,
@@ -103,8 +103,8 @@ def train(d):
     )
     mout = MaxoutConvC01B(
         layer_name='m0',
-        num_pieces=4,
-        num_channels=128,
+        num_pieces=6,
+        num_channels=256,
         irange=.05,
         kernel_shape=[5, 5],
         pool_shape=[3, 3],
@@ -114,8 +114,8 @@ def train(d):
     )
     mout2 = MaxoutConvC01B(
         layer_name='m1',
-        num_pieces=4,
-        num_channels=96,
+        num_pieces=6,
+        num_channels=128,
         irange=.05,
         kernel_shape=[5, 5],
         pool_shape=[4, 4],
@@ -125,13 +125,13 @@ def train(d):
     )
     sigmoid = mlp.Sigmoid(
         layer_name='Sigmoid',
-        dim=2000,
-        sparse_init=500,
+        dim=10000,
+        sparse_init=2000,
     )
     sigmoid2 = mlp.Sigmoid(
         layer_name='s2',
-        dim=750,
-        sparse_init=225,
+        dim=2000,
+        sparse_init=500,
     )
     smax = mlp.Softmax(
         layer_name='y',
