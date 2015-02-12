@@ -25,6 +25,7 @@ from pylearn2.costs.mlp import dropout
 warnings.filterwarnings("ignore")
 
 NB_CLASSES = 121
+IMG_SIZE = 28
 
 
 def grouper(iterable, n, fillvalue=None):
@@ -65,35 +66,18 @@ def score(dataset, model, batch_size):
 
 def train(d):
     print 'Creating dataset'
-    # load mnist here
-    # X = d.train_X
-    # y = d.train_Y
-    # test_X = d.test_X
-    # test_Y = d.test_Y
-    # nb_classes = len(np.unique(y))
-    # train_y = convert_one_hot(y)
-    # train_set = DenseDesignMatrix(X=X, y=y)
-    d.create_parent_labels()
-    train = RotationalDDM(X=d.train_X, y=convert_one_hot(d.train_parent_Y))
-    valid = RotationalDDM(X=d.valid_X, y=convert_one_hot(d.valid_parent_Y))
-    test = RotationalDDM(X=d.test_X, y=convert_one_hot(d.test_parent_Y))
-    # train = mnist.MNIST(
-    #     which_set='train',
-    #     start=0,
-    #     stop=50000,
-    # )
-    # valid = mnist.MNIST(
-    #     which_set='train',
-    #     start=50000,
-    #     stop=60000,
-    # )
-    # test = mnist.MNIST(which_set='test')
+    # train = RotationalDDM(X=d.train_X, y=convert_one_hot(d.train_Y))
+    # valid = RotationalDDM(X=d.valid_X, y=convert_one_hot(d.valid_Y))
+    # test = RotationalDDM(X=d.test_X, y=convert_one_hot(d.test_Y))
+    train = DenseDesignMatrix(X=d.train_X, y=convert_one_hot(d.train_Y))
+    valid = DenseDesignMatrix(X=d.valid_X, y=convert_one_hot(d.valid_Y))
+    test = DenseDesignMatrix(X=d.test_X, y=convert_one_hot(d.test_Y))
 
     print 'Setting up'
-    batch_size = 1280
+    batch_size = 256
     conv = mlp.ConvRectifiedLinear(
         layer_name='c0',
-        output_channels=20,
+        output_channels=128,
         irange=.05,
         kernel_shape=[5, 5],
         pool_shape=[4, 4],
@@ -139,12 +123,12 @@ def train(d):
         irange=0.
     )
     in_space = Conv2DSpace(
-        shape=[28, 28],
+        shape=[IMG_SIZE, IMG_SIZE],
         num_channels=1,
-        axes=['c', 0, 1, 'b']
+        # axes=['c', 0, 1, 'b']
     )
     net = mlp.MLP(
-        layers=[mout, mout2, sigmoid, sigmoid2, smax],
+        layers=[conv, smax],
         input_space=in_space,
         # nvis=784,
     )
@@ -229,6 +213,6 @@ if __name__ == '__main__':
  #   mnist = fetch_mldata('MNIST original')
     # debug()
 #    mnist.data = (mnist.data.astype(float) / 255)
-    data = Data(size=28, train_perc=0.75, valid_perc=0.1, test_perc=0.15)
+    data = Data(size=IMG_SIZE, train_perc=0.75, valid_perc=0.1, test_perc=0.15)
     train(d=data)
     # train()
