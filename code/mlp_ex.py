@@ -74,13 +74,13 @@ def train(d):
     test = DenseDesignMatrix(X=d.test_X, y=convert_one_hot(d.test_Y))
 
     print 'Setting up'
-    batch_size = 256
+    batch_size = 128
     conv = mlp.ConvRectifiedLinear(
         layer_name='c0',
         output_channels=128,
-        irange=.05,
-        kernel_shape=[5, 5],
-        pool_shape=[4, 4],
+        irange=.235,
+        kernel_shape=[4, 4],
+        pool_shape=[3, 3],
         pool_stride=[2, 2],
         # W_lr_scale=0.25,
         max_kernel_norm=1.9365
@@ -88,12 +88,12 @@ def train(d):
     mout = MaxoutConvC01B(
         layer_name='m0',
         num_pieces=6,
-        num_channels=256,
-        irange=.05,
-        kernel_shape=[5, 5],
+        num_channels=128,
+        irange=.235,
+        kernel_shape=[4, 4],
         pool_shape=[3, 3],
         pool_stride=[2, 2],
-        W_lr_scale=0.25,
+        # W_lr_scale=0.25,
         max_kernel_norm=1.9365
     )
     mout2 = MaxoutConvC01B(
@@ -153,24 +153,23 @@ def train(d):
     # Monitor:
     monitor_save_best = best_params.MonitorBasedSaveBest('test_y_nll',
                                                          'best_model.pkle')
-
-    trainer = bgd.BGD(
-        batch_size=batch_size,
-        line_search_mode='exhaustive',
-        conjugate=1,
-        updates_per_batch=10,
-        monitoring_dataset={
-            'train': train,
-            'valid': valid,
-            'test': test
-        },
-        termination_criterion=termination_criteria.MonitorBased(
-            channel_name='valid_y_misclass')
-    )
+    # trainer = bgd.BGD(
+    #     batch_size=batch_size,
+    #     line_search_mode='exhaustive',
+    #     conjugate=1,
+    #     updates_per_batch=10,
+    #     monitoring_dataset={
+    #         'train': train,
+    #         'valid': valid,
+    #         'test': test
+    #     },
+    #     termination_criterion=termination_criteria.MonitorBased(
+    #         channel_name='valid_y_misclass')
+    # )
     trainer = sgd.SGD(
         learning_rate=0.1,
-        learning_rule=mom_rule,
-        cost=dropout.Dropout(),
+        # learning_rule=mom_rule,
+        # cost=dropout.Dropout(),
         batch_size=batch_size,
         monitoring_dataset={
             'train': train,
