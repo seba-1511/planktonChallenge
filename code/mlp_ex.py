@@ -187,7 +187,7 @@ def train(d):
     #         channel_name='valid_y_misclass')
     # )
     trainer = sgd.SGD(
-        learning_rate=0.1,
+        learning_rate=1.0,
         # learning_rule=mom_rule,
         cost=dropout.Dropout(),
         batch_size=batch_size,
