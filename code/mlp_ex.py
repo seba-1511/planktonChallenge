@@ -77,6 +77,16 @@ def train(d):
     batch_size = 128
     conv = mlp.ConvRectifiedLinear(
         layer_name='c0',
+        output_channels=96,
+        irange=.235,
+        kernel_shape=[4, 4],
+        pool_shape=[3, 3],
+        pool_stride=[2, 2],
+        # W_lr_scale=0.25,
+        max_kernel_norm=1.9365
+    )
+    conv2 = mlp.ConvRectifiedLinear(
+        layer_name='c2',
         output_channels=128,
         irange=.235,
         kernel_shape=[4, 4],
@@ -117,6 +127,14 @@ def train(d):
         dim=2000,
         sparse_init=500,
     )
+    rect = mlp.RectifiedLinear(
+        layer_name='r0',
+        dim=512,
+    )
+    rect1 = mlp.RectifiedLinear(
+        layer_name='r1',
+        dim=512,
+    )
     smax = mlp.Softmax(
         layer_name='y',
         n_classes=NB_CLASSES,
@@ -128,7 +146,7 @@ def train(d):
         # axes=['c', 0, 1, 'b']
     )
     net = mlp.MLP(
-        layers=[conv, smax],
+        layers=[conv, conv2, rect, rect1,  smax],
         input_space=in_space,
         # nvis=784,
     )
