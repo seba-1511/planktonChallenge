@@ -23,7 +23,6 @@ def load_test_data(size=28):
     images = []
     names = []
     for class_id, folder in enumerate(folders):
-        d()
         for img in folder[2]:
             if img.index('.jpg') == -1:
                 continue
