@@ -10,12 +10,14 @@ from sklearn.datasets import fetch_mldata
 from sklearn.metrics import accuracy_score, classification_report
 
 from data.data import Data, RotationalDDM
+from submission import submit
 from pdb import set_trace as debug
 from itertools import izip_longest
 
 from pylearn2.space import Conv2DSpace, VectorSpace
 from pylearn2 import termination_criteria, monitor
 from pylearn2.train_extensions import best_params
+from pylearn2.termination_criteria import EpochCounter
 from pylearn2.models import mlp
 from pylearn2.models.maxout import MaxoutConvC01B
 from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
@@ -41,6 +43,16 @@ def convert_one_hot(data):
 
 def convert_categorical(data):
     return np.argmax(data, axis=1)
+
+def predict(data, model, batch_size, vec_space):
+    data = np.asarray(data)
+    # data.shape = (1, 784)
+    res = []
+    for X in grouper(data, batch_size):
+        X = vec_space.np_format_as(X, model.get_input_space())
+        res.append(ann.fprop(theano.shared(X, name='inputs')).eval())
+    return res
+
 
 
 def classify(inp, model, batch_size, vec_space):
@@ -74,7 +86,7 @@ def train(d):
     test = DenseDesignMatrix(X=d.test_X, y=convert_one_hot(d.test_Y))
 
     print 'Setting up'
-    batch_size = 128
+    batch_size = 96
     conv = mlp.ConvRectifiedLinear(
         layer_name='c0',
         output_channels=96,
@@ -91,6 +103,16 @@ def train(d):
         irange=.235,
         kernel_shape=[4, 4],
         pool_shape=[3, 3],
+        pool_stride=[2, 2],
+        # W_lr_scale=0.25,
+        max_kernel_norm=1.9365
+    )
+    conv3 = mlp.ConvRectifiedLinear(
+        layer_name='c3',
+        output_channels=128,
+        irange=.235,
+        kernel_shape=[5, 5],
+        pool_shape=[4, 4],
         pool_stride=[2, 2],
         # W_lr_scale=0.25,
         max_kernel_norm=1.9365
@@ -131,11 +153,13 @@ def train(d):
         layer_name='r0',
         dim=512,
         sparse_init=200,
+        W_lr_scale=0.25,
     )
     rect1 = mlp.RectifiedLinear(
         layer_name='r1',
         dim=512,
         sparse_init=200,
+        irange=0.235,
     )
     smax = mlp.Softmax(
         layer_name='y',
@@ -148,15 +172,15 @@ def train(d):
         # axes=['c', 0, 1, 'b']
     )
     net = mlp.MLP(
-        layers=[conv, conv2,  smax],
+        layers=[conv2, smax],
         input_space=in_space,
         # nvis=784,
     )
     # Momentum:
-    mom_init = 0.3
+    mom_init = 0.45
     mom_final = 0.99
     mom_start = 1
-    mom_saturate = 100
+    mom_saturate = 35
     mom_adjust = learning_rule.MomentumAdjustor(
         mom_final,
         mom_start,
@@ -166,7 +190,7 @@ def train(d):
 
     # Learning Rate:
     lr_init = 1
-    lr_saturate = 100
+    lr_saturate = 35
     lr_decay_factor = 0.1
     lr_adjust = sgd.LinearDecayOverEpoch(lr_init, lr_saturate, lr_decay_factor)
 
@@ -187,8 +211,8 @@ def train(d):
     #         channel_name='valid_y_misclass')
     # )
     trainer = sgd.SGD(
-        learning_rate=1.0,
-        # learning_rule=mom_rule,
+        learning_rate=0.1,
+        learning_rule=mom_rule,
         # cost=dropout.Dropout(),
         batch_size=batch_size,
         monitoring_dataset={
@@ -196,14 +220,13 @@ def train(d):
             'valid': valid,
             'test': test
         },
-        termination_criterion=termination_criteria.MonitorBased(
-            channel_name='valid_y_misclass')
+        termination_criterion=EpochCounter(35)
     )
     trainer.setup(net, train)
     epoch = 0
     test_monitor = []
     prev_nll = 10
-    while True:
+    while trainer.continue_learning(net):
         print 'Training...', epoch
         trainer.train(dataset=train)
         net.monitor()
@@ -220,9 +243,10 @@ def train(d):
         pk.dump(test_monitor, f, protocol=pk.HIGHEST_PROTOCOL)
         f.close()
         # print 'Custom test score', score((test.X, test.y), net, batch_size)
-        #mom_adjust.on_monitor(net, valid, trainer)
-        #lr_adjust.on_monitor(net, valid, trainer)
+        # mom_adjust.on_monitor(net, valid, trainer)
+        # lr_adjust.on_monitor(net, valid, trainer)
         epoch += 1
+    submit(predict, net, IMG_SIZE)
 
 """
     TODO: Get above .98 with momentum and maxout and dropout. And then add several ones.
@@ -232,6 +256,6 @@ if __name__ == '__main__':
  #   mnist = fetch_mldata('MNIST original')
     # debug()
 #    mnist.data = (mnist.data.astype(float) / 255)
-    data = Data(size=IMG_SIZE, train_perc=0.75, valid_perc=0.1, test_perc=0.15)
+    data = Data(size=IMG_SIZE, train_perc=0.8, valid_perc=0.1, test_perc=0.1)
     train(d=data)
     # train()
