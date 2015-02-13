@@ -189,7 +189,7 @@ def train(d):
     trainer = sgd.SGD(
         learning_rate=1.0,
         # learning_rule=mom_rule,
-        cost=dropout.Dropout(),
+        # cost=dropout.Dropout(),
         batch_size=batch_size,
         monitoring_dataset={
             'train': train,
