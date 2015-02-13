@@ -140,7 +140,7 @@ def train(d):
     smax = mlp.Softmax(
         layer_name='y',
         n_classes=NB_CLASSES,
-        irange=0.
+        irange=0.235,
     )
     in_space = Conv2DSpace(
         shape=[IMG_SIZE, IMG_SIZE],
@@ -148,7 +148,7 @@ def train(d):
         # axes=['c', 0, 1, 'b']
     )
     net = mlp.MLP(
-        layers=[conv, conv2, rect, rect1,  smax],
+        layers=[conv, conv2,  smax],
         input_space=in_space,
         # nvis=784,
     )
@@ -189,7 +189,7 @@ def train(d):
     trainer = sgd.SGD(
         learning_rate=0.1,
         # learning_rule=mom_rule,
-        # cost=dropout.Dropout(),
+        cost=dropout.Dropout(),
         batch_size=batch_size,
         monitoring_dataset={
             'train': train,
