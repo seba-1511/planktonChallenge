@@ -130,10 +130,12 @@ def train(d):
     rect = mlp.RectifiedLinear(
         layer_name='r0',
         dim=512,
+        sparse_init=200,
     )
     rect1 = mlp.RectifiedLinear(
         layer_name='r1',
         dim=512,
+        sparse_init=200,
     )
     smax = mlp.Softmax(
         layer_name='y',
