@@ -197,7 +197,7 @@ def train(d):
 
     # Monitor:
     monitor_save_best = best_params.MonitorBasedSaveBest('test_y_nll',
-            'best_model.pkle')
+            'best_model.pkl')
     # trainer = bgd.BGD(
     #     batch_size=batch_size,
     #     line_search_mode='exhaustive',
@@ -238,10 +238,10 @@ def train(d):
                     (nll, monitor.read_channel(net, 'test_y_misclass'))
                     )
             if nll < prev_nll:
-                f = open('best.pkle', 'wb')
+                f = open('best.pkl', 'wb')
                 pk.dump(net, f, protocol=pk.HIGHEST_PROTOCOL)
                 f.close()
-            f = open('monitor.pkle', 'wb')
+            f = open('monitor.pkl', 'wb')
             pk.dump(test_monitor, f, protocol=pk.HIGHEST_PROTOCOL)
             f.close()
         # print 'Custom test score', score((test.X, test.y), net, batch_size)
