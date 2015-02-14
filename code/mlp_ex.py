@@ -170,7 +170,7 @@ def train(d):
     in_space = Conv2DSpace(
             shape=[IMG_SIZE, IMG_SIZE],
             num_channels=1,
-            axes=['c', 0, 1, 'b']
+            # axes=['c', 0, 1, 'b']
             )
     net = mlp.MLP(
             layers=[conv, rect, smax],
