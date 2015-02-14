@@ -17,7 +17,7 @@ from itertools import izip_longest
 from pylearn2.space import Conv2DSpace, VectorSpace
 from pylearn2 import termination_criteria, monitor
 from pylearn2.train_extensions import best_params
-from pylearn2.termination_criteria import EpochCounter
+from pylearn2.termination_criteria import EpochCounter, MonitorBased
 from pylearn2.models import mlp
 from pylearn2.models.maxout import MaxoutConvC01B
 from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
@@ -82,16 +82,16 @@ def train(d):
     # train = RotationalDDM(X=d.train_X, y=convert_one_hot(d.train_Y))
     # valid = RotationalDDM(X=d.valid_X, y=convert_one_hot(d.valid_Y))
     # test = RotationalDDM(X=d.test_X, y=convert_one_hot(d.test_Y))
-    train = DenseDesignMatrix(X=d.train_X, y=convert_one_hot(d.train_Y))
-    valid = DenseDesignMatrix(X=d.valid_X, y=convert_one_hot(d.valid_Y))
-    test = DenseDesignMatrix(X=d.test_X, y=convert_one_hot(d.test_Y))
+    train = DenseDesignMatrix(X=d.train_X - 0.5, y=convert_one_hot(d.train_Y))
+    valid = DenseDesignMatrix(X=d.valid_X - 0.5, y=convert_one_hot(d.valid_Y))
+    test = DenseDesignMatrix(X=d.test_X - 0.5, y=convert_one_hot(d.test_Y))
 
     print 'Setting up'
     batch_size = 256
     conv = mlp.ConvRectifiedLinear(
             layer_name='c0',
             output_channels=96,
-            irange=.235,
+            irange=0.235,
             kernel_shape=[4, 4],
             pool_shape=[3, 3],
             pool_stride=[2, 2],
@@ -127,7 +127,6 @@ def train(d):
             pool_shape=[3, 3],
             pool_stride=[2, 2],
             # W_lr_scale=0.25,
-            max_kernel_norm=1.9365
             )
     mout2 = MaxoutConvC01B(
             layer_name='m1',
@@ -153,8 +152,9 @@ def train(d):
     rect = mlp.RectifiedLinear(
             layer_name='r0',
             dim=512,
-            sparse_init=200,
-            W_lr_scale=0.25,
+            irange=0.1082,
+            # sparse_init=200,
+            # W_lr_scale=0.25,
             )
     rect1 = mlp.RectifiedLinear(
             layer_name='r1',
@@ -173,7 +173,7 @@ def train(d):
             axes=['c', 0, 1, 'b']
             )
     net = mlp.MLP(
-            layers=[mout, smax],
+            layers=[conv, rect, smax],
             input_space=in_space,
             # nvis=784,
             )
@@ -245,7 +245,7 @@ def train(d):
             pk.dump(test_monitor, f, protocol=pk.HIGHEST_PROTOCOL)
             f.close()
         # print 'Custom test score', score((test.X, test.y), net, batch_size)
-        # mom_adjust.on_monitor(net, valid, trainer)
+        mom_adjust.on_monitor(net, valid, trainer)
         # lr_adjust.on_monitor(net, valid, trainer)
         epoch += 1
     submit(predict, net, IMG_SIZE)
@@ -259,12 +259,12 @@ if __name__ == '__main__':
     # debug()
 #    mnist.data = (mnist.data.astype(float) / 255)
     import gzip
-    data = Data(size=IMG_SIZE, train_perc=0.8, valid_perc=0.1, test_perc=0.1)
-    f = gzip.open('data.pkl.gz', 'wb')
-    pk.dump(data, f, protocol=pk.HIGHEST_PROTOCOL)
-    f.close()
-    # f = gzip.open('data.pkl.gz', 'rb')
-    # data = pk.load(f)
+    # data = Data(size=IMG_SIZE, train_perc=0.8, valid_perc=0.1, test_perc=0.1)
+    # f = gzip.open('data.pkl.gz', 'wb')
+    # pk.dump(data, f, protocol=pk.HIGHEST_PROTOCOL)
     # f.close()
+    f = gzip.open('data.pkl.gz', 'rb')
+    data = pk.load(f)
+    f.close()
     train(d=data)
     # train()
