@@ -170,7 +170,11 @@ def train(d):
     in_space = Conv2DSpace(
             shape=[IMG_SIZE, IMG_SIZE],
             num_channels=1,
+<<<<<<< HEAD
             # axes=['c', 0, 1, 'b']
+=======
+            axes=['c', 0, 1, 'b']
+>>>>>>> 69fcece138f3db96795aee7573274cbb2f957280
             )
     net = mlp.MLP(
             layers=[conv, rect, smax],
@@ -198,6 +202,7 @@ def train(d):
     # Monitor:
     monitor_save_best = best_params.MonitorBasedSaveBest('test_y_nll',
             'best_model.pkl')
+
     # trainer = bgd.BGD(
     #     batch_size=batch_size,
     #     line_search_mode='exhaustive',
