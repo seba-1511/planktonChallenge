@@ -28,6 +28,7 @@ warnings.filterwarnings("ignore")
 
 NB_CLASSES = 121
 IMG_SIZE = 28
+SAVE = False
 
 
 def grouper(iterable, n, fillvalue=None):
@@ -86,106 +87,106 @@ def train(d):
     test = DenseDesignMatrix(X=d.test_X, y=convert_one_hot(d.test_Y))
 
     print 'Setting up'
-    batch_size = 96
+    batch_size = 256
     conv = mlp.ConvRectifiedLinear(
-        layer_name='c0',
-        output_channels=96,
-        irange=.235,
-        kernel_shape=[4, 4],
-        pool_shape=[3, 3],
-        pool_stride=[2, 2],
-        # W_lr_scale=0.25,
-        max_kernel_norm=1.9365
-    )
+            layer_name='c0',
+            output_channels=96,
+            irange=.235,
+            kernel_shape=[4, 4],
+            pool_shape=[3, 3],
+            pool_stride=[2, 2],
+            # W_lr_scale=0.25,
+            max_kernel_norm=1.9365
+            )
     conv2 = mlp.ConvRectifiedLinear(
-        layer_name='c2',
-        output_channels=128,
-        irange=.235,
-        kernel_shape=[4, 4],
-        pool_shape=[3, 3],
-        pool_stride=[2, 2],
-        # W_lr_scale=0.25,
-        max_kernel_norm=1.9365
-    )
+            layer_name='c2',
+            output_channels=128,
+            irange=.235,
+            kernel_shape=[4, 4],
+            pool_shape=[3, 3],
+            pool_stride=[2, 2],
+            # W_lr_scale=0.25,
+            max_kernel_norm=1.9365
+            )
     conv3 = mlp.ConvRectifiedLinear(
-        layer_name='c3',
-        output_channels=128,
-        irange=.235,
-        kernel_shape=[5, 5],
-        pool_shape=[4, 4],
-        pool_stride=[2, 2],
-        # W_lr_scale=0.25,
-        max_kernel_norm=1.9365
-    )
+            layer_name='c3',
+            output_channels=128,
+            irange=.235,
+            kernel_shape=[5, 5],
+            pool_shape=[4, 4],
+            pool_stride=[2, 2],
+            # W_lr_scale=0.25,
+            max_kernel_norm=1.9365
+            )
     mout = MaxoutConvC01B(
-        layer_name='m0',
-        num_pieces=6,
-        num_channels=128,
-        irange=.235,
-        kernel_shape=[4, 4],
-        pool_shape=[3, 3],
-        pool_stride=[2, 2],
-        # W_lr_scale=0.25,
-        max_kernel_norm=1.9365
-    )
+            layer_name='m0',
+            num_pieces=6,
+            num_channels=96,
+            irange=.235,
+            kernel_shape=[4, 4],
+            pool_shape=[3, 3],
+            pool_stride=[2, 2],
+            # W_lr_scale=0.25,
+            max_kernel_norm=1.9365
+            )
     mout2 = MaxoutConvC01B(
-        layer_name='m1',
-        num_pieces=6,
-        num_channels=128,
-        irange=.05,
-        kernel_shape=[5, 5],
-        pool_shape=[4, 4],
-        pool_stride=[2, 2],
-        W_lr_scale=0.25,
-        max_kernel_norm=1.9365
-    )
+            layer_name='m1',
+            num_pieces=6,
+            num_channels=128,
+            irange=.05,
+            kernel_shape=[5, 5],
+            pool_shape=[4, 4],
+            pool_stride=[2, 2],
+            W_lr_scale=0.25,
+            max_kernel_norm=1.9365
+            )
     sigmoid = mlp.Sigmoid(
-        layer_name='Sigmoid',
-        dim=10000,
-        sparse_init=2000,
-    )
+            layer_name='Sigmoid',
+            dim=10000,
+            sparse_init=2000,
+            )
     sigmoid2 = mlp.Sigmoid(
-        layer_name='s2',
-        dim=2000,
-        sparse_init=500,
-    )
+            layer_name='s2',
+            dim=2000,
+            sparse_init=500,
+            )
     rect = mlp.RectifiedLinear(
-        layer_name='r0',
-        dim=512,
-        sparse_init=200,
-        W_lr_scale=0.25,
-    )
+            layer_name='r0',
+            dim=512,
+            sparse_init=200,
+            W_lr_scale=0.25,
+            )
     rect1 = mlp.RectifiedLinear(
-        layer_name='r1',
-        dim=512,
-        sparse_init=200,
-        irange=0.235,
-    )
+            layer_name='r1',
+            dim=512,
+            sparse_init=200,
+            irange=0.235,
+            )
     smax = mlp.Softmax(
-        layer_name='y',
-        n_classes=NB_CLASSES,
-        irange=0.235,
-    )
+            layer_name='y',
+            n_classes=NB_CLASSES,
+            irange=0.235,
+            )
     in_space = Conv2DSpace(
-        shape=[IMG_SIZE, IMG_SIZE],
-        num_channels=1,
-        # axes=['c', 0, 1, 'b']
-    )
+            shape=[IMG_SIZE, IMG_SIZE],
+            num_channels=1,
+            axes=['c', 0, 1, 'b']
+            )
     net = mlp.MLP(
-        layers=[conv2, smax],
-        input_space=in_space,
-        # nvis=784,
-    )
+            layers=[mout, smax],
+            input_space=in_space,
+            # nvis=784,
+            )
     # Momentum:
-    mom_init = 0.45
+    mom_init = 0.5
     mom_final = 0.99
     mom_start = 1
     mom_saturate = 35
     mom_adjust = learning_rule.MomentumAdjustor(
-        mom_final,
-        mom_start,
-        mom_saturate,
-    )
+            mom_final,
+            mom_start,
+            mom_saturate,
+            )
     mom_rule = learning_rule.Momentum(mom_init)
 
     # Learning Rate:
@@ -196,7 +197,7 @@ def train(d):
 
     # Monitor:
     monitor_save_best = best_params.MonitorBasedSaveBest('test_y_nll',
-                                                         'best_model.pkle')
+            'best_model.pkle')
     # trainer = bgd.BGD(
     #     batch_size=batch_size,
     #     line_search_mode='exhaustive',
@@ -211,17 +212,17 @@ def train(d):
     #         channel_name='valid_y_misclass')
     # )
     trainer = sgd.SGD(
-        learning_rate=0.1,
-        learning_rule=mom_rule,
-        # cost=dropout.Dropout(),
-        batch_size=batch_size,
-        monitoring_dataset={
-            'train': train,
-            'valid': valid,
-            'test': test
-        },
-        termination_criterion=EpochCounter(35)
-    )
+            learning_rate=0.1,
+            learning_rule=mom_rule,
+            # cost=dropout.Dropout(),
+            batch_size=batch_size,
+            monitoring_dataset={
+                'train': train,
+                'valid': valid,
+                'test': test
+                },
+            termination_criterion=EpochCounter(50)
+            )
     trainer.setup(net, train)
     epoch = 0
     test_monitor = []
@@ -231,17 +232,18 @@ def train(d):
         trainer.train(dataset=train)
         net.monitor()
         monitor_save_best.on_monitor(net, valid, trainer)
-        nll = monitor.read_channel(net, 'test_y_nll') + 0
-        test_monitor.append(
-            (nll, monitor.read_channel(net, 'test_y_misclass'))
-        )
-        if nll < prev_nll:
-            f = open('best.pkle', 'wb')
-            pk.dump(net, f, protocol=pk.HIGHEST_PROTOCOL)
+        if SAVE:
+            nll = monitor.read_channel(net, 'test_y_nll') + 0
+            test_monitor.append(
+                    (nll, monitor.read_channel(net, 'test_y_misclass'))
+                    )
+            if nll < prev_nll:
+                f = open('best.pkle', 'wb')
+                pk.dump(net, f, protocol=pk.HIGHEST_PROTOCOL)
+                f.close()
+            f = open('monitor.pkle', 'wb')
+            pk.dump(test_monitor, f, protocol=pk.HIGHEST_PROTOCOL)
             f.close()
-        f = open('monitor.pkle', 'wb')
-        pk.dump(test_monitor, f, protocol=pk.HIGHEST_PROTOCOL)
-        f.close()
         # print 'Custom test score', score((test.X, test.y), net, batch_size)
         # mom_adjust.on_monitor(net, valid, trainer)
         # lr_adjust.on_monitor(net, valid, trainer)
@@ -253,9 +255,16 @@ def train(d):
 """
 
 if __name__ == '__main__':
- #   mnist = fetch_mldata('MNIST original')
+    #   mnist = fetch_mldata('MNIST original')
     # debug()
 #    mnist.data = (mnist.data.astype(float) / 255)
+    import gzip
     data = Data(size=IMG_SIZE, train_perc=0.8, valid_perc=0.1, test_perc=0.1)
+    f = gzip.open('data.pkl.gz', 'wb')
+    pk.dump(data, f, protocol=pk.HIGHEST_PROTOCOL)
+    f.close()
+    # f = gzip.open('data.pkl.gz', 'rb')
+    # data = pk.load(f)
+    # f.close()
     train(d=data)
     # train()
