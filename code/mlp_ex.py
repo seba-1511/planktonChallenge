@@ -22,7 +22,7 @@ from pylearn2.models import mlp
 from pylearn2.models.maxout import MaxoutConvC01B
 from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
 from pylearn2.training_algorithms import bgd, sgd, learning_rule
-from pylearn2.costs.mlp import dropout
+from pylearn2.costs.mlp import dropout, WeightDecay
 
 warnings.filterwarnings("ignore")
 
@@ -79,12 +79,12 @@ def score(dataset, model, batch_size):
 
 def train(d):
     print 'Creating dataset'
-    # train = RotationalDDM(X=d.train_X, y=convert_one_hot(d.train_Y))
-    # valid = RotationalDDM(X=d.valid_X, y=convert_one_hot(d.valid_Y))
-    # test = RotationalDDM(X=d.test_X, y=convert_one_hot(d.test_Y))
-    train = DenseDesignMatrix(X=d.train_X - 0.5, y=convert_one_hot(d.train_Y))
-    valid = DenseDesignMatrix(X=d.valid_X - 0.5, y=convert_one_hot(d.valid_Y))
-    test = DenseDesignMatrix(X=d.test_X - 0.5, y=convert_one_hot(d.test_Y))
+    train = RotationalDDM(X=d.train_X, y=convert_one_hot(d.train_Y))
+    valid = RotationalDDM(X=d.valid_X, y=convert_one_hot(d.valid_Y))
+    test = RotationalDDM(X=d.test_X, y=convert_one_hot(d.test_Y))
+    # train = DenseDesignMatrix(X=d.train_X - 0.5, y=convert_one_hot(d.train_Y))
+    # valid = DenseDesignMatrix(X=d.valid_X - 0.5, y=convert_one_hot(d.valid_Y))
+    # test = DenseDesignMatrix(X=d.test_X - 0.5, y=convert_one_hot(d.test_Y))
 
     print 'Setting up'
     batch_size = 256
@@ -170,11 +170,7 @@ def train(d):
     in_space = Conv2DSpace(
             shape=[IMG_SIZE, IMG_SIZE],
             num_channels=1,
-<<<<<<< HEAD
             # axes=['c', 0, 1, 'b']
-=======
-            axes=['c', 0, 1, 'b']
->>>>>>> 69fcece138f3db96795aee7573274cbb2f957280
             )
     net = mlp.MLP(
             layers=[conv, rect, smax],
@@ -220,13 +216,14 @@ def train(d):
             learning_rate=0.1,
             learning_rule=mom_rule,
             # cost=dropout.Dropout(),
+            # cost=WeightDecay([1e-2, 1e-2, 1e-2]),
             batch_size=batch_size,
             monitoring_dataset={
                 'train': train,
                 'valid': valid,
                 'test': test
                 },
-            termination_criterion=EpochCounter(50)
+            termination_criterion=EpochCounter(5000)
             )
     trainer.setup(net, train)
     epoch = 0
