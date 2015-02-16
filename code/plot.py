@@ -127,10 +127,6 @@ def plotSurface3D(plotArray, title='', xlabel='', ylabel='', zlabel=''):
 
 
 if __name__ == '__main__':
-    x = [i for i in xrange(10)]
-    y = [i**2 for i in xrange(10)]
-    x1 = [i for i in xrange(10)]
-    y2 = [i**3 for i in xrange(10)]
-    x3 = [i for i in xrange(10)]
-    y3 = [i*3 for i in xrange(10)]
-    plotLines3D([x, y, y3], title="test")
+    f = open('monitor.pkle')
+    data = pk.load(f)
+
