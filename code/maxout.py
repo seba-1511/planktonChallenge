@@ -251,10 +251,11 @@ def train_pylearn_general(d=None):
     nn = mlp.MLP(layers=layers, input_space=in_space, batch_size=batch_size)
     trainer = sgd.SGD(
         learning_rate=5e-7,
-        cost=SumOfCosts(costs=[
-            dropout.Dropout(),
-            WeightDecay(decay_coeffs),
-        ]),
+        cost=WeightDecay(decay_coeffs),
+        # cost=SumOfCosts(costs=[
+        #     dropout.Dropout(),
+        #     WeightDecay(decay_coeffs),
+        # ]),
         batch_size=batch_size,
         train_iteration_mode='even_shuffled_sequential',
         termination_criterion=epochs,
@@ -290,7 +291,7 @@ def train_pylearn_general(d=None):
         print ' '
 
 if __name__ == '__main__':
-    d = Data(size=48, train_perc=0.98, test_perc=0.01,
+    d = Data(size=28, train_perc=0.98, test_perc=0.01,
              valid_perc=0.0, augmentation=0)
 #    test_dbn(d)
 #    train_specialists(d=d)

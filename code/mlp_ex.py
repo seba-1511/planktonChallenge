@@ -22,7 +22,8 @@ from pylearn2.models import mlp
 from pylearn2.models.maxout import MaxoutConvC01B
 from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
 from pylearn2.training_algorithms import bgd, sgd, learning_rule
-from pylearn2.costs.mlp import dropout, WeightDecay
+from pylearn2.costs.mlp import dropout, WeightDecay, L1WeightDecay, Default
+from pylearn2.costs.cost import SumOfCosts
 
 warnings.filterwarnings("ignore")
 
@@ -79,12 +80,12 @@ def score(dataset, model, batch_size):
 
 def train(d):
     print 'Creating dataset'
-    train = RotationalDDM(X=d.train_X, y=convert_one_hot(d.train_Y))
-    valid = RotationalDDM(X=d.valid_X, y=convert_one_hot(d.valid_Y))
-    test = RotationalDDM(X=d.test_X, y=convert_one_hot(d.test_Y))
-    # train = DenseDesignMatrix(X=d.train_X - 0.5, y=convert_one_hot(d.train_Y))
-    # valid = DenseDesignMatrix(X=d.valid_X - 0.5, y=convert_one_hot(d.valid_Y))
-    # test = DenseDesignMatrix(X=d.test_X - 0.5, y=convert_one_hot(d.test_Y))
+    # train = RotationalDDM(X=d.train_X, y=convert_one_hot(d.train_Y))
+    # valid = RotationalDDM(X=d.valid_X, y=convert_one_hot(d.valid_Y))
+    # test = RotationalDDM(X=d.test_X, y=convert_one_hot(d.test_Y))
+    train = DenseDesignMatrix(X=d.train_X - 0.5, y=convert_one_hot(d.train_Y))
+    valid = DenseDesignMatrix(X=d.valid_X - 0.5, y=convert_one_hot(d.valid_Y))
+    test = DenseDesignMatrix(X=d.test_X - 0.5, y=convert_one_hot(d.test_Y))
 
     print 'Setting up'
     batch_size = 256
@@ -92,11 +93,13 @@ def train(d):
             layer_name='c0',
             output_channels=96,
             irange=0.235,
-            kernel_shape=[4, 4],
-            pool_shape=[3, 3],
-            pool_stride=[2, 2],
+            kernel_shape=(4, 4),
+            kernel_stride=(1, 1),
+            pool_shape=(3, 3),
+            pool_stride=(2, 2),
+            border_mode='valid',
             # W_lr_scale=0.25,
-            max_kernel_norm=1.9365
+            # max_kernel_norm=1.9365
             )
     conv2 = mlp.ConvRectifiedLinear(
             layer_name='c2',
@@ -216,24 +219,33 @@ def train(d):
             learning_rate=0.1,
             learning_rule=mom_rule,
             # cost=dropout.Dropout(),
-            # cost=WeightDecay([1e-2, 1e-2, 1e-2]),
+            # cost=WeightDecay([1e-2, 1e-2, 0.0]),
+            cost=SumOfCosts(
+                costs=[
+                    Default(),
+                    WeightDecay([1e-2, 1e-2, 0.0]),
+                ]
+            ),
             batch_size=batch_size,
             monitoring_dataset={
                 'train': train,
                 'valid': valid,
                 'test': test
                 },
-            termination_criterion=EpochCounter(5000)
+            termination_criterion=EpochCounter(50),
+            # termination_criterion=MonitorBased(channel_name='valid_y_nll'),
             )
     trainer.setup(net, train)
     epoch = 0
     test_monitor = []
     prev_nll = 10
-    while trainer.continue_learning(net):
+    while True:
         print 'Training...', epoch
         trainer.train(dataset=train)
         net.monitor()
         monitor_save_best.on_monitor(net, valid, trainer)
+        if not trainer.continue_learning(net):
+            break
         if SAVE:
             nll = monitor.read_channel(net, 'test_y_nll') + 0
             test_monitor.append(
