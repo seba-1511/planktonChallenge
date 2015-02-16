@@ -193,14 +193,15 @@ def train(d):
     mom_rule = learning_rule.Momentum(mom_init)
 
     # Learning Rate:
-    lr_init = 1
+    lr_init = 5
     lr_saturate = 35
     lr_decay_factor = 0.1
     lr_adjust = sgd.LinearDecayOverEpoch(lr_init, lr_saturate, lr_decay_factor)
 
     # Monitor:
-    monitor_save_best = best_params.MonitorBasedSaveBest('test_y_nll',
-            'best_model.pkl')
+    if SAVE:
+        monitor_save_best = best_params.MonitorBasedSaveBest('test_y_nll',
+                'best_model.pkl')
 
     # trainer = bgd.BGD(
     #     batch_size=batch_size,
@@ -216,14 +217,14 @@ def train(d):
     #         channel_name='valid_y_misclass')
     # )
     trainer = sgd.SGD(
-            learning_rate=0.1,
+            learning_rate=0.15,
             learning_rule=mom_rule,
             # cost=dropout.Dropout(),
             # cost=WeightDecay([1e-2, 1e-2, 0.0]),
             cost=SumOfCosts(
                 costs=[
                     Default(),
-                    WeightDecay([1e-2, 1e-2, 0.0]),
+                    WeightDecay([1e-3, 1e-2, 0.0]),
                 ]
             ),
             batch_size=batch_size,
@@ -260,7 +261,7 @@ def train(d):
             f.close()
         # print 'Custom test score', score((test.X, test.y), net, batch_size)
         mom_adjust.on_monitor(net, valid, trainer)
-        # lr_adjust.on_monitor(net, valid, trainer)
+        lr_adjust.on_monitor(net, valid, trainer)
         epoch += 1
     submit(predict, net, IMG_SIZE)
 
