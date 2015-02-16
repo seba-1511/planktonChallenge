@@ -29,7 +29,7 @@ warnings.filterwarnings("ignore")
 
 NB_CLASSES = 121
 IMG_SIZE = 28
-SAVE = False
+SAVE = True
 
 
 def grouper(iterable, n, fillvalue=None):
@@ -51,7 +51,7 @@ def predict(data, model, batch_size, vec_space):
     # data.shape = (1, 784)
     res = []
     for X in grouper(data, batch_size):
-        X = vec_space.np_format_as(X, model.get_input_space())
+        X = vec_space.np_format_as(X, model.get_input_space().make_theano_batch())
         res.append(ann.fprop(theano.shared(X, name='inputs')).eval())
     return res
 
@@ -92,7 +92,7 @@ def train(d):
     conv = mlp.ConvRectifiedLinear(
             layer_name='c0',
             output_channels=96,
-            irange=0.235,
+            irange=0.087,
             kernel_shape=(4, 4),
             kernel_stride=(1, 1),
             pool_shape=(3, 3),
@@ -103,13 +103,14 @@ def train(d):
             )
     conv2 = mlp.ConvRectifiedLinear(
             layer_name='c2',
-            output_channels=128,
-            irange=.235,
-            kernel_shape=[4, 4],
-            pool_shape=[3, 3],
-            pool_stride=[2, 2],
+            output_channels=64,
+            irange=0.087,
+            kernel_shape=(3, 3),
+            kernel_stride=(1, 1),
+            pool_shape=(3, 3),
+            pool_stride=(2, 2),
             # W_lr_scale=0.25,
-            max_kernel_norm=1.9365
+            # max_kernel_norm=1.9365
             )
     conv3 = mlp.ConvRectifiedLinear(
             layer_name='c3',
@@ -176,7 +177,7 @@ def train(d):
             # axes=['c', 0, 1, 'b']
             )
     net = mlp.MLP(
-            layers=[conv, rect, smax],
+            layers=[conv, conv2, rect, smax],
             input_space=in_space,
             # nvis=784,
             )
@@ -195,7 +196,7 @@ def train(d):
     # Learning Rate:
     lr_init = 5
     lr_saturate = 35
-    lr_decay_factor = 0.1
+    lr_decay_factor = 0.06
     lr_adjust = sgd.LinearDecayOverEpoch(lr_init, lr_saturate, lr_decay_factor)
 
     # Monitor:
@@ -217,13 +218,13 @@ def train(d):
     #         channel_name='valid_y_misclass')
     # )
     trainer = sgd.SGD(
-            learning_rate=0.05,
+            learning_rate=0.085,
             learning_rule=mom_rule,
             cost=SumOfCosts(
                 costs=[
                     Default(),
                     # dropout.Dropout(),
-                    WeightDecay([1e-2, 1e-2, 1e-3]),
+                    WeightDecay([1e-2, 1e-2, 1e-2, 1e-3]),
                 ]
             ),
             batch_size=batch_size,
@@ -232,7 +233,7 @@ def train(d):
                 'valid': valid,
                 'test': test
                 },
-            termination_criterion=EpochCounter(32),
+            termination_criterion=EpochCounter(1),
             # termination_criterion=MonitorBased(channel_name='valid_y_nll'),
             )
     trainer.setup(net, train)

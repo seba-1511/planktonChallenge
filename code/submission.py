@@ -28,7 +28,7 @@ def load_test_data(size=28):
                 continue
             image = imread(folder[0] + '/' + img)
             image = resize(image, (size, size))
-            images.extend(image)
+            images.extend(image.ravel())
             names.append(img)
     return names, images
 
