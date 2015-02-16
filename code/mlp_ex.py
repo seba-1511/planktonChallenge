@@ -244,10 +244,10 @@ def train(d):
         print 'Training...', epoch
         trainer.train(dataset=train)
         net.monitor()
-        monitor_save_best.on_monitor(net, valid, trainer)
         if not trainer.continue_learning(net):
             break
         if SAVE:
+            monitor_save_best.on_monitor(net, valid, trainer)
             nll = monitor.read_channel(net, 'test_y_nll') + 0
             test_monitor.append(
                     (nll, monitor.read_channel(net, 'test_y_misclass'))
