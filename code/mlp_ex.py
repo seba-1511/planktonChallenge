@@ -154,7 +154,7 @@ def train(d):
             )
     rect = mlp.RectifiedLinear(
             layer_name='r0',
-            dim=1378,
+            dim=1560,
             irange=0.070,
             # sparse_init=200,
             # W_lr_scale=0.25,
@@ -223,7 +223,7 @@ def train(d):
                 costs=[
                     Default(),
                     # dropout.Dropout(),
-                    WeightDecay([1e-2, 1e-2, 0.0]),
+                    WeightDecay([1e-2, 1e-2, 1e-3]),
                 ]
             ),
             batch_size=batch_size,
