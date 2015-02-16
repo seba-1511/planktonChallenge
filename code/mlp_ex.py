@@ -51,9 +51,13 @@ def predict(data, model, batch_size, vec_space):
     # data.shape = (1, 784)
     res = []
     fill = [0 for x in xrange(NB_CLASSES)]
+    # total = len(data)/batch_size
+    # count = 0
     for X in grouper(data, batch_size, fill):
+        count += 1
         X = vec_space.np_format_as(X, model.get_input_space().make_theano_batch())
         res.append(ann.fprop(theano.shared(X, name='inputs')).eval())
+        # print 'Predicted %s out of %s batches' % (count, total)
     return res
 
 
@@ -93,8 +97,8 @@ def train(d):
     conv = mlp.ConvRectifiedLinear(
             layer_name='c0',
             output_channels=96,
-            irange=0.087,
-            kernel_shape=(4, 4),
+            irange=0.070,
+            kernel_shape=(3, 3),
             kernel_stride=(1, 1),
             pool_shape=(3, 3),
             pool_stride=(2, 2),
@@ -104,12 +108,12 @@ def train(d):
             )
     conv2 = mlp.ConvRectifiedLinear(
             layer_name='c2',
-            output_channels=64,
-            irange=0.087,
+            output_channels=96,
+            irange=0.070,
             kernel_shape=(3, 3),
             kernel_stride=(1, 1),
             pool_shape=(3, 3),
-            pool_stride=(2, 2),
+            pool_stride=(1, 1),
             # W_lr_scale=0.25,
             # max_kernel_norm=1.9365
             )
@@ -156,7 +160,7 @@ def train(d):
             )
     rect = mlp.RectifiedLinear(
             layer_name='r0',
-            dim=1560,
+            dim=2000,
             irange=0.070,
             # sparse_init=200,
             # W_lr_scale=0.25,
@@ -183,7 +187,7 @@ def train(d):
             # nvis=784,
             )
     # Momentum:
-    mom_init = 0.5
+    mom_init = 0.3
     mom_final = 0.99
     mom_start = 1
     mom_saturate = 35
@@ -195,9 +199,9 @@ def train(d):
     mom_rule = learning_rule.Momentum(mom_init)
 
     # Learning Rate:
-    lr_init = 5
+    lr_init = 8
     lr_saturate = 35
-    lr_decay_factor = 0.06
+    lr_decay_factor = 0.07
     lr_adjust = sgd.LinearDecayOverEpoch(lr_init, lr_saturate, lr_decay_factor)
 
     # Monitor:
