@@ -154,8 +154,8 @@ def train(d):
             )
     rect = mlp.RectifiedLinear(
             layer_name='r0',
-            dim=512,
-            irange=0.1082,
+            dim=1378,
+            irange=0.070,
             # sparse_init=200,
             # W_lr_scale=0.25,
             )
@@ -217,14 +217,13 @@ def train(d):
     #         channel_name='valid_y_misclass')
     # )
     trainer = sgd.SGD(
-            learning_rate=0.15,
+            learning_rate=0.05,
             learning_rule=mom_rule,
-            # cost=dropout.Dropout(),
-            # cost=WeightDecay([1e-2, 1e-2, 0.0]),
             cost=SumOfCosts(
                 costs=[
                     Default(),
-                    WeightDecay([1e-3, 1e-2, 0.0]),
+                    # dropout.Dropout(),
+                    WeightDecay([1e-2, 1e-2, 0.0]),
                 ]
             ),
             batch_size=batch_size,
@@ -233,7 +232,7 @@ def train(d):
                 'valid': valid,
                 'test': test
                 },
-            termination_criterion=EpochCounter(50),
+            termination_criterion=EpochCounter(32),
             # termination_criterion=MonitorBased(channel_name='valid_y_nll'),
             )
     trainer.setup(net, train)
