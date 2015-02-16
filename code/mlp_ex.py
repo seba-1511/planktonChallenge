@@ -50,7 +50,8 @@ def predict(data, model, batch_size, vec_space):
     data = np.asarray(data)
     # data.shape = (1, 784)
     res = []
-    for X in grouper(data, batch_size):
+    fill = [0 for x in xrange(NB_CLASSES)]
+    for X in grouper(data, batch_size, fill):
         X = vec_space.np_format_as(X, model.get_input_space().make_theano_batch())
         res.append(ann.fprop(theano.shared(X, name='inputs')).eval())
     return res
