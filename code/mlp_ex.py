@@ -93,14 +93,14 @@ def train(d):
     test = DenseDesignMatrix(X=d.test_X - 0.5, y=convert_one_hot(d.test_Y))
 
     print 'Setting up'
-    batch_size = 256
+    batch_size = 128
     conv = mlp.ConvRectifiedLinear(
             layer_name='c0',
-            output_channels=96,
+            output_channels=64,
             irange=0.070,
-            kernel_shape=(3, 3),
+            kernel_shape=(7, 7),
             kernel_stride=(1, 1),
-            pool_shape=(3, 3),
+            pool_shape=(5, 5),
             pool_stride=(2, 2),
             border_mode='valid',
             # W_lr_scale=0.25,
@@ -108,12 +108,13 @@ def train(d):
             )
     conv2 = mlp.ConvRectifiedLinear(
             layer_name='c2',
-            output_channels=96,
+            output_channels=64,
             irange=0.070,
-            kernel_shape=(3, 3),
+            kernel_shape=(5, 5),
             kernel_stride=(1, 1),
             pool_shape=(3, 3),
-            pool_stride=(1, 1),
+            pool_stride=(2, 2),
+            border_mode='valid',
             # W_lr_scale=0.25,
             # max_kernel_norm=1.9365
             )
@@ -160,21 +161,21 @@ def train(d):
             )
     rect = mlp.RectifiedLinear(
             layer_name='r0',
-            dim=2000,
+            dim=10000,
             irange=0.070,
             # sparse_init=200,
             # W_lr_scale=0.25,
             )
     rect1 = mlp.RectifiedLinear(
             layer_name='r1',
-            dim=512,
-            sparse_init=200,
-            irange=0.235,
+            dim=1000,
+            # sparse_init=200,
+            irange=0.054,
             )
     smax = mlp.Softmax(
             layer_name='y',
             n_classes=NB_CLASSES,
-            irange=0.235,
+            irange=0.054,
             )
     in_space = Conv2DSpace(
             shape=[IMG_SIZE, IMG_SIZE],
@@ -189,7 +190,7 @@ def train(d):
     # Momentum:
     mom_init = 0.3
     mom_final = 0.99
-    mom_start = 1
+    mom_start = 8
     mom_saturate = 35
     mom_adjust = learning_rule.MomentumAdjustor(
             mom_final,
@@ -223,7 +224,7 @@ def train(d):
     #         channel_name='valid_y_misclass')
     # )
     trainer = sgd.SGD(
-            learning_rate=0.085,
+            learning_rate=0.03,
             learning_rule=mom_rule,
             cost=SumOfCosts(
                 costs=[
@@ -238,7 +239,7 @@ def train(d):
                 'valid': valid,
                 'test': test
                 },
-            termination_criterion=EpochCounter(1),
+            termination_criterion=EpochCounter(3200),
             # termination_criterion=MonitorBased(channel_name='valid_y_nll'),
             )
     trainer.setup(net, train)
