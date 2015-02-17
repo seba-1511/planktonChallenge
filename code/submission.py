@@ -23,18 +23,17 @@ def grouper(iterable, n, fillvalue=None):
     args = [iter(iterable)] * n
     return izip_longest(fillvalue=fillvalue, *args)
 
-def load_test_data(size=28, predict=None, model=None, vec=None):
+def load_test_data(size=28, predict=None, model=None, vec=None, sub=None):
     curr_dir = os.path.dirname(
             os.path.abspath(inspect.getfile(inspect.currentframe())))
     folders = os.walk(os.path.join(curr_dir, '../data/test/'))
     images = []
     names = []
     print 'Reading test data...'
-    with open('submission.csv', 'wb') as sub:
-        for class_id, folder in enumerate(folders):
-            for img in folder[2]:
-                if img.index('.jpg') == -1:
-                    continue
+    for class_id, folder in enumerate(folders):
+        for img in folder[2]:
+            if img.index('.jpg') == -1:
+                continue
             image = imread(folder[0] + '/' + img)
             image = resize(image, (size, size))
             # images.extend(image.ravel())
@@ -43,9 +42,9 @@ def load_test_data(size=28, predict=None, model=None, vec=None):
             p = vec.np_format_as((p - 0.5), model.get_input_space())
             p = predict(p)[0]
             l = str(img) + ',' + \
-                    ','.join([str(format(i, 'f')) for i in p]) + '\n'
+                        ','.join([str(format(i, 'f')) for i in p]) + '\n'
             sub.write(l)
-            print 'Wrote image', img
+            # print 'Wrote image', img
     # import gzip
     # f = gzip.open('submit.pkl.gz', 'wb')
     # pk.dump((names, images), f, protocol=pk.HIGHEST_PROTOCOL)
@@ -69,9 +68,9 @@ def submit(predict, model=None, img_size=28):
         # for name, p in zip(names, data):
         #     p = predict((p - 0.5), model, 1, vec)[0]
         #     l = str(name) + ',' + \
-        #             ','.join([str(format(i, 'f')) for i in p]) + '\n'
+                #             ','.join([str(format(i, 'f')) for i in p]) + '\n'
         #     sub.write(l)
-    names, data = load_test_data(img_size, predict, model, vec)
+        names, data = load_test_data(img_size, predict, model, vec, sub)
 
 
 if __name__ == '__main__':
