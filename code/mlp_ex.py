@@ -29,7 +29,7 @@ warnings.filterwarnings("ignore")
 
 NB_CLASSES = 121
 IMG_SIZE = 28
-SAVE = True
+SAVE = False
 
 
 def grouper(iterable, n, fillvalue=None):
@@ -47,18 +47,18 @@ def convert_categorical(data):
     return np.argmax(data, axis=1)
 
 def predict(data, model, batch_size, vec_space):
-    data = np.asarray(data)
-    # data.shape = (1, 784)
-    res = []
-    fill = [0 for x in xrange(NB_CLASSES)]
-    # total = len(data)/batch_size
-    # count = 0
-    for X in grouper(data, batch_size, fill):
-        count += 1
-        X = vec_space.np_format_as(X, model.get_input_space().make_theano_batch())
-        res.append(ann.fprop(theano.shared(X, name='inputs')).eval())
-        # print 'Predicted %s out of %s batches' % (count, total)
-    return res
+    # data = np.asarray(data)
+    # # data.shape = (1, 784)
+    # res = []
+    # fill = [0 for x in xrange(NB_CLASSES)]
+    # # total = len(data)/batch_size
+    # # count = 0
+    # for X in grouper(data, batch_size, fill):
+    #     # count += 1
+    #     X = vec_space.np_format_as(X, model.get_input_space().make_theano_batch())
+    #     res.append(ann.fprop(theano.shared(X, name='inputs')).eval())
+    #     # print 'Predicted %s out of %s batches' % (count, total)
+    return None
 
 
 
