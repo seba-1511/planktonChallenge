@@ -93,27 +93,27 @@ def train(d):
     test = DenseDesignMatrix(X=d.test_X - 0.5, y=convert_one_hot(d.test_Y))
 
     print 'Setting up'
-    batch_size = 128
+    batch_size = 256
     conv = mlp.ConvRectifiedLinear(
             layer_name='c0',
-            output_channels=64,
+            output_channels=96,
             irange=0.070,
-            kernel_shape=(7, 7),
+            kernel_shape=(2, 2),
             kernel_stride=(1, 1),
-            pool_shape=(5, 5),
-            pool_stride=(2, 2),
+            pool_shape=(2, 2),
+            pool_stride=(1, 1),
             border_mode='valid',
             # W_lr_scale=0.25,
             # max_kernel_norm=1.9365
             )
     conv2 = mlp.ConvRectifiedLinear(
             layer_name='c2',
-            output_channels=64,
+            output_channels=126,
             irange=0.070,
-            kernel_shape=(5, 5),
+            kernel_shape=(3, 3),
             kernel_stride=(1, 1),
             pool_shape=(3, 3),
-            pool_stride=(2, 2),
+            pool_stride=(1, 1),
             border_mode='valid',
             # W_lr_scale=0.25,
             # max_kernel_norm=1.9365
@@ -161,14 +161,14 @@ def train(d):
             )
     rect = mlp.RectifiedLinear(
             layer_name='r0',
-            dim=10000,
+            dim=2000,
             irange=0.070,
             # sparse_init=200,
             # W_lr_scale=0.25,
             )
     rect1 = mlp.RectifiedLinear(
             layer_name='r1',
-            dim=1000,
+            dim=2000,
             # sparse_init=200,
             irange=0.054,
             )
@@ -183,7 +183,7 @@ def train(d):
             # axes=['c', 0, 1, 'b']
             )
     net = mlp.MLP(
-            layers=[conv, conv2, rect, smax],
+            layers=[conv, conv2, rect, rect1, smax],
             input_space=in_space,
             # nvis=784,
             )
@@ -230,7 +230,7 @@ def train(d):
                 costs=[
                     Default(),
                     # dropout.Dropout(),
-                    WeightDecay([1e-2, 1e-2, 1e-2, 1e-3]),
+                    WeightDecay([1e-2, 1e-2, 1e-2, 1e-2, 1e-3]),
                 ]
             ),
             batch_size=batch_size,
