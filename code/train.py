@@ -4,10 +4,13 @@ from pylearn2 import monitor
 from pylearn2.train_extensions import best_params
 from pylearn2.termination_criteria import EpochCounter, MonitorBased
 from pylearn2.training_algorithms import bgd, sgd, learning_rule
+from pylearn2.costs.mlp import dropout, WeightDecay, L1WeightDecay, Default
+from pylearn2.costs.cost import SumOfCosts
 
 
 from utils import (
     SAVE,
+    BATCH_SIZE,
 )
 
 # Momentum:
@@ -56,7 +59,7 @@ trainer = sgd.SGD(
             WeightDecay([1e-2, 1e-2, 1e-2, 1e-2, 1e-3]),
         ]
     ),
-    batch_size=batch_size,
+    batch_size=BATCH_SIZE,
     monitoring_dataset={
         'train': train,
         'valid': valid,

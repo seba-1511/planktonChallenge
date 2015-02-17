@@ -39,27 +39,27 @@ conv3 = mlp.ConvRectifiedLinear(
     # W_lr_scale=0.25,
     max_kernel_norm=1.9365
 )
-mout = MaxoutConvC01B(
-    layer_name='m0',
-    num_pieces=6,
-    num_channels=96,
-    irange=.235,
-    kernel_shape=[4, 4],
-    pool_shape=[3, 3],
-    pool_stride=[2, 2],
-    # W_lr_scale=0.25,
-)
-mout2 = MaxoutConvC01B(
-    layer_name='m1',
-    num_pieces=6,
-    num_channels=128,
-    irange=.05,
-    kernel_shape=[5, 5],
-    pool_shape=[4, 4],
-    pool_stride=[2, 2],
-    W_lr_scale=0.25,
-    max_kernel_norm=1.9365
-)
+# mout = MaxoutConvC01B(
+#     layer_name='m0',
+#     num_pieces=6,
+#     num_channels=96,
+#     irange=.235,
+#     kernel_shape=[4, 4],
+#     pool_shape=[3, 3],
+#     pool_stride=[2, 2],
+#     # W_lr_scale=0.25,
+# )
+# mout2 = MaxoutConvC01B(
+#     layer_name='m1',
+#     num_pieces=6,
+#     num_channels=128,
+#     irange=.05,
+#     kernel_shape=[5, 5],
+#     pool_shape=[4, 4],
+#     pool_stride=[2, 2],
+#     W_lr_scale=0.25,
+#     max_kernel_norm=1.9365
+# )
 sigmoid = mlp.Sigmoid(
     layer_name='Sigmoid',
     dim=10000,
