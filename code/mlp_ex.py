@@ -46,20 +46,20 @@ def convert_one_hot(data):
 def convert_categorical(data):
     return np.argmax(data, axis=1)
 
+
 def predict(data, model, batch_size, vec_space):
     # data = np.asarray(data)
-    # # data.shape = (1, 784)
+    # data.shape = (1, 784)
     # res = []
     # fill = [0 for x in xrange(NB_CLASSES)]
-    # # total = len(data)/batch_size
-    # # count = 0
+    # total = len(data)/batch_size
+    # count = 0
     # for X in grouper(data, batch_size, fill):
-    #     # count += 1
+    # count += 1
     #     X = vec_space.np_format_as(X, model.get_input_space().make_theano_batch())
     #     res.append(ann.fprop(theano.shared(X, name='inputs')).eval())
-    #     # print 'Predicted %s out of %s batches' % (count, total)
+    # print 'Predicted %s out of %s batches' % (count, total)
     return None
-
 
 
 def classify(inp, model, batch_size, vec_space):
@@ -95,108 +95,108 @@ def train(d):
     print 'Setting up'
     batch_size = 256
     conv = mlp.ConvRectifiedLinear(
-            layer_name='c0',
-            output_channels=96,
-            irange=0.070,
-            kernel_shape=(2, 2),
-            kernel_stride=(1, 1),
-            pool_shape=(2, 2),
-            pool_stride=(1, 1),
-            border_mode='valid',
-            # W_lr_scale=0.25,
-            # max_kernel_norm=1.9365
-            )
+        layer_name='c0',
+        output_channels=96,
+        irange=0.070,
+        kernel_shape=(2, 2),
+        kernel_stride=(1, 1),
+        pool_shape=(2, 2),
+        pool_stride=(1, 1),
+        border_mode='valid',
+        # W_lr_scale=0.25,
+        # max_kernel_norm=1.9365
+    )
     conv2 = mlp.ConvRectifiedLinear(
-            layer_name='c2',
-            output_channels=126,
-            irange=0.070,
-            kernel_shape=(3, 3),
-            kernel_stride=(1, 1),
-            pool_shape=(3, 3),
-            pool_stride=(1, 1),
-            border_mode='valid',
-            # W_lr_scale=0.25,
-            # max_kernel_norm=1.9365
-            )
+        layer_name='c2',
+        output_channels=126,
+        irange=0.070,
+        kernel_shape=(3, 3),
+        kernel_stride=(1, 1),
+        pool_shape=(3, 3),
+        pool_stride=(1, 1),
+        border_mode='valid',
+        # W_lr_scale=0.25,
+        # max_kernel_norm=1.9365
+    )
     conv3 = mlp.ConvRectifiedLinear(
-            layer_name='c3',
-            output_channels=128,
-            irange=.235,
-            kernel_shape=[5, 5],
-            pool_shape=[4, 4],
-            pool_stride=[2, 2],
-            # W_lr_scale=0.25,
-            max_kernel_norm=1.9365
-            )
+        layer_name='c3',
+        output_channels=128,
+        irange=.235,
+        kernel_shape=[5, 5],
+        pool_shape=[4, 4],
+        pool_stride=[2, 2],
+        # W_lr_scale=0.25,
+        max_kernel_norm=1.9365
+    )
     mout = MaxoutConvC01B(
-            layer_name='m0',
-            num_pieces=6,
-            num_channels=96,
-            irange=.235,
-            kernel_shape=[4, 4],
-            pool_shape=[3, 3],
-            pool_stride=[2, 2],
-            # W_lr_scale=0.25,
-            )
+        layer_name='m0',
+        num_pieces=6,
+        num_channels=96,
+        irange=.235,
+        kernel_shape=[4, 4],
+        pool_shape=[3, 3],
+        pool_stride=[2, 2],
+        # W_lr_scale=0.25,
+    )
     mout2 = MaxoutConvC01B(
-            layer_name='m1',
-            num_pieces=6,
-            num_channels=128,
-            irange=.05,
-            kernel_shape=[5, 5],
-            pool_shape=[4, 4],
-            pool_stride=[2, 2],
-            W_lr_scale=0.25,
-            max_kernel_norm=1.9365
-            )
+        layer_name='m1',
+        num_pieces=6,
+        num_channels=128,
+        irange=.05,
+        kernel_shape=[5, 5],
+        pool_shape=[4, 4],
+        pool_stride=[2, 2],
+        W_lr_scale=0.25,
+        max_kernel_norm=1.9365
+    )
     sigmoid = mlp.Sigmoid(
-            layer_name='Sigmoid',
-            dim=10000,
-            sparse_init=2000,
-            )
+        layer_name='Sigmoid',
+        dim=10000,
+        sparse_init=2000,
+    )
     sigmoid2 = mlp.Sigmoid(
-            layer_name='s2',
-            dim=2000,
-            sparse_init=500,
-            )
+        layer_name='s2',
+        dim=2000,
+        sparse_init=500,
+    )
     rect = mlp.RectifiedLinear(
-            layer_name='r0',
-            dim=2000,
-            irange=0.070,
-            # sparse_init=200,
-            # W_lr_scale=0.25,
-            )
+        layer_name='r0',
+        dim=2000,
+        irange=0.070,
+        # sparse_init=200,
+        # W_lr_scale=0.25,
+    )
     rect1 = mlp.RectifiedLinear(
-            layer_name='r1',
-            dim=2000,
-            # sparse_init=200,
-            irange=0.054,
-            )
+        layer_name='r1',
+        dim=2000,
+        # sparse_init=200,
+        irange=0.054,
+    )
     smax = mlp.Softmax(
-            layer_name='y',
-            n_classes=NB_CLASSES,
-            irange=0.054,
-            )
+        layer_name='y',
+        n_classes=NB_CLASSES,
+        irange=0.054,
+    )
     in_space = Conv2DSpace(
-            shape=[IMG_SIZE, IMG_SIZE],
-            num_channels=1,
-            # axes=['c', 0, 1, 'b']
-            )
+        shape=[IMG_SIZE, IMG_SIZE],
+        num_channels=1,
+        # axes=['c', 0, 1, 'b']
+    )
     net = mlp.MLP(
-            layers=[conv, conv2, rect, rect1, smax],
-            input_space=in_space,
-            # nvis=784,
-            )
+        layers=[conv, conv2, rect, rect1, smax],
+        input_space=in_space,
+        # nvis=784,
+    )
     # Momentum:
     mom_init = 0.3
     mom_final = 0.99
     mom_start = 8
     mom_saturate = 35
     mom_adjust = learning_rule.MomentumAdjustor(
-            mom_final,
-            mom_start,
-            mom_saturate,
-            )
+        mom_final,
+        mom_start,
+        mom_saturate,
+    )
     mom_rule = learning_rule.Momentum(mom_init)
 
     # Learning Rate:
@@ -208,7 +208,7 @@ def train(d):
     # Monitor:
     if SAVE:
         monitor_save_best = best_params.MonitorBasedSaveBest('test_y_nll',
-                'best_model.pkl')
+                                                             'best_model.pkl')
 
     # trainer = bgd.BGD(
     #     batch_size=batch_size,
@@ -224,24 +224,24 @@ def train(d):
     #         channel_name='valid_y_misclass')
     # )
     trainer = sgd.SGD(
-            learning_rate=0.03,
-            learning_rule=mom_rule,
-            cost=SumOfCosts(
-                costs=[
-                    Default(),
-                    # dropout.Dropout(),
-                    WeightDecay([1e-2, 1e-2, 1e-2, 1e-2, 1e-3]),
-                ]
-            ),
-            batch_size=batch_size,
-            monitoring_dataset={
-                'train': train,
-                'valid': valid,
-                'test': test
-                },
-            termination_criterion=EpochCounter(3200),
-            # termination_criterion=MonitorBased(channel_name='valid_y_nll'),
-            )
+        learning_rate=0.03,
+        learning_rule=mom_rule,
+        cost=SumOfCosts(
+            costs=[
+                Default(),
+                # dropout.Dropout(),
+                WeightDecay([1e-2, 1e-2, 1e-2, 1e-2, 1e-3]),
+            ]
+        ),
+        batch_size=batch_size,
+        monitoring_dataset={
+            'train': train,
+            'valid': valid,
+            'test': test
+        },
+        termination_criterion=EpochCounter(3200),
+        # termination_criterion=MonitorBased(channel_name='valid_y_nll'),
+    )
     trainer.setup(net, train)
     epoch = 0
     test_monitor = []
@@ -256,8 +256,8 @@ def train(d):
             monitor_save_best.on_monitor(net, valid, trainer)
             nll = monitor.read_channel(net, 'test_y_nll') + 0
             test_monitor.append(
-                    (nll, monitor.read_channel(net, 'test_y_misclass'))
-                    )
+                (nll, monitor.read_channel(net, 'test_y_misclass'))
+            )
             if nll < prev_nll:
                 f = open('best.pkl', 'wb')
                 pk.dump(net, f, protocol=pk.HIGHEST_PROTOCOL)
