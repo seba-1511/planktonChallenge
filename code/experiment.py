@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-#
-import numpy as np
+import warnings
 
 from pylearn2.space import Conv2DSpace
 
@@ -28,6 +27,9 @@ from datasets import (
 
 from pylearn2.models import mlp
 
+
+warnings.filterwarnings("ignore")
+
 if __name__ == '__main__':
     train, valid, test = get_dataset()
     trainer = get_trainer(train, valid, test)
@@ -37,6 +39,7 @@ if __name__ == '__main__':
         num_channels=1,
         # axes=['c', 0, 1, 'b']
     )
+
     net = mlp.MLP(
         layers=[conv0, conv1, rect0, rect1, smax],
         input_space=in_space,
