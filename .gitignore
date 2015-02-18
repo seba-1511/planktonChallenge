@@ -54,3 +54,9 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Custom 
+*.csv
+*.pkl
+*.pkl.gz
+*.csv.gz
