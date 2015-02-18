@@ -37,41 +37,42 @@ def get_predict_fn(model):
 def load_test_data(predict=None, model=None, sub=None, size=IMG_SIZE):
     curr_dir = os.path.dirname(
         os.path.abspath(inspect.getfile(inspect.currentframe())))
+    d()
     if isfile(TEST_DATA):
         print 'Load test data from archive...'
         with gzip.open(TEST_DATA) as data:
             names, images = pk.load(data)
             print 'Started predicting...'
             for name, img in zip(names, images):
-                d()
                 pred = predict(img)[0]
                 l = str(img) + ',' + \
                     ','.join([str(format(i, 'f')) for i in pred]) + '\n'
                 sub.write(l)
     else:
         folders = os.walk(os.path.join(curr_dir, PATH_TEST_FOLDER))
-        images = []
-        names = []
+        # images = []
+        # names = []
         print 'Reading test data...'
         for folder in folders:
             print 'Started predicting...'
-            for name in folder[2]:
+            for c, name in enumerate(folder[2]):
+                if c % 100 == 0:
+                    print 'predicted ', c
                 if name.index('.jpg') == -1:
                     continue
                 image = imread(folder[0] + '/' + name)
                 image = resize(image, (size, size))
                 image = image.ravel()
                 p = np.array([image, ])
-                d()
                 p = predict(p)[0]
                 l = str(name) + ',' + \
                     ','.join([str(format(i, 'f')) for i in p]) + '\n'
                 sub.write(l)
-                images.append(image)
-                names.append(name)
-        with gzip.open(TEST_DATA) as test_data:
-            names, images = np.array(names), np.array(images)
-            pk.dump((names, images), test_data, protocol=pk.HIGHEST_PROTOCOL)
+                # images.append(image)
+                # names.append(name)
+        # with gzip.open(TEST_DATA) as test_data:
+            # names, images = np.array(names), np.array(images)
+            # pk.dump((names, images), test_data, protocol=pk.HIGHEST_PROTOCOL)
     print 'Submission done.'
 
 
