@@ -15,7 +15,7 @@ from utils import (
 )
 from submit import (
     submit,
-    predict,
+    get_predict_fn,
 )
 from train import (
     get_trainer,
@@ -47,4 +47,4 @@ if __name__ == '__main__':
     )
 
     net = loop(trainer, net)
-    submit(predict, net, IMG_SIZE)
+    submit(net)
