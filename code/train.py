@@ -68,3 +68,33 @@ trainer = sgd.SGD(
     termination_criterion=EpochCounter(3200),
     # termination_criterion=MonitorBased(channel_name='valid_y_nll'),
 )
+
+
+def train(trainer, model):
+    trainer.setup(model, train)
+    epoch = 0
+    test_monitor = []
+    prev_nll = 10
+    while True:
+        print 'Training...', epoch
+        trainer.train(dataset=train)
+        net.monitor()
+        if not trainer.continue_learning(net):
+            break
+        if SAVE:
+            monitor_save_best.on_monitor(net, valid, trainer)
+            nll = monitor.read_channel(net, 'test_y_nll') + 0
+            test_monitor.append(
+                (nll, monitor.read_channel(net, 'test_y_misclass'))
+            )
+            if nll < prev_nll:
+                f = open('best.pkl', 'wb')
+                pk.dump(net, f, protocol=pk.HIGHEST_PROTOCOL)
+                f.close()
+            f = open('monitor.pkl', 'wb')
+            pk.dump(test_monitor, f, protocol=pk.HIGHEST_PROTOCOL)
+            f.close()
+        mom_adjust.on_monitor(net, valid, trainer)
+        lr_adjust.on_monitor(net, valid, trainer)
+        epoch += 1
+    submit(predict, net, IMG_SIZE)

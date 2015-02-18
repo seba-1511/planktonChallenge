@@ -5,7 +5,7 @@ from utils import (
     NB_CLASSES,
 )
 
-conv = mlp.ConvRectifiedLinear(
+conv0 = mlp.ConvRectifiedLinear(
     layer_name='c0',
     output_channels=96,
     irange=0.070,
@@ -17,8 +17,8 @@ conv = mlp.ConvRectifiedLinear(
     # W_lr_scale=0.25,
     # max_kernel_norm=1.9365
 )
-conv2 = mlp.ConvRectifiedLinear(
-    layer_name='c2',
+conv1 = mlp.ConvRectifiedLinear(
+    layer_name='c1',
     output_channels=126,
     irange=0.070,
     kernel_shape=(3, 3),
@@ -29,8 +29,8 @@ conv2 = mlp.ConvRectifiedLinear(
     # W_lr_scale=0.25,
     # max_kernel_norm=1.9365
 )
-conv3 = mlp.ConvRectifiedLinear(
-    layer_name='c3',
+conv2 = mlp.ConvRectifiedLinear(
+    layer_name='c2',
     output_channels=128,
     irange=.235,
     kernel_shape=[5, 5],
@@ -39,7 +39,7 @@ conv3 = mlp.ConvRectifiedLinear(
     # W_lr_scale=0.25,
     max_kernel_norm=1.9365
 )
-# mout = MaxoutConvC01B(
+# mout0 = MaxoutConvC01B(
 #     layer_name='m0',
 #     num_pieces=6,
 #     num_channels=96,
@@ -49,7 +49,7 @@ conv3 = mlp.ConvRectifiedLinear(
 #     pool_stride=[2, 2],
 #     # W_lr_scale=0.25,
 # )
-# mout2 = MaxoutConvC01B(
+# mout1 = MaxoutConvC01B(
 #     layer_name='m1',
 #     num_pieces=6,
 #     num_channels=128,
@@ -61,16 +61,16 @@ conv3 = mlp.ConvRectifiedLinear(
 #     max_kernel_norm=1.9365
 # )
 sigmoid = mlp.Sigmoid(
-    layer_name='Sigmoid',
+    layer_name='s0',
     dim=10000,
     sparse_init=2000,
 )
-sigmoid2 = mlp.Sigmoid(
-    layer_name='s2',
+sigmoid1 = mlp.Sigmoid(
+    layer_name='s1',
     dim=2000,
     sparse_init=500,
 )
-rect = mlp.RectifiedLinear(
+rect0 = mlp.RectifiedLinear(
     layer_name='r0',
     dim=2000,
     irange=0.070,
@@ -84,7 +84,7 @@ rect1 = mlp.RectifiedLinear(
     irange=0.054,
 )
 smax = mlp.Softmax(
-    layer_name='y',
+    layer_name='softmax',
     n_classes=NB_CLASSES,
     irange=0.054,
 )
