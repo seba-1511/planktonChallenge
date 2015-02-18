@@ -27,7 +27,7 @@ from pylearn2.costs.cost import SumOfCosts
 
 warnings.filterwarnings("ignore")
 
-NB_CLASSES = 121
+NB_CLASSES = 80
 IMG_SIZE = 28
 SAVE = False
 
@@ -88,9 +88,11 @@ def train(d):
     # train = RotationalDDM(X=d.train_X, y=convert_one_hot(d.train_Y))
     # valid = RotationalDDM(X=d.valid_X, y=convert_one_hot(d.valid_Y))
     # test = RotationalDDM(X=d.test_X, y=convert_one_hot(d.test_Y))
-    train = DenseDesignMatrix(X=d.train_X - 0.5, y=convert_one_hot(d.train_Y))
-    valid = DenseDesignMatrix(X=d.valid_X - 0.5, y=convert_one_hot(d.valid_Y))
-    test = DenseDesignMatrix(X=d.test_X - 0.5, y=convert_one_hot(d.test_Y))
+    d.create_categories()
+    train = DenseDesignMatrix(X=np.array(d.train_cat_X['Hydromedusae']) - 0.5, y=convert_one_hot(d.train_cat_Y['Hydromedusae']))
+    # valid = DenseDesignMatrix(X=np.array(d.valid_cat_X['Protists']) - 0.5, y=convert_one_hot(d.valid_cat_Y['Protists']))
+    test = DenseDesignMatrix(X=np.array(d.test_cat_X['Hydromedusae']) - 0.5, y=convert_one_hot(d.test_cat_Y['Hydromedusae']))
+    valid = test
 
     print 'Setting up'
     batch_size = 256
