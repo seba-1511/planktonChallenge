@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-import theano
+#
 import numpy as np
+
+from pylearn2.space import Conv2DSpace
 
 from layers import (
     conv0,
@@ -14,18 +16,20 @@ from utils import (
 )
 from submit import (
     submit,
+    predict,
 )
 from train import (
     get_trainer,
+    loop,
 )
 from datasets import (
-    get_datasets,
+    get_dataset,
 )
 
 from pylearn2.models import mlp
 
 if __name__ == '__main__':
-    train, valid, test = get_datasets()
+    train, valid, test = get_dataset()
     trainer = get_trainer(train, valid, test)
 
     in_space = Conv2DSpace(
@@ -39,5 +43,5 @@ if __name__ == '__main__':
         # nvis=784,
     )
 
-    net = train(trainer, model)
-    submit()
+    net = loop(trainer, net)
+    submit(predict, net, IMG_SIZE)

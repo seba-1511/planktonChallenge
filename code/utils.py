@@ -7,6 +7,7 @@ NB_CLASSES = 121
 IMG_SIZE = 28
 SAVE = False
 BATCH_SIZE = 128
+NB_EPOCHS = 50
 
 
 def grouper(iterable, n, fillvalue=None):
@@ -17,7 +18,8 @@ def grouper(iterable, n, fillvalue=None):
 
 
 def convert_one_hot(data):
-    return np.array([[1 if y == c else 0 for c in xrange(NB_CLASSES)] for y in data])
+    return np.array([[(1 if y == c else 0)
+                      for c in xrange(NB_CLASSES)] for y in data])
 
 
 def convert_categorical(data):

@@ -20,7 +20,8 @@ from utils import (
 #
 
 
-def get_sets():
+def get_dataset():
+    print 'Loading Data...'
     f = gzip.open('data.pkl.gz', 'rb')
     d = pk.load(f)
     f.close()
