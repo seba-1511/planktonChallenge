@@ -20,7 +20,7 @@ from utils import (
 
 PATH_TEST_FOLDER = '../data/test/'
 SUBMISSION_FILENAME = 'submission.csv.gzip'
-TEST_DATA = 'data_test.pkl.gzip'
+TEST_DATA = 'plankton_test.pkl.gz'
 
 
 def get_predict_fn(model):

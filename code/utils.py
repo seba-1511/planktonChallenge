@@ -4,10 +4,12 @@ import numpy as np
 from itertools import izip_longest
 
 NB_CLASSES = 121
-IMG_SIZE = 28
+IMG_SIZE = 37
 SAVE = False
-BATCH_SIZE = 256
-NB_EPOCHS = 0
+BATCH_SIZE = 128
+NB_EPOCHS = 2500
+DROPOUT = False
+DROPOUT_PROB = 0.5
 
 
 def grouper(iterable, n, fillvalue=None):

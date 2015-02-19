@@ -6,8 +6,12 @@ from pylearn2.space import Conv2DSpace
 from layers import (
     conv0,
     conv1,
+    conv2,
     rect0,
     rect1,
+    mout0,
+    mout1,
+    sigmoid,
     smax,
 )
 from utils import (
@@ -23,6 +27,7 @@ from train import (
 )
 from datasets import (
     get_dataset,
+    get_gabe_planktons,
 )
 
 from pylearn2.models import mlp
@@ -41,7 +46,7 @@ if __name__ == '__main__':
     )
 
     net = mlp.MLP(
-        layers=[conv0, conv1, rect0, rect1, smax],
+        layers=[conv0, conv1, rect0, smax],
         input_space=in_space,
         # nvis=784,
     )

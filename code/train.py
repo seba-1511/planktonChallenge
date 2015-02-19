@@ -12,7 +12,9 @@ from utils import (
     SAVE,
     BATCH_SIZE,
     NB_EPOCHS,
-    IMG_SIZE
+    IMG_SIZE,
+    DROPOUT,
+    DROPOUT_PROB,
 )
 
 # Global Variables
@@ -60,7 +62,7 @@ def adjust_parameters(model, trainer, dataset):
 def init_momentum():
     global momentum_adjustor
     global momentum_rule
-    mom_init = 0.3
+    mom_init = 0.9
     mom_final = 0.99
     mom_start = 8
     mom_saturate = 35
@@ -99,14 +101,14 @@ def get_BGD(train, valid, test):
 
 def get_SGD(train, valid, test):
     global momentum_rule
+    regularizer = dropout.Dropout(DROPOUT_PROB) if DROPOUT else Default()
     trainer = sgd.SGD(
-        learning_rate=0.03,
+        learning_rate=0.5,
         learning_rule=momentum_rule,
         cost=SumOfCosts(
             costs=[
-                Default(),
-                # dropout.Dropout(),
-                WeightDecay([1e-2, 1e-2, 1e-2, 1e-2, 1e-3]),
+                regularizer,
+                WeightDecay([5e-3, 5e-3, 5e-3, 0.0]),
             ]
         ),
         batch_size=BATCH_SIZE,
