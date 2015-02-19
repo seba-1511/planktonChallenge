@@ -44,6 +44,17 @@ conv2 = mlp.ConvRectifiedLinear(
     W_lr_scale=dropout_scale,
     # max_kernel_norm=1.9365
 )
+conv3 = mlp.ConvRectifiedLinear(
+    layer_name='c3',
+    output_channels=196,
+    irange=0.070,
+    kernel_shape=[3, 3],
+    kernel_stride= (1, 1),
+    pool_shape=[2, 2],
+    pool_stride=[1, 1],
+    W_lr_scale=dropout_scale,
+    # max_kernel_norm=1.9365
+)
 mout0 = MaxoutConvC01B(
     layer_name='m0',
     num_pieces=6,
