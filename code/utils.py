@@ -4,7 +4,7 @@ import numpy as np
 from itertools import izip_longest
 
 NB_CLASSES = 121
-IMG_SIZE = 37
+IMG_SIZE = 28
 SAVE = False
 BATCH_SIZE = 128
 NB_EPOCHS = 2500

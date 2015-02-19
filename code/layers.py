@@ -13,7 +13,7 @@ conv0 = mlp.ConvRectifiedLinear(
     layer_name='c0',
     output_channels=96,
     irange=0.070,
-    kernel_shape=(5, 5),
+    kernel_shape=(4, 4),
     kernel_stride=(1, 1),
     pool_shape=(2, 2),
     pool_stride=(1, 1),
@@ -35,14 +35,14 @@ conv1 = mlp.ConvRectifiedLinear(
 )
 conv2 = mlp.ConvRectifiedLinear(
     layer_name='c2',
-    output_channels=128,
+    output_channels=164,
     irange=0.070,
     kernel_shape=[3, 3],
     kernel_stride= (1, 1),
     pool_shape=[2, 2],
     pool_stride=[1, 1],
     W_lr_scale=dropout_scale,
-    max_kernel_norm=1.9365
+    # max_kernel_norm=1.9365
 )
 mout0 = MaxoutConvC01B(
     layer_name='m0',
@@ -78,16 +78,16 @@ sigmoid1 = mlp.Sigmoid(
 )
 rect0 = mlp.RectifiedLinear(
     layer_name='r0',
-    dim=1512,
-    irange=0.0757,
+    dim=2048,
+    irange=0.01,
     # sparse_init=200,
     W_lr_scale=dropout_scale,
 )
 rect1 = mlp.RectifiedLinear(
     layer_name='r1',
-    dim=1512,
+    dim=2048,
     # sparse_init=200,
-    irange=0.054,
+    irange=0.01,
 )
 smax = mlp.Softmax(
     layer_name='softmax',
