@@ -6,10 +6,11 @@ from itertools import izip_longest
 NB_CLASSES = 121
 IMG_SIZE = 60
 SAVE = False
-BATCH_SIZE = 256
+NB_EPOCHS = 2500
+BATCH_SIZE = 128
 NB_EPOCHS = 2500
 DROPOUT = True
-DROPOUT_PROB = 0.5
+DROPOUT_PROB = 0.8
 
 
 def grouper(iterable, n, fillvalue=None):

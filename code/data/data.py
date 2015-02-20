@@ -73,14 +73,20 @@ def print_images(images, folder='cropped/'):
 
 
 class RotationalDDM(DenseDesignMatrix):
+    """
+        Rot_angle is the rotational angle allowed.
+        To allow all degrees, rot_angle=1,
+        to allow only 90°, rot_angle=90
+    """
 
-    def __init__(self, X, y, y_labels=None):
+    def __init__(self, X, y, rot_angle=90, y_labels=None):
         self.original_X = X
+        self.rot_angle = rot_angle
         super(RotationalDDM, self).__init__(X=X, y=y, y_labels=y_labels)
 
     def rotation(self, x):
         width = sqrt(x.shape[0])
-        angle = randint(0, 359)
+        angle = randint(0, 359) * self.rot_angle
         img = x.reshape(width, width)
         return rotate(img, angle, mode='nearest').ravel()
 

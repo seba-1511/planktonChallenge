@@ -76,9 +76,9 @@ def init_momentum():
 
 def init_learning_rate():
     global lr_adjustor
-    lr_init = 8
+    lr_init = 0
     lr_saturate = 35
-    lr_decay_factor = 0.07
+    lr_decay_factor = 0.9
     lr_adjustor = sgd.LinearDecayOverEpoch(
         lr_init, lr_saturate, lr_decay_factor)
 
@@ -103,12 +103,12 @@ def get_SGD(train, valid, test):
     global momentum_rule
     regularizer = dropout.Dropout(DROPOUT_PROB) if DROPOUT else Default()
     trainer = sgd.SGD(
-        learning_rate=0.01,
+        learning_rate=0.06,
         learning_rule=momentum_rule,
         cost=SumOfCosts(
             costs=[
                 regularizer,
-                WeightDecay([5e-3, 5e-3, 5e-3, 5e-3, 5e-3, 0.0]),
+                WeightDecay([5e-4, 5e-4, 5e-4, 5e-4, 5e-4, 0.0]),
             ]
         ),
         batch_size=BATCH_SIZE,
@@ -125,7 +125,7 @@ def get_SGD(train, valid, test):
 
 def get_trainer(train, valid=None, test=None):
     init_momentum()
-    init_learning_rate()
+    # init_learning_rate()
     trainer = get_SGD(train, valid, test)
     return trainer
 

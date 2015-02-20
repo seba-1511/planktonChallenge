@@ -27,6 +27,7 @@ from train import (
 )
 from datasets import (
     get_dataset,
+    get_gabe_planktons,
 )
 
 from pylearn2.models import mlp
