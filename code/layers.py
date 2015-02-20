@@ -99,9 +99,11 @@ rect1 = mlp.RectifiedLinear(
     dim=2048,
     # sparse_init=200,
     irange=0.01,
+    W_lr_scale=dropout_scale,
 )
 smax = mlp.Softmax(
     layer_name='softmax',
     n_classes=NB_CLASSES,
     irange=0.054,
+    W_lr_scale=dropout_scale,
 )

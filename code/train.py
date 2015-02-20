@@ -103,7 +103,7 @@ def get_SGD(train, valid, test):
     global momentum_rule
     regularizer = dropout.Dropout(DROPOUT_PROB) if DROPOUT else Default()
     trainer = sgd.SGD(
-        learning_rate=0.06,
+        learning_rate=0.01,
         learning_rule=momentum_rule,
         cost=SumOfCosts(
             costs=[
