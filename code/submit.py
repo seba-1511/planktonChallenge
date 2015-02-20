@@ -19,8 +19,9 @@ from utils import (
 )
 
 PATH_TEST_FOLDER = '../data/test/'
+PATH_TRAIN_FOLDER = '../data/train/'
 SUBMISSION_FILENAME = 'submission.csv.gzip'
-TEST_DATA = 'plankton_test.pkl.gz'
+TEST_DATA = 'test.pkl.gz'
 
 
 def get_predict_fn(model):
@@ -114,9 +115,10 @@ def get_labels_list():
     list_names = ['image', ]
     curr_dir = os.path.dirname(
                 os.path.abspath(inspect.getfile(inspect.currentframe())))
-    folders = os.walk(os.path.join(curr_dir, '../../data/train/'))
+    folders = os.walk(os.path.join(curr_dir, PATH_TRAIN_FOLDER))
     for class_id, folder in enumerate(folders):
-        list_names.append(folder[0])
+        name = folder[0]
+        list_names.append(name[name.rfind('/') + 1:])
     return ','.join(list_names)
 
 
@@ -130,3 +132,6 @@ def submit(model=None):
         # submission.write('image,trichodesmium_puff,siphonophore_physonect,radiolarian_colony,chaetognath_other,euphausiids,copepod_cyclopoid_oithona,copepod_calanoid_flatheads,echinoderm_larva_seastar_brachiolaria,chaetognath_sagitta,copepod_calanoid_eucalanus,radiolarian_chain,diatom_chain_tube,detritus_other,copepod_other,hydromedusae_solmaris,hydromedusae_haliscera_small_sideview,crustacean_other,echinoderm_larva_pluteus_brittlestar,pteropod_butterfly,copepod_cyclopoid_oithona_eggs,acantharia_protist,detritus_filamentous,chaetognath_non_sagitta,invertebrate_larvae_other_B,hydromedusae_narco_dark,siphonophore_other_parts,fish_larvae_very_thin_body,trochophore_larvae,pteropod_theco_dev_seq,protist_noctiluca,appendicularian_fritillaridae,chordate_type1,protist_fuzzy_olive,copepod_calanoid_eggs,fish_larvae_thin_body,siphonophore_physonect_young,euphausiids_young,siphonophore_calycophoran_sphaeronectes,hydromedusae_sideview_big,hydromedusae_typeE,tunicate_salp_chains,shrimp_caridean,copepod_calanoid_octomoms,invertebrate_larvae_other_A,acantharia_protist_halo,shrimp_sergestidae,pteropod_triangle,amphipods,tunicate_partial,appendicularian_s_shape,hydromedusae_narcomedusae,hydromedusae_liriope,tunicate_salp,hydromedusae_shapeB,hydromedusae_other,ctenophore_lobate,unknown_blobs_and_smudges,tunicate_doliolid,trichodesmium_multiple,appendicularian_slight_curve,protist_dark_center,unknown_sticks,copepod_cyclopoid_copilia,copepod_calanoid,hydromedusae_typeD,siphonophore_calycophoran_sphaeronectes_young,protist_star,copepod_calanoid_frillyAntennae,diatom_chain_string,fish_larvae_myctophids,hydromedusae_aglaura,echinoderm_larva_seastar_bipinnaria,fecal_pellet,hydromedusae_haliscera,siphonophore_calycophoran_rocketship_young,acantharia_protist_big_center,ctenophore_cestid,ctenophore_cydippid_tentacles,hydromedusae_typeF,protist_other,tornaria_acorn_worm_larvae,hydromedusae_h15,decapods,detritus_blob,ephyra,copepod_calanoid_small_longantennae,artifacts,hydromedusae_partial_dark,copepod_calanoid_large,fish_larvae_deep_body,hydromedusae_solmundella,hydromedusae_shapeA_sideview_small,ctenophore_cydippid_no_tentacles,echinopluteus,copepod_calanoid_large_side_antennatucked,echinoderm_larva_pluteus_early,hydromedusae_bell_and_tentacles,siphonophore_calycophoran_abylidae,siphonophore_partial,echinoderm_seacucumber_auricularia_larva,fish_larvae_medium_body,siphonophore_calycophoran_sphaeronectes_stem,siphonophore_calycophoran_rocketship_adult,tunicate_doliolid_nurse,fish_larvae_leptocephali,unknown_unclassified,heteropod,jellies_tentacles,shrimp_zoea,polychaete,echinoderm_larva_pluteus_typeC,hydromedusae_narco_young,trichodesmium_tuft,stomatopod,echinoderm_larva_pluteus_urchin,hydromedusae_shapeA,artifacts_edge,trichodesmium_bowtie,appendicularian_straight,hydromedusae_typeD_bell_and_tentacles,shrimp-like_other\n')
         names, data = load_test_data(predict, model, submission)
 
+
+if __name__ == '__main__':
+    print get_labels_list()

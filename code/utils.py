@@ -6,7 +6,7 @@ from itertools import izip_longest
 NB_CLASSES = 121
 IMG_SIZE = 28
 SAVE = False
-NB_EPOCHS = 5
+NB_EPOCHS = 15
 BATCH_SIZE = 128
 DROPOUT = True
 DROPOUT_PROB = 0.5
